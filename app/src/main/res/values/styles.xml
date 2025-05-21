@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Font -->
+    <style name="Head_Bold_30">
+        <item name="android:fontFamily">@font/pretendard_bold</item>
+        <item name="android:textSize">30sp</item>
+    </style>
+
+    <style name="Title_Bold_26">
+        <item name="android:fontFamily">@font/pretendard_bold</item>
+        <item name="android:textSize">26sp</item>
+    </style>
+
+    <style name="Title_Bold_24">
+        <item name="android:fontFamily">@font/pretendard_bold</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="Title_Semi_20">
+        <item name="android:fontFamily">@font/pretendard_semi_bold</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="Text_Semi_18">
+        <item name="android:fontFamily">@font/pretendard_semi_bold</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="Text_Medi_18">
+        <item name="android:fontFamily">@font/pretendard_medium</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="Text_Semi_16">
+        <item name="android:fontFamily">@font/pretendard_semi_bold</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="Text_Regular_16">
+        <item name="android:fontFamily">@font/pretendard_regular</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="Text_Semi_14">
+        <item name="android:fontFamily">@font/pretendard_semi_bold</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Text_Regular_14">
+        <item name="android:fontFamily">@font/pretendard_regular</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Caption_Medi_12">
+        <item name="android:fontFamily">@font/pretendard_medium</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="Caption_Semi_11">
+        <item name="android:fontFamily">@font/pretendard_semi_bold</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
+    <style name="Caption_Regular_11">
+        <item name="android:fontFamily">@font/pretendard_regular</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
+    <style name="Title_Bold_20">
+        <item name="android:fontFamily">@font/pretendard_bold</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+</resources>
