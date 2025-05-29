@@ -25,6 +25,9 @@ class SplashFragment : Fragment() {
         mainActivity = activity as MainActivity
 
         Handler().postDelayed({
+            mainActivity.supportFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainerView, LoginFragment())
+                .commit()
         }, 2000)
 
         return binding.root
