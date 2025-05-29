@@ -24,6 +24,8 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
+        buildConfigField("String", "SERVER_URL", "\"${properties["server_url"]}\"")
+
         buildConfigField("String", "KAKAO_APP_KEY", "\"${properties["kakao_key"]}\"")
 
         manifestPlaceholders["kakao_native_key"] = kakaoNativeKey
@@ -69,4 +71,12 @@ dependencies {
 
     // 카카오 로그인
     implementation("com.kakao.sdk:v2-user:2.20.6")
+
+    // api
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0") // JSON 변환
+    implementation("com.squareup.okhttp3:okhttp:4.10.0") // OkHttp 라이브러리
+    implementation("com.squareup.okhttp3:logging-interceptor:3.11.0")
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.12.0"))
+    implementation("com.squareup.okhttp3:okhttp-urlconnection:4.9.0")
 }
