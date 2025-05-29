@@ -1,0 +1,57 @@
+package com.terbuck.terbuck.viewModel
+
+import android.util.Log
+import androidx.lifecycle.ViewModel
+import com.terbuck.terbuck.api.ApiClient
+import com.terbuck.terbuck.api.TokenManager
+import com.terbuck.terbuck.api.request.onboarding.LoginRequest
+import com.terbuck.terbuck.api.response.BaseResponse
+import com.terbuck.terbuck.api.response.onboarding.LoginResponse
+import com.terbuck.terbuck.ui.MainActivity
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
+class OnboardingViewModel: ViewModel() {
+    fun login(activity: MainActivity, token: String) {
+        val apiClient = ApiClient(activity)
+        val tokenManager = TokenManager(activity)
+
+        apiClient.apiService.login(LoginRequest(token))
+            .enqueue(object :
+                Callback<BaseResponse<LoginResponse>> {
+                override fun onResponse(
+                    call: Call<BaseResponse<LoginResponse>>,
+                    response: Response<BaseResponse<LoginResponse>>
+                ) {
+                    Log.d("TerbuckTerbuck", "onResponse 성공: " + response.body().toString())
+                    if (response.isSuccessful) {
+                        // 정상적으로 통신이 성공된 경우
+                        val result: BaseResponse<LoginResponse>? = response.body()
+                        Log.d("TerbuckTerbuck", "onResponse 성공: " + result?.toString())
+
+                        tokenManager.saveTokens(result?.data?.accessToken.toString(), result?.data?.refreshToken.toString())
+
+                        if(result?.data?.redirect == true) {
+                            // 회원가입 화면 이동
+                        } else {
+                            // 홈화면 이동
+                        }
+
+                    } else {
+                        // 통신이 실패한 경우(응답코드 3xx, 4xx 등)
+                        var result: BaseResponse<LoginResponse>? = response.body()
+                        Log.d("TerbuckTerbuck", "onResponse 실패: " + response.body())
+                        val errorBody = response.errorBody()?.string() // 에러 응답 데이터를 문자열로 얻음
+                        Log.d("TerbuckTerbuck", "Error Response: $errorBody")
+                    }
+                }
+
+                override fun onFailure(call: Call<BaseResponse<LoginResponse>>, t: Throwable) {
+                    // 통신 실패
+                    Log.d("TerbuckTerbuck", "onFailure 에러: " + t.message.toString())
+
+                }
+            })
+    }
+}

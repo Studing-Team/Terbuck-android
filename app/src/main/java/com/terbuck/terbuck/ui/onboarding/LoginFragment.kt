@@ -15,11 +15,15 @@ import com.kakao.sdk.user.UserApiClient
 import com.terbuck.terbuck.R
 import com.terbuck.terbuck.databinding.FragmentLoginBinding
 import com.terbuck.terbuck.ui.MainActivity
+import com.terbuck.terbuck.viewModel.OnboardingViewModel
 
 class LoginFragment : Fragment() {
 
     lateinit var binding: FragmentLoginBinding
     lateinit var mainActivity: MainActivity
+    private val viewModel: OnboardingViewModel by lazy {
+        ViewModelProvider(requireActivity())[OnboardingViewModel::class.java]
+    }
 
 
     // 카카오 로그인
@@ -31,6 +35,7 @@ class LoginFragment : Fragment() {
         } else if (token != null) {
             Log.i(TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
             // 로그인 기능 구현
+            viewModel.login(mainActivity, token.accessToken.toString())
         }
     }
 
@@ -62,6 +67,7 @@ class LoginFragment : Fragment() {
                         } else if (token != null) {
                             Log.i(TAG, "카카오톡으로 로그인 성공 ${token.accessToken}")
                             // 로그인 기능 구현
+                            viewModel.login(mainActivity, token.accessToken.toString())
                         }
                     }
                 } else {
