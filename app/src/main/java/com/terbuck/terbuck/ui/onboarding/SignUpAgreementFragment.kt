@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import com.terbuck.terbuck.R
 import com.terbuck.terbuck.databinding.FragmentSignUpAgreementBinding
 import com.terbuck.terbuck.ui.MainActivity
+import com.terbuck.terbuck.ui.user.SchoolFragment
+import com.terbuck.terbuck.ui.user.adapter.SchoolAdapter
 
 class SignUpAgreementFragment : Fragment() {
 
@@ -31,6 +33,13 @@ class SignUpAgreementFragment : Fragment() {
             textViewAgreementAgreement1.setOnClickListener { toggleAgreement(0) }
             imageViewCheckbox2.setOnClickListener { toggleAgreement(1) }
             textViewAgreementAgreement2.setOnClickListener { toggleAgreement(1) }
+
+            buttonNext.setOnClickListener {
+                mainActivity.supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainerView, SchoolFragment())
+                    .addToBackStack(null)
+                    .commit()
+            }
         }
 
         return binding.root
