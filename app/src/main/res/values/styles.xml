@@ -70,4 +70,15 @@
         <item name="android:fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">20sp</item>
     </style>
+
+    <!-- NEXT Button -->
+    <style name="NextButton" parent="Text_Semi_18">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginHorizontal">20dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="android:backgroundTint">@drawable/background_button</item>
+        <item name="android:paddingVertical">15.5dp</item>
+    </style>
 </resources>
