@@ -2,12 +2,15 @@ package com.terbuck.terbuck.viewModel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.terbuck.terbuck.R
 import com.terbuck.terbuck.api.ApiClient
 import com.terbuck.terbuck.api.TokenManager
 import com.terbuck.terbuck.api.request.onboarding.LoginRequest
 import com.terbuck.terbuck.api.response.BaseResponse
 import com.terbuck.terbuck.api.response.onboarding.LoginResponse
 import com.terbuck.terbuck.ui.MainActivity
+import com.terbuck.terbuck.ui.home.HomeFragment
+import com.terbuck.terbuck.ui.onboarding.SignUpAgreementFragment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -30,12 +33,20 @@ class OnboardingViewModel: ViewModel() {
                         val result: BaseResponse<LoginResponse>? = response.body()
                         Log.d("TerbuckTerbuck", "onResponse 성공: " + result?.toString())
 
-                        tokenManager.saveTokens(result?.data?.accessToken.toString(), result?.data?.refreshToken.toString())
+                        tokenManager.saveTokens("Bearer ${result?.data?.accessToken}", result?.data?.refreshToken.toString())
 
                         if(result?.data?.redirect == true) {
                             // 회원가입 화면 이동
+                            activity.supportFragmentManager.beginTransaction()
+                                .replace(R.id.fragmentContainerView, SignUpAgreementFragment())
+                                .addToBackStack(null)
+                                .commit()
                         } else {
                             // 홈화면 이동
+                            activity.supportFragmentManager.beginTransaction()
+                                .replace(R.id.fragmentContainerView, HomeFragment())
+                                .addToBackStack(null)
+                                .commit()
                         }
 
                     } else {
