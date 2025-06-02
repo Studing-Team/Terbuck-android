@@ -33,4 +33,9 @@ class SplashFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        mainActivity.hideBottomNavigation(true)
+    }
+
 }
