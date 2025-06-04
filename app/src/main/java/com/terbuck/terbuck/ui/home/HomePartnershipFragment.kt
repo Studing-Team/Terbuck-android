@@ -70,7 +70,16 @@ class HomePartnershipFragment : Fragment() {
             itemClickListener = object : HomePartnershipAdapter.OnItemClickListener {
                 override fun onItemClick(position: Int) {
                     // 파트너십 상세 정보 화면
+                    val bundle = Bundle().apply { putInt("partnershipId", getPartnershipNewInfo?.get(position)?.id ?: 0) }
 
+                    var nextFragment = PartnershipDetailFragment().apply {
+                        arguments = bundle
+                    }
+
+                    mainActivity.supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainerView, nextFragment)
+                        .addToBackStack(null)
+                        .commit()
                 }
             }
         }
@@ -82,7 +91,16 @@ class HomePartnershipFragment : Fragment() {
             itemClickListener = object : HomePartnershipAdapter.OnItemClickListener {
                 override fun onItemClick(position: Int) {
                     // 파트너십 상세 정보 화면
+                    val bundle = Bundle().apply { putInt("partnershipId", getPartnershipInfo?.get(position)?.id ?: 0) }
 
+                    var nextFragment = PartnershipDetailFragment().apply {
+                        arguments = bundle
+                    }
+
+                    mainActivity.supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainerView, nextFragment)
+                        .addToBackStack(null)
+                        .commit()
                 }
             }
         }

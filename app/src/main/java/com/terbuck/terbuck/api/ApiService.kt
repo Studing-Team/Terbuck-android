@@ -5,6 +5,7 @@ import com.terbuck.terbuck.api.request.onboarding.SignUpRequest
 import com.terbuck.terbuck.api.response.BaseResponse
 import com.terbuck.terbuck.api.response.home.HomePartnershipResponse
 import com.terbuck.terbuck.api.response.home.HomeStoreResponse
+import com.terbuck.terbuck.api.response.home.PartnershipDetailResponse
 import com.terbuck.terbuck.api.response.onboarding.LoginResponse
 import retrofit2.Call
 import retrofit2.http.Body
@@ -51,4 +52,11 @@ interface ApiService {
         @Header("authorization") token: String,
         @Query("university") university: String
     ): Call<BaseResponse<HomePartnershipResponse>>
+
+    // 파트너십 상세 정보 조회
+    @GET("/partnership/{partnership_id}")
+    fun getPartnershipDetailInfo(
+        @Header("authorization") token: String,
+        @Path("partnership_id") partnershipId: Int
+    ): Call<BaseResponse<PartnershipDetailResponse>>
 }
