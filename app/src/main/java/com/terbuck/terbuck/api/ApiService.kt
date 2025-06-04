@@ -3,6 +3,7 @@ package com.terbuck.terbuck.api
 import com.terbuck.terbuck.api.request.onboarding.LoginRequest
 import com.terbuck.terbuck.api.request.onboarding.SignUpRequest
 import com.terbuck.terbuck.api.response.BaseResponse
+import com.terbuck.terbuck.api.response.home.HomeStoreResponse
 import com.terbuck.terbuck.api.response.onboarding.LoginResponse
 import retrofit2.Call
 import retrofit2.http.Body
@@ -25,4 +26,14 @@ interface ApiService {
         @Header("authorization") token: String,
         @Body request: SignUpRequest
     ): Call<BaseResponse<String>>
+
+    // 홈화면 제휴 업체 정보 조회
+    @GET("/shops/home")
+    fun getHomeStoreInfo(
+        @Header("authorization") token: String,
+        @Query("university") university: String,
+        @Query("category") category: String?,
+        @Query("latitude") latitude: String?,
+        @Query("longitude") longitude: String?
+    ): Call<BaseResponse<HomeStoreResponse>>
 }

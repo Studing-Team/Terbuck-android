@@ -9,12 +9,23 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.terbuck.terbuck.R
+import com.terbuck.terbuck.api.response.home.StoreInfo
+import com.terbuck.terbuck.databinding.FragmentHomeUseBinding
 import com.terbuck.terbuck.ui.MainActivity
+import com.terbuck.terbuck.ui.home.adapter.HomeStoreAdapter
+import com.terbuck.terbuck.viewModel.HomeViewModel
 
 class HomeUseFragment : Fragment() {
 
     lateinit var binding: FragmentHomeUseBinding
     lateinit var mainActivity: MainActivity
+    private val viewModel: HomeViewModel by lazy {
+        ViewModelProvider(requireActivity())[HomeViewModel::class.java]
+    }
+
+    lateinit var homeStoreAdapter: HomeStoreAdapter
+
+    var getPartnershipInfo: List<StoreInfo>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -24,6 +35,16 @@ class HomeUseFragment : Fragment() {
         binding = FragmentHomeUseBinding.inflate(layoutInflater)
         mainActivity = activity as MainActivity
 
+        initAdapter()
+        observeViewModel()
+
+        binding.run {
+            recyclerViewPartnership.apply {
+                adapter = homeStoreAdapter
+                layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            }
+        }
+
         return binding.root
     }
 
@@ -32,8 +53,34 @@ class HomeUseFragment : Fragment() {
         initView()
     }
 
+    fun initAdapter() {
+        homeStoreAdapter = HomeStoreAdapter(
+            mainActivity,
+            getPartnershipInfo
+        ).apply {
+            itemClickListener = object : HomeStoreAdapter.OnItemClickListener {
+                override fun onItemClick(position: Int) {
+                    // 혜택 더보기 클릭
+
+                }
+            }
+        }
+    }
+
+    fun observeViewModel() {
+        viewModel.run {
+            partnershipStoreInfo.observe(viewLifecycleOwner) {
+                getPartnershipInfo = it?.list
+
+                homeStoreAdapter.updateList(getPartnershipInfo)
+            }
+        }
+    }
 
     fun initView() {
+        viewModel.getHomeStoreInfo(mainActivity, "이용하기") {
+
+        }
     }
 
 }
