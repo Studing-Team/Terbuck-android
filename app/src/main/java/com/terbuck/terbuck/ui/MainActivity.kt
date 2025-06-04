@@ -5,6 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -27,6 +28,10 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavBar.itemIconTintList = null
 
         setContentView(binding.root)
+    }
+
+    fun hideBottomNavigation(isHide: Boolean) {
+        binding.bottomNavBar.visibility = if(isHide) View.GONE else View.VISIBLE
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
