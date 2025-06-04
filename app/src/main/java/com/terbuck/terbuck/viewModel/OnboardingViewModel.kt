@@ -6,11 +6,13 @@ import com.terbuck.terbuck.R
 import com.terbuck.terbuck.api.ApiClient
 import com.terbuck.terbuck.api.TokenManager
 import com.terbuck.terbuck.api.request.onboarding.LoginRequest
+import com.terbuck.terbuck.api.request.onboarding.SignUpRequest
 import com.terbuck.terbuck.api.response.BaseResponse
 import com.terbuck.terbuck.api.response.onboarding.LoginResponse
 import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.ui.home.HomeFragment
 import com.terbuck.terbuck.ui.onboarding.SignUpAgreementFragment
+import com.terbuck.terbuck.ui.user.SchoolFragment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -59,6 +61,41 @@ class OnboardingViewModel: ViewModel() {
                 }
 
                 override fun onFailure(call: Call<BaseResponse<LoginResponse>>, t: Throwable) {
+                    // 통신 실패
+                    Log.d("TerbuckTerbuck", "onFailure 에러: " + t.message.toString())
+
+                }
+            })
+    }
+
+    fun signUp(activity: MainActivity, university: String, onSuccess: () -> Unit) {
+        val apiClient = ApiClient(activity)
+        val tokenManager = TokenManager(activity)
+
+        apiClient.apiService.signUp(tokenManager.getAccessToken().toString(), SignUpRequest(university))
+            .enqueue(object :
+                Callback<BaseResponse<String>> {
+                override fun onResponse(
+                    call: Call<BaseResponse<String>>,
+                    response: Response<BaseResponse<String>>
+                ) {
+                    Log.d("TerbuckTerbuck", "onResponse 성공: " + response.body().toString())
+                    if (response.isSuccessful) {
+                        // 정상적으로 통신이 성공된 경우
+                        val result: BaseResponse<String>? = response.body()
+                        Log.d("TerbuckTerbuck", "onResponse 성공: " + result?.toString())
+
+                        onSuccess()
+                    } else {
+                        // 통신이 실패한 경우(응답코드 3xx, 4xx 등)
+                        var result: BaseResponse<String>? = response.body()
+                        Log.d("TerbuckTerbuck", "onResponse 실패: " + response.body())
+                        val errorBody = response.errorBody()?.string() // 에러 응답 데이터를 문자열로 얻음
+                        Log.d("TerbuckTerbuck", "Error Response: $errorBody")
+                    }
+                }
+
+                override fun onFailure(call: Call<BaseResponse<String>>, t: Throwable) {
                     // 통신 실패
                     Log.d("TerbuckTerbuck", "onFailure 에러: " + t.message.toString())
 

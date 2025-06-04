@@ -1,6 +1,7 @@
 package com.terbuck.terbuck.api
 
 import com.terbuck.terbuck.api.request.onboarding.LoginRequest
+import com.terbuck.terbuck.api.request.onboarding.SignUpRequest
 import com.terbuck.terbuck.api.response.BaseResponse
 import com.terbuck.terbuck.api.response.onboarding.LoginResponse
 import retrofit2.Call
@@ -17,4 +18,11 @@ interface ApiService {
     fun login(
         @Body request: LoginRequest
     ): Call<BaseResponse<LoginResponse>>
+
+    // 회원가입
+    @POST("/member/signin")
+    fun signUp(
+        @Header("authorization") token: String,
+        @Body request: SignUpRequest
+    ): Call<BaseResponse<String>>
 }

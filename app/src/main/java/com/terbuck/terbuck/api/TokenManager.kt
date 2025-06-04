@@ -38,13 +38,13 @@ class TokenManager(val context: Context) {
         editor.apply()
     }
 
-    fun saveSchool(school: String) {
+    fun saveUniversity(school: String) {
         val editor = sharedPreferences.edit()
         editor.putString("school", school)
         editor.apply()
     }
 
-    fun getSchool(): String? {
+    fun getUniversity(): String? {
         return sharedPreferences.getString("school", "")
     }
 

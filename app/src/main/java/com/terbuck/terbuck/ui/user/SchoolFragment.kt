@@ -5,18 +5,26 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.terbuck.terbuck.R
+import com.terbuck.terbuck.api.TokenManager
 import com.terbuck.terbuck.databinding.FragmentSchoolBinding
 import com.terbuck.terbuck.ui.MainActivity
+import com.terbuck.terbuck.ui.home.HomeFragment
 import com.terbuck.terbuck.ui.user.adapter.SchoolAdapter
+import com.terbuck.terbuck.viewModel.OnboardingViewModel
 import kotlin.text.replace
 
 class SchoolFragment : Fragment() {
 
     lateinit var binding: FragmentSchoolBinding
     lateinit var mainActivity: MainActivity
+    private val viewModel: OnboardingViewModel by lazy {
+        ViewModelProvider(requireActivity())[OnboardingViewModel::class.java]
+    }
+
     lateinit var schoolAdapter: SchoolAdapter
 
     var schoolList = mutableListOf<String>("광운대학교", "서울과학기술대학교", "성신여자대학교", "삼육대학교")
@@ -41,7 +49,15 @@ class SchoolFragment : Fragment() {
 
             buttonNext.setOnClickListener {
                 // 회원가입 API 호출
-                
+                viewModel.signUp(mainActivity, selectedSchool) {
+                    TokenManager(mainActivity).saveUniversity(selectedSchool)
+
+                    // 홈화면 이동
+                    mainActivity.supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainerView, HomeFragment())
+                        .addToBackStack(null)
+                        .commit()
+                }
             }
         }
 
