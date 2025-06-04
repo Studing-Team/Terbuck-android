@@ -3,6 +3,7 @@ package com.terbuck.terbuck.api
 import com.terbuck.terbuck.api.request.onboarding.LoginRequest
 import com.terbuck.terbuck.api.request.onboarding.SignUpRequest
 import com.terbuck.terbuck.api.response.BaseResponse
+import com.terbuck.terbuck.api.response.home.HomePartnershipResponse
 import com.terbuck.terbuck.api.response.home.HomeStoreResponse
 import com.terbuck.terbuck.api.response.onboarding.LoginResponse
 import retrofit2.Call
@@ -36,4 +37,18 @@ interface ApiService {
         @Query("latitude") latitude: String?,
         @Query("longitude") longitude: String?
     ): Call<BaseResponse<HomeStoreResponse>>
+
+    // 홈화면 파트너십 정보 조회
+    @GET("/partnership/home")
+    fun getHomePartnershipInfo(
+        @Header("authorization") token: String,
+        @Query("university") university: String
+    ): Call<BaseResponse<HomePartnershipResponse>>
+
+    // 홈화면 새로운 파트너십 정보 조회
+    @GET("/partnership/home_new")
+    fun getHomePartnershipNewInfo(
+        @Header("authorization") token: String,
+        @Query("university") university: String
+    ): Call<BaseResponse<HomePartnershipResponse>>
 }

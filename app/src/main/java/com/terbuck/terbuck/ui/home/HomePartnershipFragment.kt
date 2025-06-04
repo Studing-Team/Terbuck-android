@@ -5,14 +5,31 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.terbuck.terbuck.R
+import com.terbuck.terbuck.api.response.home.PartnershipInfo
+import com.terbuck.terbuck.api.response.home.StoreInfo
 import com.terbuck.terbuck.databinding.FragmentHomePartnershipBinding
 import com.terbuck.terbuck.ui.MainActivity
+import com.terbuck.terbuck.ui.home.adapter.HomePartnershipAdapter
+import com.terbuck.terbuck.ui.home.adapter.HomeStoreAdapter
+import com.terbuck.terbuck.viewModel.HomeViewModel
 
 class HomePartnershipFragment : Fragment() {
 
     lateinit var binding: FragmentHomePartnershipBinding
     lateinit var mainActivity: MainActivity
+    private val viewModel: HomeViewModel by lazy {
+        ViewModelProvider(requireActivity())[HomeViewModel::class.java]
+    }
+
+    lateinit var homePartnershipNewAdapter: HomePartnershipAdapter
+    lateinit var homePartnershipAdapter: HomePartnershipAdapter
+
+    var getPartnershipNewInfo: List<PartnershipInfo>? = null
+    var getPartnershipInfo: List<PartnershipInfo>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -22,7 +39,79 @@ class HomePartnershipFragment : Fragment() {
         binding = FragmentHomePartnershipBinding.inflate(layoutInflater)
         mainActivity = activity as MainActivity
 
+        initAdapter()
+        observeViewModel()
+
+        binding.run {
+            recyclerViewPartnershipNew.apply {
+                adapter = homePartnershipNewAdapter
+                layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            }
+
+            recyclerViewPartnership.apply {
+                adapter = homePartnershipAdapter
+                layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            }
+        }
+
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        initView()
+    }
+
+    fun initAdapter() {
+        homePartnershipNewAdapter = HomePartnershipAdapter(
+            mainActivity,
+            getPartnershipNewInfo
+        ).apply {
+            itemClickListener = object : HomePartnershipAdapter.OnItemClickListener {
+                override fun onItemClick(position: Int) {
+                    // 파트너십 상세 정보 화면
+
+                }
+            }
+        }
+
+        homePartnershipAdapter = HomePartnershipAdapter(
+            mainActivity,
+            getPartnershipInfo
+        ).apply {
+            itemClickListener = object : HomePartnershipAdapter.OnItemClickListener {
+                override fun onItemClick(position: Int) {
+                    // 파트너십 상세 정보 화면
+
+                }
+            }
+        }
+    }
+
+    fun observeViewModel() {
+        viewModel.run {
+            partnershipNewInfo.observe(viewLifecycleOwner) {
+                getPartnershipNewInfo = it?.list
+
+                if(getPartnershipNewInfo?.size == 0) {
+                    binding.layoutNew.visibility = View.GONE
+                } else {
+                    binding.layoutNew.visibility = View.VISIBLE
+                    homePartnershipNewAdapter.updateList(getPartnershipNewInfo)
+                }
+            }
+
+            partnershipInfo.observe(viewLifecycleOwner) {
+                getPartnershipInfo = it?.list
+
+                homePartnershipAdapter.updateList(getPartnershipInfo)
+            }
+        }
+    }
+
+    fun initView() {
+        viewModel.getHomePartnershipNewInfo(mainActivity)
+        viewModel.getHomePartnershipInfo(mainActivity)
     }
 
 }

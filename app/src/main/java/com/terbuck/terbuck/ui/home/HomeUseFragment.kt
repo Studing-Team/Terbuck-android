@@ -69,7 +69,7 @@ class HomeUseFragment : Fragment() {
 
     fun observeViewModel() {
         viewModel.run {
-            partnershipStoreInfo.observe(viewLifecycleOwner) {
+            storeInfo.observe(viewLifecycleOwner) {
                 getPartnershipInfo = it?.list
 
                 homeStoreAdapter.updateList(getPartnershipInfo)
@@ -78,9 +78,7 @@ class HomeUseFragment : Fragment() {
     }
 
     fun initView() {
-        viewModel.getHomeStoreInfo(mainActivity, "이용하기") {
-
-        }
+        viewModel.getHomeStoreInfo(mainActivity, "이용하기")
     }
 
 }
