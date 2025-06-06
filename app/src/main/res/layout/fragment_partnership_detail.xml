@@ -76,50 +76,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/recyclerView_partnership_image" />
 
-            <LinearLayout
-                android:id="@+id/layout_tooltip"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="30dp"
-                android:visibility="visible"
-                android:background="@drawable/background_black30_radius16"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:paddingVertical="17.5dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView_partnership_description">
-
-                <ImageView
-                    android:id="@+id/imageView_tooltip"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginEnd="6dp"
-                    android:src="@drawable/ic_finger_down" />
-
-                <TextView
-                    android:id="@+id/textView_tooltip"
-                    style="@style/Text_Regular_14"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="문의하려면 아래 버튼을 눌러주세요."
-                    android:textColor="@color/white" />
-            </LinearLayout>
-
             <Button
                 android:id="@+id/button_insta"
                 style="@style/NextButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="38dp"
                 android:text="인스타그램 게시물 보기"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_tooltip"
+                app:layout_constraintTop_toBottomOf="@+id/textView_partnership_description"
                 app:layout_constraintVertical_bias="0.0" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

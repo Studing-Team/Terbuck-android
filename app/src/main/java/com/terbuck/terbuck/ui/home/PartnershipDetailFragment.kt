@@ -16,6 +16,7 @@ import com.terbuck.terbuck.viewModel.HomeViewModel
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.terbuck.terbuck.ui.BasicToast
 import com.terbuck.terbuck.ui.home.adapter.HomePartnershipAdapter
 import com.terbuck.terbuck.ui.home.adapter.PartnershipImageAdapter
 
@@ -115,7 +116,6 @@ class PartnershipDetailFragment : Fragment() {
 
     private fun setupTooltipBehavior() {
         val scrollView = binding.scrollView
-        val tooltip = binding.layoutTooltip
 
         scrollView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
@@ -125,10 +125,7 @@ class PartnershipDetailFragment : Fragment() {
 
                 if (!canScroll && !tooltipShown) {
                     tooltipShown = true
-                    tooltip.visibility = View.VISIBLE
-                    tooltip.postDelayed({
-                        tooltip.visibility = View.INVISIBLE
-                    }, 2000)
+                    BasicToast.showPopupAboveView(requireContext(), "문의하려면 아래 버튼을 눌러주세요.", R.drawable.ic_finger_down, binding.buttonInsta)
                 }
             }
         })
@@ -136,18 +133,10 @@ class PartnershipDetailFragment : Fragment() {
         scrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
             if (tooltipShown) return@setOnScrollChangeListener
 
-            val view = scrollView.getChildAt(0)
-            val maxScroll = view.measuredHeight - scrollView.measuredHeight
-
-            if (scrollY >= maxScroll - 10) { // 여유를 두기 위해 -10
+            if (scrollY > 0) {
                 tooltipShown = true
-                tooltip.visibility = View.VISIBLE
-                tooltip.postDelayed({
-                    tooltip.visibility = View.INVISIBLE
-                }, 2000)
+                BasicToast.showPopupAboveView(requireContext(), "문의하려면 아래 버튼을 눌러주세요.", R.drawable.ic_finger_down, binding.buttonInsta)
             }
         }
     }
-
-
 }
