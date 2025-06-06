@@ -63,7 +63,9 @@ class HomeEatFragment : Fragment() {
             itemClickListener = object : HomeStoreAdapter.OnItemClickListener {
                 override fun onItemClick(position: Int) {
                     // 혜택 더보기 클릭
+                    val dialog = DialogPartnership(getPartnershipInfo?.get(position))
 
+                    dialog.show(mainActivity.supportFragmentManager, "DialogPartnership")
                 }
             }
         }
