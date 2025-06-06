@@ -13,6 +13,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.terbuck.terbuck.R
 import com.terbuck.terbuck.databinding.FragmentHomeBinding
 import com.terbuck.terbuck.ui.MainActivity
+import com.terbuck.terbuck.ui.user.StudentCardOnboardingFragment
 
 class HomeFragment : Fragment() {
 
@@ -74,6 +75,11 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         initView()
+
+        mainActivity.supportFragmentManager.beginTransaction()
+            .add(R.id.fragmentContainerView, StudentCardOnboardingFragment())
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun tabItemMargin(mTabLayout: TabLayout) {
