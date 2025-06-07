@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Terbuck</string>
+
+    <!-- 버튼 텍스트 -->
+    <string name="register_button"><u>등록하기</u></string>
+    <string name="re_register_button"><u>학생증 재등록</u></string>
+    <string name="notification_button"><u>알림받기</u></string>
 </resources>

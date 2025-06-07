@@ -80,7 +80,7 @@ class StudentCardRegisterFragment : Fragment() {
         }
 
         applyWindowInsetsListenerForKeyboard(binding.scrollView)
-        BasicToast.showPopupAboveView(requireContext(), "얼굴, 이름, 학번이 보이는 이미지를 넣어주세요", R.drawable.ic_star, binding.buttonRegister)
+        BasicToast.showBasicToast(requireContext(), "얼굴, 이름, 학번이 보이는 이미지를 넣어주세요", R.drawable.ic_star, binding.buttonRegister)
 
         binding.run {
             scrollView.setOnTouchListener { v, event ->

@@ -100,7 +100,15 @@ class HomeFragment : Fragment() {
 
         binding.run {
             toolbar.imageViewCard.setOnClickListener {
-
+                BasicToast.showBasicButtonToast(
+                    requireContext(),
+                    mainActivity,
+                    "아직 학생증이 등록되지 않았어요!",
+                    R.drawable.ic_face,
+                    resources.getString(R.string.register_button),
+                    mainActivity.binding.bottomNavBar,
+                    binding.root
+                )
             }
         }
     }

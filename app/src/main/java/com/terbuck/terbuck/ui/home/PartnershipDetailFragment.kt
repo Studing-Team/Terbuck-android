@@ -125,7 +125,7 @@ class PartnershipDetailFragment : Fragment() {
 
                 if (!canScroll && !tooltipShown) {
                     tooltipShown = true
-                    BasicToast.showPopupAboveView(requireContext(), "문의하려면 아래 버튼을 눌러주세요.", R.drawable.ic_finger_down, binding.buttonInsta)
+                    BasicToast.showBasicToast(requireContext(), "문의하려면 아래 버튼을 눌러주세요.", R.drawable.ic_finger_down, binding.buttonInsta)
                 }
             }
         })
@@ -135,7 +135,7 @@ class PartnershipDetailFragment : Fragment() {
 
             if (scrollY > 0) {
                 tooltipShown = true
-                BasicToast.showPopupAboveView(requireContext(), "문의하려면 아래 버튼을 눌러주세요.", R.drawable.ic_finger_down, binding.buttonInsta)
+                BasicToast.showBasicToast(requireContext(), "문의하려면 아래 버튼을 눌러주세요.", R.drawable.ic_finger_down, binding.buttonInsta)
             }
         }
     }
