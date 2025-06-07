@@ -65,9 +65,6 @@ class DialogPartnership(var storeInfo: StoreInfo?) : DialogFragment() {
         super.onResume()
         dialog?.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-
-            // 포커스 잃었을 때 깜빡이거나 깨지는 현상 방지
-            clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
             setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         }
     }
