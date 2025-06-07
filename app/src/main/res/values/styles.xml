@@ -95,4 +95,13 @@
         <item name="android:backgroundTint">@color/black_5</item>
         <item name="android:paddingVertical">15.5dp</item>
     </style>
+
+    <!-- 이미지 round style - 10dp -->
+    <style name="RoundSector16">
+        <item name="cornerSizeTopLeft">16dp</item>
+        <item name="cornerSizeTopRight">16dp</item>
+        <item name="cornerSizeBottomRight">16dp</item>
+        <item name="cornerSizeBottomLeft">16dp</item>
+        <item name="cornerFamily">rounded</item>
+    </style>
 </resources>

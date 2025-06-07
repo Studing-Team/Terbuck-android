@@ -9,6 +9,7 @@ import android.widget.PopupWindow
 import androidx.databinding.DataBindingUtil
 import com.terbuck.terbuck.R
 import com.terbuck.terbuck.databinding.ToastBasicBinding
+import com.terbuck.terbuck.utils.MainUtil.toPx
 
 object BasicToast {
     fun showPopupAboveView(context: Context, message: String, icon: Int, anchorView: View) {
@@ -47,7 +48,4 @@ object BasicToast {
             }, 2000)
         }
     }
-
-
-    private fun Int.toPx(): Int = (this * Resources.getSystem().displayMetrics.density).toInt()
 }
