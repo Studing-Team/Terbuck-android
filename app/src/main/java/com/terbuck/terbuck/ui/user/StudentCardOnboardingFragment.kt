@@ -9,14 +9,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import com.terbuck.terbuck.R
 import com.terbuck.terbuck.databinding.FragmentStudentCardOnboardingBinding
 import com.terbuck.terbuck.ui.MainActivity
 
-class StudentCardOnboardingFragment : Fragment() {
+class StudentCardOnboardingFragment : DialogFragment() {
 
     lateinit var binding: FragmentStudentCardOnboardingBinding
     lateinit var mainActivity: MainActivity
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(STYLE_NO_FRAME, android.R.style.Theme_Translucent_NoTitleBar)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,19 +50,19 @@ class StudentCardOnboardingFragment : Fragment() {
 
             buttonRegister.setOnClickListener {
                 // 학생증 등록
+                mainActivity.supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainerView, StudentCardRegisterFragment())
+                    .addToBackStack(null)
+                    .commit()
+
+                dismiss()
             }
 
             buttonNext.setOnClickListener {
-                fragmentManager?.popBackStack()
+                dismiss()
             }
         }
 
         return binding.root
     }
-
-    override fun onResume() {
-        super.onResume()
-        mainActivity.hideBottomNavigation(true)
-    }
-
 }

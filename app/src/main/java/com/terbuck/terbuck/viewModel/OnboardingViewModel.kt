@@ -45,10 +45,7 @@ class OnboardingViewModel: ViewModel() {
                                 .commit()
                         } else {
                             // 홈화면 이동
-                            activity.supportFragmentManager.beginTransaction()
-                                .replace(R.id.fragmentContainerView, HomeFragment())
-                                .addToBackStack(null)
-                                .commit()
+                            activity.setBottomNavigationHome()
                         }
 
                     } else {

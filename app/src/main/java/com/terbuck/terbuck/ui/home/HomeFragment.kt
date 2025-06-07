@@ -11,9 +11,12 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.terbuck.terbuck.R
+import com.terbuck.terbuck.api.TokenManager
 import com.terbuck.terbuck.databinding.FragmentHomeBinding
+import com.terbuck.terbuck.ui.BasicToast
 import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.ui.user.StudentCardOnboardingFragment
+import com.terbuck.terbuck.utils.MyApplication
 
 class HomeFragment : Fragment() {
 
@@ -76,10 +79,11 @@ class HomeFragment : Fragment() {
         super.onResume()
         initView()
 
-        mainActivity.supportFragmentManager.beginTransaction()
-            .add(R.id.fragmentContainerView, StudentCardOnboardingFragment())
-            .addToBackStack(null)
-            .commit()
+        if(MyApplication.preferences.getIsFirst() != false) {
+            MyApplication.preferences.setIsFirst(false)
+
+            StudentCardOnboardingFragment().show(parentFragmentManager, "StudentCardOnboardingDialog")
+        }
     }
 
     private fun tabItemMargin(mTabLayout: TabLayout) {

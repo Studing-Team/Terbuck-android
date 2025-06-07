@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:fitsSystemWindows="true"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.user.StudentCardRegisterFragment">
@@ -49,6 +50,7 @@
                 android:layout_marginTop="12dp"
                 android:layout_marginEnd="25dp"
                 android:text="학생증 등록은 24시간 안에 마무리 할게요 :)"
+                android:textColor="@color/black_30"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/textView_title"
