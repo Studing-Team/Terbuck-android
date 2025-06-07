@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingHorizontal="47dp"
+    android:background="#D9141517"
+    tools:context=".ui.user.StudentCardFragment" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginVertical="100dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/imageView_student_card"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:src="@drawable/background_white_stroke_black10" />
+
+        <Button
+            android:id="@+id/button_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="22dp"
+            android:backgroundTint="@color/black_10"
+            android:text="닫기"
+            android:textColor="@color/black_30" />
+
+        <TextView
+            android:id="@+id/button_re_register"
+            style="@style/Text_Medi_18"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="6dp"
+            android:padding="10dp"
+            android:text="@string/re_register_button"
+            android:textColor="@color/black_10"
+            app:layout_constraintEnd_toEndOf="@+id/button_register"
+            app:layout_constraintStart_toStartOf="@+id/button_register"
+            app:layout_constraintTop_toBottomOf="@+id/button_register" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
