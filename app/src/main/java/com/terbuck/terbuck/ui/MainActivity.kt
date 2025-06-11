@@ -13,6 +13,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.terbuck.terbuck.R
 import com.terbuck.terbuck.databinding.ActivityMainBinding
+import com.terbuck.terbuck.ui.home.HomeFragment
+import com.terbuck.terbuck.utils.MyApplication
+import com.terbuck.terbuck.utils.PreferenceUtil
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
@@ -24,10 +27,48 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
+        MyApplication.preferences = PreferenceUtil(applicationContext)
+
+        setBottomNavigationView()
 
         binding.bottomNavBar.itemIconTintList = null
 
         setContentView(binding.root)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        hideBottomNavigation(false)
+    }
+
+    private fun setBottomNavigationView() {
+        binding.bottomNavBar.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.menu_home -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainerView, HomeFragment())
+                        .addToBackStack(null)
+                        .commit()
+                    true
+                }
+
+                R.id.menu_partnership -> {
+
+                    true
+                }
+
+                R.id.menu_mypage -> {
+
+                    true
+                }
+
+                else -> false
+            }
+        }
+    }
+
+    fun setBottomNavigationHome() {
+        binding.bottomNavBar.selectedItemId = R.id.menu_home
     }
 
     fun hideBottomNavigation(isHide: Boolean) {

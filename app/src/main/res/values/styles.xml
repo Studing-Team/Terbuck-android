@@ -71,6 +71,12 @@
         <item name="android:textSize">20sp</item>
     </style>
 
+    <style name="Logo_Typo">
+        <item name="android:fontFamily">@font/gmarket_sans_bold</item>
+        <item name="android:textSize">25sp</item>
+        <item name="android:textColor">@color/green_50</item>
+    </style>
+
     <!-- NEXT Button -->
     <style name="NextButton" parent="Text_Semi_18">
         <item name="android:layout_height">wrap_content</item>
@@ -80,5 +86,22 @@
         <item name="cornerRadius">16dp</item>
         <item name="android:backgroundTint">@drawable/background_button</item>
         <item name="android:paddingVertical">15.5dp</item>
+    </style>
+
+    <style name="DialogButton" parent="Text_Semi_18">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="android:backgroundTint">@color/black_5</item>
+        <item name="android:paddingVertical">15.5dp</item>
+    </style>
+
+    <!-- 이미지 round style - 10dp -->
+    <style name="RoundSector16">
+        <item name="cornerSizeTopLeft">16dp</item>
+        <item name="cornerSizeTopRight">16dp</item>
+        <item name="cornerSizeBottomRight">16dp</item>
+        <item name="cornerSizeBottomLeft">16dp</item>
+        <item name="cornerFamily">rounded</item>
     </style>
 </resources>
