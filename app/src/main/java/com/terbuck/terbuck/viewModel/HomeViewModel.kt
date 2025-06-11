@@ -32,25 +32,25 @@ class HomeViewModel: ViewModel() {
                     call: Call<BaseResponse<HomeStoreResponse>>,
                     response: Response<BaseResponse<HomeStoreResponse>>
                 ) {
-                    Log.d("TerbuckTerbuck", "onResponse 성공: " + response.body().toString())
+                    Log.d("터벅터벅", "onResponse 성공: " + response.body().toString())
                     if (response.isSuccessful) {
                         // 정상적으로 통신이 성공된 경우
                         val result: BaseResponse<HomeStoreResponse>? = response.body()
-                        Log.d("TerbuckTerbuck", "onResponse 성공: " + result?.toString())
+                        Log.d("터벅터벅", "onResponse 성공: " + result?.toString())
 
                         storeInfo.value = result?.data
                     } else {
                         // 통신이 실패한 경우(응답코드 3xx, 4xx 등)
                         var result: BaseResponse<HomeStoreResponse>? = response.body()
-                        Log.d("TerbuckTerbuck", "onResponse 실패: " + response.body())
+                        Log.d("터벅터벅", "onResponse 실패: " + response.body())
                         val errorBody = response.errorBody()?.string() // 에러 응답 데이터를 문자열로 얻음
-                        Log.d("TerbuckTerbuck", "Error Response: $errorBody")
+                        Log.d("터벅터벅", "Error Response: $errorBody")
                     }
                 }
 
                 override fun onFailure(call: Call<BaseResponse<HomeStoreResponse>>, t: Throwable) {
                     // 통신 실패
-                    Log.d("TerbuckTerbuck", "onFailure 에러: " + t.message.toString())
+                    Log.d("터벅터벅", "onFailure 에러: " + t.message.toString())
 
                 }
             })
@@ -67,25 +67,25 @@ class HomeViewModel: ViewModel() {
                     call: Call<BaseResponse<HomePartnershipResponse>>,
                     response: Response<BaseResponse<HomePartnershipResponse>>
                 ) {
-                    Log.d("TerbuckTerbuck", "onResponse 성공: " + response.body().toString())
+                    Log.d("터벅터벅", "onResponse 성공: " + response.body().toString())
                     if (response.isSuccessful) {
                         // 정상적으로 통신이 성공된 경우
                         val result: BaseResponse<HomePartnershipResponse>? = response.body()
-                        Log.d("TerbuckTerbuck", "onResponse 성공: " + result?.toString())
+                        Log.d("터벅터벅", "onResponse 성공: " + result?.toString())
 
                         partnershipNewInfo.value = result?.data
                     } else {
                         // 통신이 실패한 경우(응답코드 3xx, 4xx 등)
                         var result: BaseResponse<HomePartnershipResponse>? = response.body()
-                        Log.d("TerbuckTerbuck", "onResponse 실패: " + response.body())
+                        Log.d("터벅터벅", "onResponse 실패: " + response.body())
                         val errorBody = response.errorBody()?.string() // 에러 응답 데이터를 문자열로 얻음
-                        Log.d("TerbuckTerbuck", "Error Response: $errorBody")
+                        Log.d("터벅터벅", "Error Response: $errorBody")
                     }
                 }
 
                 override fun onFailure(call: Call<BaseResponse<HomePartnershipResponse>>, t: Throwable) {
                     // 통신 실패
-                    Log.d("TerbuckTerbuck", "onFailure 에러: " + t.message.toString())
+                    Log.d("터벅터벅", "onFailure 에러: " + t.message.toString())
 
                 }
             })
@@ -102,25 +102,25 @@ class HomeViewModel: ViewModel() {
                     call: Call<BaseResponse<HomePartnershipResponse>>,
                     response: Response<BaseResponse<HomePartnershipResponse>>
                 ) {
-                    Log.d("TerbuckTerbuck", "onResponse 성공: " + response.body().toString())
+                    Log.d("터벅터벅", "onResponse 성공: " + response.body().toString())
                     if (response.isSuccessful) {
                         // 정상적으로 통신이 성공된 경우
                         val result: BaseResponse<HomePartnershipResponse>? = response.body()
-                        Log.d("TerbuckTerbuck", "onResponse 성공: " + result?.toString())
+                        Log.d("터벅터벅", "onResponse 성공: " + result?.toString())
 
                         partnershipInfo.value = result?.data
                     } else {
                         // 통신이 실패한 경우(응답코드 3xx, 4xx 등)
                         var result: BaseResponse<HomePartnershipResponse>? = response.body()
-                        Log.d("TerbuckTerbuck", "onResponse 실패: " + response.body())
+                        Log.d("터벅터벅", "onResponse 실패: " + response.body())
                         val errorBody = response.errorBody()?.string() // 에러 응답 데이터를 문자열로 얻음
-                        Log.d("TerbuckTerbuck", "Error Response: $errorBody")
+                        Log.d("터벅터벅", "Error Response: $errorBody")
                     }
                 }
 
                 override fun onFailure(call: Call<BaseResponse<HomePartnershipResponse>>, t: Throwable) {
                     // 통신 실패
-                    Log.d("TerbuckTerbuck", "onFailure 에러: " + t.message.toString())
+                    Log.d("터벅터벅", "onFailure 에러: " + t.message.toString())
 
                 }
             })
@@ -137,25 +137,25 @@ class HomeViewModel: ViewModel() {
                     call: Call<BaseResponse<PartnershipDetailResponse>>,
                     response: Response<BaseResponse<PartnershipDetailResponse>>
                 ) {
-                    Log.d("TerbuckTerbuck", "onResponse 성공: " + response.body().toString())
+                    Log.d("터벅터벅", "onResponse 성공: " + response.body().toString())
                     if (response.isSuccessful) {
                         // 정상적으로 통신이 성공된 경우
                         val result: BaseResponse<PartnershipDetailResponse>? = response.body()
-                        Log.d("TerbuckTerbuck", "onResponse 성공: " + result?.toString())
+                        Log.d("터벅터벅", "onResponse 성공: " + result?.toString())
 
                         partnershipDetailInfo.value = result?.data
                     } else {
                         // 통신이 실패한 경우(응답코드 3xx, 4xx 등)
                         var result: BaseResponse<PartnershipDetailResponse>? = response.body()
-                        Log.d("TerbuckTerbuck", "onResponse 실패: " + response.body())
+                        Log.d("터벅터벅", "onResponse 실패: " + response.body())
                         val errorBody = response.errorBody()?.string() // 에러 응답 데이터를 문자열로 얻음
-                        Log.d("TerbuckTerbuck", "Error Response: $errorBody")
+                        Log.d("터벅터벅", "Error Response: $errorBody")
                     }
                 }
 
                 override fun onFailure(call: Call<BaseResponse<PartnershipDetailResponse>>, t: Throwable) {
                     // 통신 실패
-                    Log.d("TerbuckTerbuck", "onFailure 에러: " + t.message.toString())
+                    Log.d("터벅터벅", "onFailure 에러: " + t.message.toString())
 
                 }
             })

@@ -7,6 +7,7 @@ import com.terbuck.terbuck.api.response.home.HomePartnershipResponse
 import com.terbuck.terbuck.api.response.home.HomeStoreResponse
 import com.terbuck.terbuck.api.response.home.PartnershipDetailResponse
 import com.terbuck.terbuck.api.response.onboarding.LoginResponse
+import com.terbuck.terbuck.api.response.user.StudentCardResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -43,6 +44,12 @@ interface ApiService {
         @Part image: MultipartBody.Part?,
         @PartMap parameters: Map<String, @JvmSuppressWildcards RequestBody>
     ): Call<BaseResponse<String?>>
+
+    // 학생증 조회
+    @GET("/member/studentID")
+    fun getStudentCard(
+        @Header("authorization") token: String
+    ): Call<BaseResponse<StudentCardResponse>>
 
     // 홈화면 제휴 업체 정보 조회
     @GET("/shops/home")

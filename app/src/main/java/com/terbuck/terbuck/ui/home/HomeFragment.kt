@@ -1,12 +1,14 @@
 package com.terbuck.terbuck.ui.home
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -15,13 +17,19 @@ import com.terbuck.terbuck.api.TokenManager
 import com.terbuck.terbuck.databinding.FragmentHomeBinding
 import com.terbuck.terbuck.ui.BasicToast
 import com.terbuck.terbuck.ui.MainActivity
+import com.terbuck.terbuck.ui.user.StudentCardFragment
 import com.terbuck.terbuck.ui.user.StudentCardOnboardingFragment
 import com.terbuck.terbuck.utils.MyApplication
+import com.terbuck.terbuck.viewModel.HomeViewModel
+import com.terbuck.terbuck.viewModel.UserViewModel
 
 class HomeFragment : Fragment() {
 
     lateinit var binding: FragmentHomeBinding
     lateinit var mainActivity: MainActivity
+    private val viewModel: UserViewModel by lazy {
+        ViewModelProvider(requireActivity())[UserViewModel::class.java]
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -100,14 +108,25 @@ class HomeFragment : Fragment() {
 
         binding.run {
             toolbar.imageViewCard.setOnClickListener {
-                BasicToast.showBasicButtonToast(
-                    requireContext(),
-                    mainActivity,
-                    "아직 학생증이 등록되지 않았어요!",
-                    R.drawable.ic_face,
-                    resources.getString(R.string.register_button),
-                    mainActivity.binding.bottomNavBar,
-                    binding.root
+                viewModel.getStudentCard(mainActivity,
+                    onSuccess = {
+                        Log.d("터벅터벅", "onSuccess")
+                        // 학생증 등록 O
+                        StudentCardFragment().show(parentFragmentManager, "StudentCardDialog")
+                    },
+                    onFailure = {
+                        // 학생증 등록 X
+                        Log.d("터벅터벅", "onFailure")
+                        BasicToast.showBasicButtonToast(
+                            requireContext(),
+                            mainActivity,
+                            "아직 학생증이 등록되지 않았어요!",
+                            R.drawable.ic_face,
+                            resources.getString(R.string.register_button),
+                            mainActivity.binding.bottomNavBar,
+                            binding.root
+                        )
+                    }
                 )
             }
         }
