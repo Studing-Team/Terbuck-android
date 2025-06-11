@@ -1,24 +1,24 @@
-package com.terbuck.terbuck.ui.home
+package com.terbuck.terbuck.ui.terbuck
 
 import android.content.Intent
-import android.net.Uri
+import android.media.Image
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
-import androidx.lifecycle.ViewModelProvider
-import com.terbuck.terbuck.R
-import com.terbuck.terbuck.databinding.FragmentPartnershipDetailBinding
-import com.terbuck.terbuck.ui.MainActivity
-import com.terbuck.terbuck.viewModel.HomeViewModel
 import androidx.core.net.toUri
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.terbuck.terbuck.R
+import com.terbuck.terbuck.databinding.FragmentPartnershipDetailBinding
 import com.terbuck.terbuck.ui.BasicToast
-import com.terbuck.terbuck.ui.home.adapter.HomePartnershipAdapter
+import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.ui.home.adapter.PartnershipImageAdapter
+import com.terbuck.terbuck.viewModel.HomeViewModel
+import kotlin.text.replace
 
 class PartnershipDetailFragment : Fragment() {
 
@@ -31,6 +31,7 @@ class PartnershipDetailFragment : Fragment() {
     lateinit var partnershipImageAdapter: PartnershipImageAdapter
 
     private var tooltipShown = false
+    var partnershipName: String? = null
     var imageUrls: List<String>? = null
 
     override fun onCreateView(
@@ -66,7 +67,20 @@ class PartnershipDetailFragment : Fragment() {
         ).apply {
             itemClickListener = object : PartnershipImageAdapter.OnItemClickListener {
                 override fun onItemClick(position: Int) {
+                    // 이미지 확대 기능
+                    val bundle = Bundle().apply {
+                        putString("partnershipName", (partnershipName ?: "").toString())
+                    }
 
+                    // 전달할 Fragment 생성
+                    var nextFragment = ImageDetailFragment(imageUrls, position).apply {
+                        arguments = bundle
+                    }
+
+                    mainActivity.supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainerView, nextFragment)
+                        .addToBackStack(null)
+                        .commit()
                 }
             }
         }
@@ -76,7 +90,8 @@ class PartnershipDetailFragment : Fragment() {
         viewModel.run {
             partnershipDetailInfo.observe(viewLifecycleOwner) {
                 binding.run {
-                    textViewPartnershipName.text = it?.name
+                    partnershipName = it?.name
+                    textViewPartnershipName.text = partnershipName
                     textViewPartnershipInstitution.text = it?.institution
                     textViewPartnershipDescription.text = it?.detail
 

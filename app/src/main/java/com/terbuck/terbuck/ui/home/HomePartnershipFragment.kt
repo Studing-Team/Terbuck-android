@@ -15,6 +15,7 @@ import com.terbuck.terbuck.databinding.FragmentHomePartnershipBinding
 import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.ui.home.adapter.HomePartnershipAdapter
 import com.terbuck.terbuck.ui.home.adapter.HomeStoreAdapter
+import com.terbuck.terbuck.ui.terbuck.PartnershipDetailFragment
 import com.terbuck.terbuck.viewModel.HomeViewModel
 
 class HomePartnershipFragment : Fragment() {
