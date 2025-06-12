@@ -14,6 +14,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.terbuck.terbuck.R
 import com.terbuck.terbuck.databinding.ActivityMainBinding
 import com.terbuck.terbuck.ui.home.HomeFragment
+import com.terbuck.terbuck.ui.terbuck.MapFragment
 import com.terbuck.terbuck.utils.MyApplication
 import com.terbuck.terbuck.utils.PreferenceUtil
 import java.security.MessageDigest
@@ -53,7 +54,10 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.menu_partnership -> {
-
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainerView, MapFragment())
+                        .addToBackStack(null)
+                        .commit()
                     true
                 }
 
