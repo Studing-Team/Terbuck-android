@@ -28,6 +28,8 @@ import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.terbuck.terbuck.BuildConfig
 import com.terbuck.terbuck.R
+import com.terbuck.terbuck.api.response.terbuck.MapStoreInfo
+import com.terbuck.terbuck.api.response.terbuck.MapStoreListResponse
 import com.terbuck.terbuck.databinding.FragmentMapBinding
 import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.viewModel.PartnershipViewModel
@@ -51,6 +53,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     var lastCameraPosition: LatLng? = null
 
+    var category: String? = null
+    var getStoreInfo: MapStoreListResponse? = null
 
     val markers = mutableListOf<Marker>()
 
@@ -66,6 +70,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
 
+        observeViewModel()
 
         binding.run {
             NaverMapSdk.getInstance(mainActivity).client =
@@ -220,6 +225,108 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
 
+    fun observeViewModel() {
+        viewModel.run {
+            storeInfo.observe(viewLifecycleOwner) {
+                getStoreInfo = it
+                Log.d("터벅터벅", "getStoreInfo : $getStoreInfo")
+
+                markers.clear()
+
+                for (i in 0 until (getStoreInfo?.list?.size ?: 0)) {
+                    val marker = Marker()
+                    var latitude = getStoreInfo?.list?.get(i)?.latitude?.toDouble()
+                    var longitude = getStoreInfo?.list?.get(i)?.longitude?.toDouble()
+                    marker.position = LatLng(latitude!!, longitude!!)
+
+                    marker.icon = OverlayImage.fromResource(
+                        when (getStoreInfo?.list?.get(i)?.category) {
+                            "음식" -> R.drawable.ic_food_marker
+                            "카페" -> R.drawable.ic_cafe_marker
+                            "문화" -> R.drawable.ic_culture_selected
+                            "주점" -> R.drawable.ic_alcohol_marker
+                            "운동" -> R.drawable.ic_exercise_marker
+                            "스터디" -> R.drawable.ic_study_selected
+                            "병원" -> R.drawable.ic_hospital_marker
+                            else -> 0
+                        }
+                    )
+
+                    markers.add(marker) // 여기서 add!
+                }
+
+
+                for (m in 0 until markers.size) {
+                    markers[m].map = naverMap
+
+                    // 마커 클릭한 경우
+                    markers[m].setOnClickListener {
+                        // 마커 변경
+
+//                        binding.bottomSheetStoreList.layoutStoreList.visibility = View.VISIBLE
+                        mainActivity.hideBottomNavigation(true)
+
+
+                        // 클릭한 마커의 위치로 카메라 이동
+                        val cameraUpdate = CameraUpdate.scrollTo(
+                            (LatLng(
+                                markers[m].position.latitude,
+                                markers[m].position.longitude
+                            ))
+                        ).animate(
+                            CameraAnimation.Easing
+                        )
+                        naverMap.moveCamera(cameraUpdate)
+
+                        true
+                    }
+
+                    // 지도 클릭한 경우
+                    naverMap.setOnMapClickListener { pointF, latLng ->
+                        for (i in 0 until markers.size) {
+                            markers[i].icon = OverlayImage.fromResource(
+                                when (getStoreInfo?.list?.get(i)?.category) {
+                                    "음식" -> {
+                                        R.drawable.ic_food_marker
+                                    }
+
+                                    "카페" -> {
+                                        R.drawable.ic_cafe_marker
+                                    }
+
+                                    "문화" -> {
+                                        R.drawable.ic_culture_selected
+                                    }
+
+                                    "주점" -> {
+                                        R.drawable.ic_alcohol_marker
+                                    }
+
+                                    "운동" -> {
+                                        R.drawable.ic_exercise_marker
+                                    }
+
+                                    "스터디" -> {
+                                        R.drawable.ic_study_selected
+                                    }
+
+                                    "병원" -> {
+                                        R.drawable.ic_hospital_marker
+                                    }
+
+                                    else -> {
+                                        0
+                                    }
+                                }
+                            )
+                            mainActivity.hideBottomNavigation(false)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     private fun fetchStoresBasedOnMapView() {
         if (!this::naverMap.isInitialized) return // 지도 초기화 확인
@@ -240,5 +347,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         Log.d("터벅터벅", "현재 지도 중심: lat=$latitude, lng=$longitude, 반경=$radius")
 
+        viewModel.getMapStoreList(mainActivity, category, latitude, longitude)
     }
 }
