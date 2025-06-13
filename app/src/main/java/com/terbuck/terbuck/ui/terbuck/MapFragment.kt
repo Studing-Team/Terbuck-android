@@ -11,10 +11,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraAnimation
 import com.naver.maps.map.CameraUpdate
@@ -32,6 +36,12 @@ import com.terbuck.terbuck.api.response.terbuck.MapStoreInfo
 import com.terbuck.terbuck.api.response.terbuck.MapStoreListResponse
 import com.terbuck.terbuck.databinding.FragmentMapBinding
 import com.terbuck.terbuck.ui.MainActivity
+import com.terbuck.terbuck.ui.home.adapter.PartnershipImageAdapter
+import com.terbuck.terbuck.ui.terbuck.adapter.CategoryAdapter
+import com.terbuck.terbuck.utils.MainUtil.getCategoryIndex
+import com.terbuck.terbuck.utils.MainUtil.getDrawableResIds
+import com.terbuck.terbuck.utils.MainUtil.setStatusBarTransparent
+import com.terbuck.terbuck.utils.MainUtil.toPx
 import com.terbuck.terbuck.viewModel.PartnershipViewModel
 
 class MapFragment : Fragment(), OnMapReadyCallback {
@@ -39,7 +49,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     lateinit var binding: FragmentMapBinding
     lateinit var mainActivity: MainActivity
     private val viewModel: PartnershipViewModel by lazy {
-        ViewModelProvider(requireActivity())[PartnershipViewModel::class.java]
+        ViewModelProvider(this)[PartnershipViewModel::class.java]
     }
 
     private lateinit var mapView: MapView
@@ -52,6 +62,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var locationSource: FusedLocationSource // 위치를 반환하는 구현체
 
     var lastCameraPosition: LatLng? = null
+
+    lateinit var categoryAdapter: CategoryAdapter
 
     var category: String? = null
     var getStoreInfo: MapStoreListResponse? = null
@@ -70,12 +82,39 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
 
+        initAdapter()
         observeViewModel()
 
         binding.run {
             NaverMapSdk.getInstance(mainActivity).client =
                 NaverMapSdk.NaverCloudPlatformClient("${BuildConfig.MAP_API_KEY}")
 
+            val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+
+            recyclerViewCategory.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    val height = recyclerViewCategory.height
+                    Log.d("터벅터벅", "RecyclerViewCategory 높이 = $height")
+
+                    bottomSheetBehavior.peekHeight = (height+28).toPx()
+
+                    // 리스너 제거 (중복 호출 방지)
+                    binding.recyclerViewCategory.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                }
+            })
+
+            // 처음 상태는 Collapsed (peekHeight 만큼만 보임)
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+
+            recyclerViewCategory.apply {
+                adapter = categoryAdapter
+                layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+            }
+
+            // 버튼 클릭 시 현재 위치로 이동
+//            mainActivity.binding.buttonMyLocation.setOnClickListener {
+//                checkLocationPermission()
+//            }
 
             locationSource = FusedLocationSource(this@MapFragment, LOCATION_PERMISSTION_REQUEST_CODE)
         }
@@ -87,8 +126,27 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         super.onResume()
         mapView.onResume()
 
-        mainActivity.run {
-            hideBottomNavigation(false)
+//        binding.bottomSheetStoreList.layoutStoreList.visibility = View.GONE
+
+        mainActivity.hideBottomNavigation(false)
+    }
+
+    fun initAdapter() {
+        categoryAdapter = CategoryAdapter(
+            mainActivity,
+            resources.getTextArray(R.array.partnership_category_name).map { it.toString() },
+            getDrawableResIds(R.array.partnership_category_image_white, resources),
+            getDrawableResIds(R.array.partnership_category_image_unselected, resources)
+        ).apply {
+            itemClickListener = object : CategoryAdapter.OnItemClickListener {
+                override fun onItemClick(position: Int) {
+                    // 카테고리 선택
+                    category = resources.getTextArray(R.array.partnership_category_name)[position].toString()
+                    fetchStoresBasedOnMapView()
+
+                    categoryAdapter.notifyDataSetChanged()
+                }
+            }
         }
     }
 
@@ -172,12 +230,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onMapReady(map: NaverMap) {
         naverMap = map
 
-        naverMap.mapType = NaverMap.MapType.Navi // 네비게이션 스타일 (다크 테마 적용됨)
+        naverMap.mapType = NaverMap.MapType.Basic
 
         // 지도 옵션 설정
         naverMap.run {
             setLayerGroupEnabled(NaverMap.LAYER_GROUP_BUILDING, true)
-            isIndoorEnabled = true
             uiSettings.run {
                 setLogoMargin(40, 0, 40, 320)
                 isScaleBarEnabled = false
@@ -202,7 +259,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             checkLocationPermission()
         }
 
-        // 지도 화면이 로딩된 후, 현재 보이는 지도를 기준으로 매장 리스트 가져오기
         fetchStoresBasedOnMapView()
 
         // 확대/이동이 발생하면 다시 매장 데이터 로드
@@ -229,104 +285,50 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         viewModel.run {
             storeInfo.observe(viewLifecycleOwner) {
                 getStoreInfo = it
-                Log.d("터벅터벅", "getStoreInfo : $getStoreInfo")
 
+                // 기존 마커 클리어
+                markers.forEach { it.map = null }
                 markers.clear()
 
+                // 새로운 마커 추가
                 for (i in 0 until (getStoreInfo?.list?.size ?: 0)) {
                     val marker = Marker()
-                    var latitude = getStoreInfo?.list?.get(i)?.latitude?.toDouble()
-                    var longitude = getStoreInfo?.list?.get(i)?.longitude?.toDouble()
+                    val latitude = getStoreInfo?.list?.get(i)?.latitude?.toDouble()
+                    val longitude = getStoreInfo?.list?.get(i)?.longitude?.toDouble()
                     marker.position = LatLng(latitude!!, longitude!!)
+                    marker.icon = OverlayImage.fromResource(setMarker(i))
 
-                    marker.icon = OverlayImage.fromResource(
-                        when (getStoreInfo?.list?.get(i)?.category) {
-                            "음식" -> R.drawable.ic_food_marker
-                            "카페" -> R.drawable.ic_cafe_marker
-                            "문화" -> R.drawable.ic_culture_selected
-                            "주점" -> R.drawable.ic_alcohol_marker
-                            "운동" -> R.drawable.ic_exercise_marker
-                            "스터디" -> R.drawable.ic_study_selected
-                            "병원" -> R.drawable.ic_hospital_marker
-                            else -> 0
-                        }
-                    )
-
-                    markers.add(marker) // 여기서 add!
+                    markers.add(marker)
                 }
 
-
-                for (m in 0 until markers.size) {
-                    markers[m].map = naverMap
-
-                    // 마커 클릭한 경우
-                    markers[m].setOnClickListener {
-                        // 마커 변경
-
-//                        binding.bottomSheetStoreList.layoutStoreList.visibility = View.VISIBLE
+                markers.forEachIndexed { m, marker ->
+                    marker.map = naverMap
+                    marker.setOnClickListener {
+                        // 하단 바 표시 및 마커 이동 처리
                         mainActivity.hideBottomNavigation(true)
 
-
-                        // 클릭한 마커의 위치로 카메라 이동
-                        val cameraUpdate = CameraUpdate.scrollTo(
-                            (LatLng(
-                                markers[m].position.latitude,
-                                markers[m].position.longitude
-                            ))
-                        ).animate(
-                            CameraAnimation.Easing
-                        )
+                        val cameraUpdate = CameraUpdate.scrollTo(marker.position).animate(CameraAnimation.Easing)
                         naverMap.moveCamera(cameraUpdate)
 
                         true
-                    }
-
-                    // 지도 클릭한 경우
-                    naverMap.setOnMapClickListener { pointF, latLng ->
-                        for (i in 0 until markers.size) {
-                            markers[i].icon = OverlayImage.fromResource(
-                                when (getStoreInfo?.list?.get(i)?.category) {
-                                    "음식" -> {
-                                        R.drawable.ic_food_marker
-                                    }
-
-                                    "카페" -> {
-                                        R.drawable.ic_cafe_marker
-                                    }
-
-                                    "문화" -> {
-                                        R.drawable.ic_culture_selected
-                                    }
-
-                                    "주점" -> {
-                                        R.drawable.ic_alcohol_marker
-                                    }
-
-                                    "운동" -> {
-                                        R.drawable.ic_exercise_marker
-                                    }
-
-                                    "스터디" -> {
-                                        R.drawable.ic_study_selected
-                                    }
-
-                                    "병원" -> {
-                                        R.drawable.ic_hospital_marker
-                                    }
-
-                                    else -> {
-                                        0
-                                    }
-                                }
-                            )
-                            mainActivity.hideBottomNavigation(false)
-                        }
                     }
                 }
             }
         }
     }
 
+    fun setMarker(position: Int): Int {
+        val category = getStoreInfo?.list?.get(position)?.category
+        val index = getCategoryIndex(category)
+
+        if (index == -1) return 0
+
+        val typedArray = context?.resources?.obtainTypedArray(R.array.partnership_category_image_marker)
+        val markerResId = typedArray?.getResourceId(index, 0) ?: 0
+        typedArray?.recycle()
+
+        return markerResId
+    }
 
     private fun fetchStoresBasedOnMapView() {
         if (!this::naverMap.isInitialized) return // 지도 초기화 확인
@@ -345,8 +347,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         // 4️⃣ 반경(Radius) 계산 (중심 좌표 ↔ 북쪽 경계 거리)
         val radius = centerLatLng.distanceTo(LatLng(northLat, longitude))
 
-        Log.d("터벅터벅", "현재 지도 중심: lat=$latitude, lng=$longitude, 반경=$radius")
-
+        // ✅ 현재 지도 중심 좌표 및 반경을 기반으로 매장 목록 요청
         viewModel.getMapStoreList(mainActivity, category, latitude, longitude)
     }
 }

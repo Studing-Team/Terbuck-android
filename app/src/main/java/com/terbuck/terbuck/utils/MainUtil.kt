@@ -6,6 +6,7 @@ import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
@@ -54,6 +55,30 @@ object MainUtil {
                 InputMethodManager.HIDE_NOT_ALWAYS
             )
         }
+    }
+
+    // 카테고리 변환
+    fun getCategoryIndex(category: String?): Int {
+        return when (category) {
+            "음식" -> 0
+            "카페" -> 1
+            "주점" -> 2
+            "병원" -> 3
+            "운동" -> 4
+            "문화" -> 5
+            "스터디" -> 6
+            else -> 0
+        }
+    }
+
+    fun getDrawableResIds(arrayResId: Int, resources: Resources): List<Int> {
+        val typedArray = resources.obtainTypedArray(arrayResId)
+        val resIds = mutableListOf<Int>()
+        for (i in 0 until typedArray.length()) {
+            resIds.add(typedArray.getResourceId(i, 0))
+        }
+        typedArray.recycle()
+        return resIds
     }
 
     fun resizeImageAndCache(context: Context, imageUri: Uri, scale: Float = 0.5f, quality: Int = 90): Uri {
