@@ -110,13 +110,11 @@ class HomeFragment : Fragment() {
             toolbar.imageViewCard.setOnClickListener {
                 viewModel.getStudentCard(mainActivity,
                     onSuccess = {
-                        Log.d("터벅터벅", "onSuccess")
                         // 학생증 등록 O
                         StudentCardFragment().show(parentFragmentManager, "StudentCardDialog")
                     },
                     onFailure = {
                         // 학생증 등록 X
-                        Log.d("터벅터벅", "onFailure")
                         BasicToast.showBasicButtonToast(
                             requireContext(),
                             mainActivity,

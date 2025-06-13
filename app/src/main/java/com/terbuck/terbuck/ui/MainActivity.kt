@@ -15,6 +15,7 @@ import com.terbuck.terbuck.R
 import com.terbuck.terbuck.databinding.ActivityMainBinding
 import com.terbuck.terbuck.ui.home.HomeFragment
 import com.terbuck.terbuck.ui.terbuck.MapFragment
+import com.terbuck.terbuck.utils.MainUtil.setStatusBarTransparent
 import com.terbuck.terbuck.utils.MyApplication
 import com.terbuck.terbuck.utils.PreferenceUtil
 import java.security.MessageDigest
@@ -39,6 +40,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        setStatusBarTransparent()
         hideBottomNavigation(false)
     }
 

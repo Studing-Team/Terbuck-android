@@ -82,6 +82,7 @@ class HomeEatFragment : Fragment() {
     }
 
     fun initView() {
+        mainActivity.hideBottomNavigation(false)
         viewModel.getHomeStoreInfo(mainActivity, "먹고가기")
     }
 

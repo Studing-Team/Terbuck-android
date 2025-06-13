@@ -58,8 +58,6 @@ class StudentCardFragment : DialogFragment() {
     }
 
     fun initView() {
-        mainActivity.hideBottomNavigation(true)
-
         binding.run {
             Glide.with(mainActivity)
                 .load(viewModel.studentCardImage.value)
