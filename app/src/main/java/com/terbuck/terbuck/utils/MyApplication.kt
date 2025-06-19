@@ -6,5 +6,8 @@ class MyApplication : Application() {
     companion object {
 
         lateinit var preferences: PreferenceUtil
+
+        var latitude: String? = null
+        var longitude: String? = null
     }
 }

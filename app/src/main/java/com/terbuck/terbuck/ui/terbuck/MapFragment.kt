@@ -76,6 +76,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
     val markers = mutableListOf<Marker>()
 
+    private var isInitialCameraMoved = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -178,7 +180,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             toolbar.buttonLocation.setOnClickListener {
                 // 현재 위치로 이동
                 toolbar.imageViewLocation.setImageResource(R.drawable.ic_location_selected)
-                moveToCurrentLocation()
+                checkLocationPermission()
             }
 
             locationSource = FusedLocationSource(this@MapFragment, LOCATION_PERMISSTION_REQUEST_CODE)
@@ -269,7 +271,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 LOCATION_PERMISSTION_REQUEST_CODE
             )
         } else {
-//            moveToCurrentLocation() // 권한이 이미 부여된 경우
+            moveToCurrentLocation() // 권한이 이미 부여된 경우
         }
     }
 
@@ -284,7 +286,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             if (locationSource.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
                 if (locationSource.isActivated) {
                     Log.d("터벅터벅", "위치 권한 승인됨")
-//                    moveToCurrentLocation() // 권한 승인 후 위치 이동
+                    moveToCurrentLocation()
                 } else {
                     Log.e("터벅터벅", "위치 권한 거부됨")
                 }
@@ -343,16 +345,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         // 현재 위치 가져오기 & 초기 지도 설정
         val lastLocation = locationSource.lastLocation
-
-        if (lastLocation != null) {
-            // 위치 정보가 있을 경우, 현재 위치로 지도 초기화
-            val currentLatLng = LatLng(lastLocation.latitude, lastLocation.longitude)
-            val cameraUpdate = CameraUpdate.scrollAndZoomTo(currentLatLng, 15.0).animate(CameraAnimation.Easing)
-            naverMap.moveCamera(cameraUpdate)
-        } else {
-            // 위치 정보가 없을 경우, 추적 모드 활성화 (현재 위치 자동 업데이트)
-            checkLocationPermission()
-        }
 
         fetchStoresBasedOnMapView()
 

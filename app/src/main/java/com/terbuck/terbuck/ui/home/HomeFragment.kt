@@ -20,8 +20,14 @@ import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.ui.user.StudentCardFragment
 import com.terbuck.terbuck.ui.user.StudentCardOnboardingFragment
 import com.terbuck.terbuck.utils.MyApplication
-import com.terbuck.terbuck.viewModel.HomeViewModel
 import com.terbuck.terbuck.viewModel.UserViewModel
+import android.Manifest
+import android.content.pm.PackageManager
+import android.location.Location
+import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+
 
 class HomeFragment : Fragment() {
 
@@ -31,6 +37,9 @@ class HomeFragment : Fragment() {
         ViewModelProvider(requireActivity())[UserViewModel::class.java]
     }
 
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private val LOCATION_PERMISSION_REQUEST_CODE = 1001
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -38,6 +47,8 @@ class HomeFragment : Fragment() {
 
         binding = FragmentHomeBinding.inflate(layoutInflater)
         mainActivity = activity as MainActivity
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(mainActivity)
 
         val category: List<String> = listOf("먹고가기", "이용하기", "파트너십")
 
@@ -90,6 +101,7 @@ class HomeFragment : Fragment() {
         if(MyApplication.preferences.getIsFirst() != false) {
             MyApplication.preferences.setIsFirst(false)
 
+            checkLocationPermission()
             StudentCardOnboardingFragment().show(parentFragmentManager, "StudentCardOnboardingDialog")
         }
     }
@@ -129,7 +141,55 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
+    private fun checkLocationPermission() {
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissions(
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+        } else {
+            getCurrentLocationAndCallApi()
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getCurrentLocationAndCallApi()
+            } else {
+                Log.e("HomeFragment", "위치 권한 거부됨")
+            }
+        }
+    }
+
+    private fun getCurrentLocationAndCallApi() {
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED
+        ) return
+
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                location?.let {
+                    MyApplication.latitude = it.latitude.toString()
+                    MyApplication.longitude = it.longitude.toString()
+                }
+            }
+            .addOnFailureListener {
+
+            }
+    }
+
 }
+
 
 class TemplateCategoryVPAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
     override fun getItemCount(): Int = 3
