@@ -447,6 +447,21 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                         fetchStoresBasedOnMapView()
                     }
                 }
+
+                // 마커 중앙 위치로 지도 이동
+                if (!isInitialCameraMoved && markers.isNotEmpty()) {
+                    val latLngBoundsBuilder = com.naver.maps.geometry.LatLngBounds.Builder()
+                    markers.forEach { marker ->
+                        latLngBoundsBuilder.include(marker.position)
+                    }
+
+                    val bounds = latLngBoundsBuilder.build()
+                    val cameraUpdate = CameraUpdate.fitBounds(bounds, 100)
+                        .animate(CameraAnimation.Easing)
+                    naverMap.moveCamera(cameraUpdate)
+
+                    isInitialCameraMoved = true
+                }
             }
         }
     }
