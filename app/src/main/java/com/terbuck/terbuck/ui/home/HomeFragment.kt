@@ -27,6 +27,7 @@ import android.location.Location
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.terbuck.terbuck.utils.MyApplication.Companion.isRegisterStudentCard
 
 
 class HomeFragment : Fragment() {
@@ -97,13 +98,6 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         initView()
-
-        if(MyApplication.preferences.getIsFirst() != false) {
-            MyApplication.preferences.setIsFirst(false)
-
-            checkLocationPermission()
-            StudentCardOnboardingFragment().show(parentFragmentManager, "StudentCardOnboardingDialog")
-        }
     }
 
     private fun tabItemMargin(mTabLayout: TabLayout) {
@@ -118,26 +112,42 @@ class HomeFragment : Fragment() {
     fun initView() {
         mainActivity.hideBottomNavigation(false)
 
+        if(MyApplication.preferences.getIsFirst() == true) {
+            MyApplication.preferences.setIsFirst(false)
+
+            StudentCardOnboardingFragment().show(parentFragmentManager, "StudentCardOnboardingDialog")
+
+            checkLocationPermission()
+        }
+
         binding.run {
+            viewModel.getStudentCard(mainActivity,
+                onSuccess = {
+                    // 학생증 등록 O
+                    toolbar.imageViewCard.setImageResource(R.drawable.ic_studentcard_green10)
+                },
+                onFailure = {
+                    // 학생증 등록 X
+                    toolbar.imageViewCard.setImageResource(R.drawable.ic_studentcard_black5)
+                }
+            )
+
             toolbar.imageViewCard.setOnClickListener {
-                viewModel.getStudentCard(mainActivity,
-                    onSuccess = {
-                        // 학생증 등록 O
-                        StudentCardFragment().show(parentFragmentManager, "StudentCardDialog")
-                    },
-                    onFailure = {
-                        // 학생증 등록 X
-                        BasicToast.showBasicButtonToast(
-                            requireContext(),
-                            mainActivity,
-                            "아직 학생증이 등록되지 않았어요!",
-                            R.drawable.ic_face,
-                            resources.getString(R.string.register_button),
-                            mainActivity.binding.bottomNavBar,
-                            binding.root
-                        )
-                    }
-                )
+                if(isRegisterStudentCard) {
+                    // 학생증 등록 O
+                    StudentCardFragment().show(parentFragmentManager, "StudentCardDialog")
+                } else {
+                    // 학생증 등록 X
+                    BasicToast.showBasicButtonToast(
+                        requireContext(),
+                        mainActivity,
+                        "아직 학생증이 등록되지 않았어요!",
+                        R.drawable.ic_face,
+                        resources.getString(R.string.register_button),
+                        mainActivity.binding.bottomNavBar,
+                        binding.root
+                    )
+                }
             }
         }
     }

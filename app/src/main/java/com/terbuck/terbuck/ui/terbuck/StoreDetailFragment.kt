@@ -19,6 +19,8 @@ import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.ui.terbuck.adapter.PartnershipImageAdapter
 import com.terbuck.terbuck.ui.terbuck.adapter.StoreBenefitAdapter
 import com.terbuck.terbuck.ui.terbuck.adapter.StoreImageAdapter
+import com.terbuck.terbuck.ui.user.StudentCardFragment
+import com.terbuck.terbuck.utils.MyApplication
 import com.terbuck.terbuck.viewModel.PartnershipViewModel
 
 class StoreDetailFragment : Fragment() {
@@ -160,7 +162,32 @@ class StoreDetailFragment : Fragment() {
         mainActivity.hideBottomNavigation(true)
 
         binding.run {
-           viewModel.getStoreDetailInfo(mainActivity, arguments?.getInt("storeId") ?: 0)
+            viewModel.getStoreDetailInfo(mainActivity, arguments?.getInt("storeId") ?: 0)
+            if(MyApplication.isRegisterStudentCard) {
+                toolbar.imageViewCard.run {
+                    setImageResource(R.drawable.ic_studentcard_green10)
+                    setOnClickListener {
+                        // 학생증 등록 O
+                        StudentCardFragment().show(parentFragmentManager, "StudentCardDialog")
+                    }
+                }
+            } else {
+                toolbar.imageViewCard.run {
+                    setImageResource(R.drawable.ic_studentcard_white5)
+                    setOnClickListener {
+                        // 학생증 등록 X
+                        BasicToast.showBasicButtonToast(
+                            requireContext(),
+                            mainActivity,
+                            "아직 학생증이 등록되지 않았어요!",
+                            R.drawable.ic_face,
+                            resources.getString(R.string.register_button),
+                            mainActivity.binding.bottomNavBar,
+                            binding.root
+                        )
+                    }
+                }
+            }
 
             toolbar.run {
                 textViewHead.text = "제휴 혜택"

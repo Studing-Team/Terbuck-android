@@ -9,5 +9,7 @@ class MyApplication : Application() {
 
         var latitude: String? = null
         var longitude: String? = null
+
+        var isRegisterStudentCard = false
     }
 }
