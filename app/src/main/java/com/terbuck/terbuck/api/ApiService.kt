@@ -8,6 +8,7 @@ import com.terbuck.terbuck.api.response.home.HomeStoreResponse
 import com.terbuck.terbuck.api.response.home.PartnershipDetailResponse
 import com.terbuck.terbuck.api.response.onboarding.LoginResponse
 import com.terbuck.terbuck.api.response.terbuck.MapStoreListResponse
+import com.terbuck.terbuck.api.response.terbuck.StoreDetailResponse
 import com.terbuck.terbuck.api.response.user.StudentCardResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -92,4 +93,11 @@ interface ApiService {
         @Query("latitude") latitude: String?,
         @Query("longitude") longitude: String?
     ): Call<BaseResponse<MapStoreListResponse>>
+
+    // 제휴업체 상세 정보 조회
+    @GET("/shops/{shop_id}")
+    fun getStoreDetailInfo(
+        @Header("authorization") token: String,
+        @Path("shop_id") storeId: Int
+    ): Call<BaseResponse<StoreDetailResponse>>
 }

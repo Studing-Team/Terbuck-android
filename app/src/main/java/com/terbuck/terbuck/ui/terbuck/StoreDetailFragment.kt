@@ -98,12 +98,27 @@ class StoreDetailFragment : Fragment() {
     }
 
     fun observeViewModel() {
+        viewModel.run {
+            storeDetailInfo.observe(viewLifecycleOwner) {
+                getStoreDetailInfo = it
+
+                binding.run {
+                    textViewStoreName.text = getStoreDetailInfo?.name
+                    textViewStoreAddress.text = getStoreDetailInfo?.address
+                    textViewBenefitNum.text = "혜택 ${getStoreDetailInfo?.benefitCount}가지"
+                }
+
+                storeBenefitAdapter.updateList(getStoreDetailInfo?.benefitList)
+                storeImageAdapter.updateList(getStoreDetailInfo?.imageList)
+            }
+        }
     }
 
     fun initView() {
         mainActivity.hideBottomNavigation(true)
 
         binding.run {
+           viewModel.getStoreDetailInfo(mainActivity, arguments?.getInt("storeId") ?: 0)
 
             toolbar.run {
                 textViewHead.text = "제휴 혜택"
