@@ -38,7 +38,7 @@ import com.terbuck.terbuck.api.response.terbuck.MapStoreInfo
 import com.terbuck.terbuck.api.response.terbuck.MapStoreListResponse
 import com.terbuck.terbuck.databinding.FragmentMapBinding
 import com.terbuck.terbuck.ui.MainActivity
-import com.terbuck.terbuck.ui.home.adapter.PartnershipImageAdapter
+import com.terbuck.terbuck.ui.terbuck.adapter.PartnershipImageAdapter
 import com.terbuck.terbuck.ui.terbuck.adapter.CategoryAdapter
 import com.terbuck.terbuck.ui.terbuck.adapter.StoreAdapter
 import com.terbuck.terbuck.utils.MainUtil
@@ -194,6 +194,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         binding.run {
             bottomSheet.visibility = View.VISIBLE
             bottomSheetStoreList.layoutStore.visibility = View.GONE
+            BottomSheetBehavior.from(bottomSheet).isDraggable = true
         }
 
         mainActivity.hideBottomNavigation(false)
@@ -224,6 +225,21 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         ).apply {
             itemClickListener = object : StoreAdapter.OnItemClickListener {
                 override fun onItemClick(position: Int) {
+                    // 스토어 상세 화면 이동
+//                    viewModel.getStoreDetailInfo(mainActivity, getStoreInfo?.list?.get(position)?.shopId?.toInt() ?: 0)
+                    var nextFragment = StoreDetailFragment()
+
+                    val bundle = Bundle().apply { putInt("storeId",
+                        getStoreInfo?.list?.get(position)?.shopId?.toInt() ?: 0
+                    ) }
+
+                    nextFragment = StoreDetailFragment().apply {
+                        arguments = bundle
+                    }
+                    mainActivity.supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainerView, nextFragment)
+                        .addToBackStack(null)
+                        .commit()
                 }
             }
         }
@@ -405,6 +421,21 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                             imageViewCategory.setImageResource(categoryImage[getCategoryIndex(storeInfo?.category) + 1])
 
                             layoutStore.setOnClickListener {
+                                // 스토어 상세 화면 이동
+//                                viewModel.getStoreDetailInfo(mainActivity, getStoreInfo?.list?.get(m)?.shopId?.toInt() ?: 0)
+                                var nextFragment = StoreDetailFragment()
+
+                                val bundle = Bundle().apply { putInt("storeId",
+                                    getStoreInfo?.list?.get(m)?.shopId?.toInt() ?: 0
+                                ) }
+
+                                nextFragment = StoreDetailFragment().apply {
+                                    arguments = bundle
+                                }
+                                mainActivity.supportFragmentManager.beginTransaction()
+                                    .replace(R.id.fragmentContainerView, nextFragment)
+                                    .addToBackStack(null)
+                                    .commit()
                             }
                         }
 

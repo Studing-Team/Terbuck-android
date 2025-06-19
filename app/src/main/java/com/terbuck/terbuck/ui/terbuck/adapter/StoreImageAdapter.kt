@@ -1,23 +1,18 @@
-package com.terbuck.terbuck.ui.home.adapter
+package com.terbuck.terbuck.ui.terbuck.adapter
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.terbuck.terbuck.api.response.home.PartnershipInfo
-import com.terbuck.terbuck.databinding.RowHomePartnershipBinding
-import com.terbuck.terbuck.databinding.RowImageBinding
+import com.terbuck.terbuck.databinding.RowImageStoreBinding
 
-class PartnershipImageAdapter(
+class StoreImageAdapter(
     private var activity: Activity,
     private var images: List<String>?
 ) :
-    RecyclerView.Adapter<PartnershipImageAdapter.ViewHolder>() {
+    RecyclerView.Adapter<StoreImageAdapter.ViewHolder>() {
 
     private var onItemClickListener: ((Int) -> Unit)? = null
     private var context: Context? = null
@@ -41,7 +36,7 @@ class PartnershipImageAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         context = parent.context
         val binding =
-            RowImageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            RowImageStoreBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
         return ViewHolder(binding)
     }
@@ -51,14 +46,14 @@ class PartnershipImageAdapter(
             val imageUrl = images?.get(position)
             Glide.with(activity)
                 .load(imageUrl)
-                .into(imageViewPartnership)
+                .into(imageViewStore)
         }
     }
 
     override fun getItemCount() = images?.size ?: 0
 
 
-    inner class ViewHolder(val binding: RowImageBinding) :
+    inner class ViewHolder(val binding: RowImageStoreBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         init {

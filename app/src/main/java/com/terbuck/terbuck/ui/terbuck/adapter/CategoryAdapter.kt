@@ -2,18 +2,12 @@ package com.terbuck.terbuck.ui.terbuck.adapter
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.terbuck.terbuck.R
-import com.terbuck.terbuck.api.response.home.PartnershipInfo
 import com.terbuck.terbuck.databinding.RowCategoryBinding
-import com.terbuck.terbuck.databinding.RowHomePartnershipBinding
-import com.terbuck.terbuck.databinding.RowImageBinding
 
 class CategoryAdapter(
     private var activity: Activity,
