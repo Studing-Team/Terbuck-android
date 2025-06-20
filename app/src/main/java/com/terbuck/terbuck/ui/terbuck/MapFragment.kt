@@ -193,6 +193,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         super.onResume()
         mapView.onResume()
 
+        isInitialCameraMoved = false
+
         binding.run {
             bottomSheet.visibility = View.VISIBLE
             bottomSheetStoreList.layoutStore.visibility = View.GONE

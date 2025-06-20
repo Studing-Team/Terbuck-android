@@ -90,6 +90,16 @@
                     android:layout_weight="1"
                     android:layout_gravity="center"
                     android:text="혜택" />
+
+                <TextView
+                    android:id="@+id/button_usages"
+                    style="@style/Text_Semi_14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_gravity="center"
+                    android:textColor="@color/black_10"
+                    android:text="이용방법" />
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView

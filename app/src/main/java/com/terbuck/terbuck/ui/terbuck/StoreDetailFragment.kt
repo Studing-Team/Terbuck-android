@@ -16,6 +16,7 @@ import com.terbuck.terbuck.api.response.terbuck.StoreDetailResponse
 import com.terbuck.terbuck.databinding.FragmentStoreDetailBinding
 import com.terbuck.terbuck.ui.BasicToast
 import com.terbuck.terbuck.ui.MainActivity
+import com.terbuck.terbuck.ui.home.DialogPartnership
 import com.terbuck.terbuck.ui.terbuck.adapter.PartnershipImageAdapter
 import com.terbuck.terbuck.ui.terbuck.adapter.StoreBenefitAdapter
 import com.terbuck.terbuck.ui.terbuck.adapter.StoreImageAdapter
@@ -57,6 +58,12 @@ class StoreDetailFragment : Fragment() {
             recyclerViewStoreBenefit.apply {
                 adapter = storeBenefitAdapter
                 layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            }
+
+            buttonUsages.setOnClickListener {
+                val dialog = DialogUsages(getStoreDetailInfo?.usagesList)
+
+                dialog.show(mainActivity.supportFragmentManager, "DialogUsages")
             }
 
             buttonNaver.setOnClickListener {
@@ -130,6 +137,12 @@ class StoreDetailFragment : Fragment() {
                     textViewStoreName.text = getStoreDetailInfo?.name
                     textViewStoreAddress.text = getStoreDetailInfo?.address
                     textViewBenefitNum.text = "혜택 ${getStoreDetailInfo?.benefitCount}가지"
+
+                    if(getStoreDetailInfo?.usagesList?.isEmpty() == true) {
+                        buttonUsages.visibility = View.INVISIBLE
+                    } else {
+                        buttonUsages.visibility = View.VISIBLE
+                    }
                 }
 
                 storeBenefitAdapter.updateList(getStoreDetailInfo?.benefitList)
