@@ -10,27 +10,22 @@ import com.terbuck.terbuck.api.response.terbuck.Benefit
 import com.terbuck.terbuck.databinding.RowStoreBenefitBinding
 import com.terbuck.terbuck.ui.MainActivity
 
-class StoreBenefitAdapter(
+class StoreDetailBenefitAdapter(
     private var activity: MainActivity,
-    private var benefits: List<Benefit>?
+    private var benefits: List<String>?
 ) :
-    RecyclerView.Adapter<StoreBenefitAdapter.ViewHolder>() {
+    RecyclerView.Adapter<StoreDetailBenefitAdapter.ViewHolder>() {
 
     private var onItemClickListener: ((Int) -> Unit)? = null
     private var context: Context? = null
-    private var selectedPosition: Int = -1
+    private var selectedPosition: Int = 0
 
     fun setOnItemClickListener(listener: (Int) -> Unit) {
         onItemClickListener = listener
     }
 
-    fun updateList(newBenefits: List<Benefit>?) {
+    fun updateList(newBenefits: List<String>?) {
         benefits = newBenefits
-        notifyDataSetChanged()
-    }
-
-    fun updatePosition(selected: Int) {
-        selectedPosition = selected
         notifyDataSetChanged()
     }
 
@@ -50,18 +45,8 @@ class StoreBenefitAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         with(holder.binding) {
-            textViewBenefit.text = benefits?.get(position)?.title
-            buttonDetail.visibility = if(benefits?.get(position)?.detailList?.isEmpty() == true) {
-                View.GONE
-            } else {
-                View.VISIBLE
-            }
-
-            if(selectedPosition == position) {
-                root.setBackgroundResource(R.drawable.background_white3_radius8_stroke_green10)
-            } else {
-                root.setBackgroundResource(R.drawable.background_white3_radius8)
-            }
+            textViewBenefit.text = benefits?.get(position)
+            buttonDetail.visibility = View.GONE
         }
     }
 
@@ -73,16 +58,9 @@ class StoreBenefitAdapter(
 
         init {
             binding.buttonDetail.setOnClickListener {
-                val previousSelectedPosition = selectedPosition
-                selectedPosition = adapterPosition
-
                 // 클릭 리스너 호출
                 itemClickListener?.onItemClick(adapterPosition)
                 onItemClickListener?.invoke(adapterPosition)
-
-                // 이전 선택 항목과 현재 선택 항목 갱신
-                notifyItemChanged(previousSelectedPosition)
-                notifyItemChanged(selectedPosition)
 
                 true
             }

@@ -105,7 +105,17 @@ class StoreDetailFragment : Fragment() {
         ).apply {
             itemClickListener = object : StoreBenefitAdapter.OnItemClickListener {
                 override fun onItemClick(position: Int) {
+                    // 혜택 상세 정보 bottom sheet
+                    val benefitBottomSheet = StoreDetailBenefitBottomSheetFragment(mainActivity, getStoreDetailInfo?.benefitList?.get(position)?.detailList).apply {
 
+                        dismissListener = object : StoreDetailBenefitBottomSheetFragment.OnBottomSheetDismissListener {
+                            override fun onBottomSheetDismissed() {
+                                updatePosition(-1)
+                            }
+                        }
+                    }
+
+                    benefitBottomSheet.show(childFragmentManager, benefitBottomSheet.tag)
                 }
             }
         }
