@@ -25,6 +25,8 @@ import retrofit2.Response
 
 class UserViewModel: ViewModel() {
     var studentCardImage: MutableLiveData<String?> = MutableLiveData()
+    var studentNumber: MutableLiveData<String?> = MutableLiveData()
+    var name: MutableLiveData<String?> = MutableLiveData()
 
     fun registerStudentCard(activity: MainActivity, image: MultipartBody.Part?, name: String, studentId: String, onSuccess: () -> Unit) {
         val apiClient = ApiClient(activity)
@@ -89,6 +91,8 @@ class UserViewModel: ViewModel() {
 
                         if(result?.data?.imageURL != null) {
                             studentCardImage.value = result.data.imageURL
+                            studentNumber.value = result.data.studentNumber
+                            name.value = result.data.name
                             onSuccess()
                         } else {
                             onFailure()
