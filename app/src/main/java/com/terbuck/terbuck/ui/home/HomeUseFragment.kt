@@ -81,6 +81,7 @@ class HomeUseFragment : Fragment() {
     }
 
     fun initView() {
+        mainActivity.hideBottomNavigation(false)
         viewModel.getHomeStoreInfo(mainActivity, "이용하기")
     }
 

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="partnership_category_name">
+        <item>전체</item>
+        <item>음식</item>
+        <item>카페</item>
+        <item>주점</item>
+        <item>병원</item>
+        <item>운동</item>
+        <item>문화</item>
+        <item>스터디</item>
+    </array>
+
+    <array name="partnership_category_image_marker">
+        <item>@drawable/ic_food_marker</item>
+        <item>@drawable/ic_cafe_marker</item>
+        <item>@drawable/ic_alcohol_marker</item>
+        <item>@drawable/ic_hospital_marker</item>
+        <item>@drawable/ic_exercise_marker</item>
+        <item>@drawable/ic_culture_marker</item>
+        <item>@drawable/ic_study_marker</item>
+    </array>
+
+    <array name="partnership_category_image_unselected">
+        <item>null</item>
+        <item>@drawable/ic_food_unselected</item>
+        <item>@drawable/ic_cafe_unselected</item>
+        <item>@drawable/ic_alcohol_unselected</item>
+        <item>@drawable/ic_hospital_unselected</item>
+        <item>@drawable/ic_exercise_unselected</item>
+        <item>@drawable/ic_culture_unselected</item>
+        <item>@drawable/ic_study_unselected</item>
+    </array>
+
+    <array name="partnership_category_image_white">
+        <item>null</item>
+        <item>@drawable/ic_food_white</item>
+        <item>@drawable/ic_cafe_white</item>
+        <item>@drawable/ic_alcohol_white</item>
+        <item>@drawable/ic_hospital_white</item>
+        <item>@drawable/ic_exercise_white</item>
+        <item>@drawable/ic_culture_white</item>
+        <item>@drawable/ic_study_white</item>
+    </array>
+</resources>

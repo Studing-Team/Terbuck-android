@@ -129,6 +129,7 @@ class HomePartnershipFragment : Fragment() {
     }
 
     fun initView() {
+        mainActivity.hideBottomNavigation(false)
         viewModel.getHomePartnershipNewInfo(mainActivity)
         viewModel.getHomePartnershipInfo(mainActivity)
     }

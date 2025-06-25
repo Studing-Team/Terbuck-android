@@ -7,6 +7,8 @@ import com.terbuck.terbuck.api.response.home.HomePartnershipResponse
 import com.terbuck.terbuck.api.response.home.HomeStoreResponse
 import com.terbuck.terbuck.api.response.home.PartnershipDetailResponse
 import com.terbuck.terbuck.api.response.onboarding.LoginResponse
+import com.terbuck.terbuck.api.response.terbuck.MapStoreListResponse
+import com.terbuck.terbuck.api.response.terbuck.StoreDetailResponse
 import com.terbuck.terbuck.api.response.user.StudentCardResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -81,4 +83,21 @@ interface ApiService {
         @Header("authorization") token: String,
         @Path("partnership_id") partnershipId: Int
     ): Call<BaseResponse<PartnershipDetailResponse>>
+
+    // 지도 화면 제휴업체 리스트 조회
+    @GET("/shops/map")
+    fun getMapStoreList(
+        @Header("authorization") token: String,
+        @Query("university") university: String,
+        @Query("category") category: String?,
+        @Query("latitude") latitude: String?,
+        @Query("longitude") longitude: String?
+    ): Call<BaseResponse<MapStoreListResponse>>
+
+    // 제휴업체 상세 정보 조회
+    @GET("/shops/{shop_id}")
+    fun getStoreDetailInfo(
+        @Header("authorization") token: String,
+        @Path("shop_id") storeId: Int
+    ): Call<BaseResponse<StoreDetailResponse>>
 }

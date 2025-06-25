@@ -27,6 +27,7 @@ android {
         buildConfigField("String", "SERVER_URL", "\"${properties["server_url"]}\"")
 
         buildConfigField("String", "KAKAO_APP_KEY", "\"${properties["kakao_key"]}\"")
+        buildConfigField("String", "MAP_API_KEY", "\"${properties["map_client_id"]}\"")
 
         manifestPlaceholders["kakao_native_key"] = kakaoNativeKey
     }
@@ -71,6 +72,10 @@ dependencies {
 
     // 카카오 로그인
     implementation("com.kakao.sdk:v2-user:2.20.6")
+
+    // 네이버 지도
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("com.naver.maps:map-sdk:3.19.1")
 
     // api
     implementation("com.squareup.retrofit2:retrofit:2.9.0")

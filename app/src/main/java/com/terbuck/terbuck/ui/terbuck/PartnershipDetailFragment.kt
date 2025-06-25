@@ -16,7 +16,7 @@ import com.terbuck.terbuck.R
 import com.terbuck.terbuck.databinding.FragmentPartnershipDetailBinding
 import com.terbuck.terbuck.ui.BasicToast
 import com.terbuck.terbuck.ui.MainActivity
-import com.terbuck.terbuck.ui.home.adapter.PartnershipImageAdapter
+import com.terbuck.terbuck.ui.terbuck.adapter.PartnershipImageAdapter
 import com.terbuck.terbuck.viewModel.HomeViewModel
 import kotlin.text.replace
 

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingTop="24dp"
     android:paddingHorizontal="47dp"
     android:background="#D9141517"
     tools:context=".ui.user.StudentCardFragment" >

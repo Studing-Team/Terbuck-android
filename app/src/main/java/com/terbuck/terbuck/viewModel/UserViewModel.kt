@@ -14,6 +14,7 @@ import com.terbuck.terbuck.api.response.user.StudentCardResponse
 import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.ui.home.HomeFragment
 import com.terbuck.terbuck.ui.onboarding.SignUpAgreementFragment
+import com.terbuck.terbuck.utils.MyApplication
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -83,8 +84,15 @@ class UserViewModel: ViewModel() {
                         val result: BaseResponse<StudentCardResponse>? = response.body()
                         Log.d("터벅터벅", "onResponse 성공: " + result?.toString())
 
-                        studentCardImage.value = result?.data?.imageURL
-                        onSuccess()
+                        MyApplication.isRegisterStudentCard = result?.data?.isRegistered == true
+                        TokenManager(activity).saveUniversity(result?.data?.university.toString())
+
+                        if(result?.data?.imageURL != null) {
+                            studentCardImage.value = result.data.imageURL
+                            onSuccess()
+                        } else {
+                            onFailure()
+                        }
                     } else {
                         // 통신이 실패한 경우(응답코드 3xx, 4xx 등)
                         var result: BaseResponse<StudentCardResponse>? = response.body()

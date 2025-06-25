@@ -11,6 +11,7 @@ import com.terbuck.terbuck.api.response.home.HomePartnershipResponse
 import com.terbuck.terbuck.api.response.home.HomeStoreResponse
 import com.terbuck.terbuck.api.response.home.PartnershipDetailResponse
 import com.terbuck.terbuck.ui.MainActivity
+import com.terbuck.terbuck.utils.MyApplication
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -25,7 +26,9 @@ class HomeViewModel: ViewModel() {
         val apiClient = ApiClient(activity)
         val tokenManager = TokenManager(activity)
 
-        apiClient.apiService.getHomeStoreInfo(tokenManager.getAccessToken().toString(), tokenManager.getUniversity().toString(), category, null, null)
+        apiClient.apiService.getHomeStoreInfo(tokenManager.getAccessToken().toString(), tokenManager.getUniversity().toString(), category,
+            MyApplication.latitude,
+            MyApplication.longitude)
             .enqueue(object :
                 Callback<BaseResponse<HomeStoreResponse>> {
                 override fun onResponse(
