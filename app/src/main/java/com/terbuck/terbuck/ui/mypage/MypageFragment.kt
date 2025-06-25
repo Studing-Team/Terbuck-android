@@ -12,6 +12,7 @@ import com.terbuck.terbuck.R
 import com.terbuck.terbuck.api.TokenManager
 import com.terbuck.terbuck.databinding.FragmentMypageBinding
 import com.terbuck.terbuck.ui.MainActivity
+import com.terbuck.terbuck.ui.terbuck.ImageDetailFragment
 import com.terbuck.terbuck.ui.user.UniversityFragment
 import com.terbuck.terbuck.utils.MyApplication
 import com.terbuck.terbuck.viewModel.UserViewModel
@@ -35,6 +36,19 @@ class MypageFragment : Fragment() {
         binding.run {
             buttonEdit.setOnClickListener {
                 // 학교 변경
+                val bundle = Bundle().apply {
+                    putBoolean("isEdit", true)
+                }
+
+                // 전달할 Fragment 생성
+                var nextFragment = UniversityFragment().apply {
+                    arguments = bundle
+                }
+
+                mainActivity.supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainerView, UniversityFragment())
+                    .addToBackStack(null)
+                    .commit()
             }
 
             layoutQna.setOnClickListener {

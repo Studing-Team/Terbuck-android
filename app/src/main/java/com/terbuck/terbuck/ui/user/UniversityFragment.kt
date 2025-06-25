@@ -26,7 +26,7 @@ class UniversityFragment : Fragment() {
 
     lateinit var universityAdapter: UniversityAdapter
 
-    var schoolList = mutableListOf<String>("광운대학교", "서울과학기술대학교", "성신여자대학교", "삼육대학교")
+    var getUniversityList = mutableListOf<String>()
 
     var selectedSchool = ""
 
@@ -39,6 +39,7 @@ class UniversityFragment : Fragment() {
         mainActivity = activity as MainActivity
 
         initAdapter()
+        observeViewModel()
 
         binding.run {
             recyclerViewSchool.apply {
@@ -47,15 +48,20 @@ class UniversityFragment : Fragment() {
             }
 
             buttonNext.setOnClickListener {
-                // 회원가입 API 호출
-                viewModel.signUp(mainActivity, selectedSchool) {
-                    TokenManager(mainActivity).saveUniversity(selectedSchool)
+                if(arguments?.getBoolean("isEdit") == true) {
+                    // 학교 변경 API 호출
+                    
+                } else {
+                    // 회원가입 API 호출
+                    viewModel.signUp(mainActivity, selectedSchool) {
+                        TokenManager(mainActivity).saveUniversity(selectedSchool)
 
-                    // 홈화면 이동
-                    mainActivity.supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragmentContainerView, HomeFragment())
-                        .addToBackStack(null)
-                        .commit()
+                        // 홈화면 이동
+                        mainActivity.supportFragmentManager.beginTransaction()
+                            .replace(R.id.fragmentContainerView, HomeFragment())
+                            .addToBackStack(null)
+                            .commit()
+                    }
                 }
             }
         }
@@ -71,16 +77,26 @@ class UniversityFragment : Fragment() {
     fun initAdapter() {
         universityAdapter = UniversityAdapter(
             mainActivity,
-            schoolList
+            getUniversityList
         ).apply {
             itemClickListener = object : UniversityAdapter.OnItemClickListener {
                 override fun onItemClick(position: Int) {
                     // 학교 선택
                     binding.buttonNext.isEnabled = true
 
-                    selectedSchool = schoolList[position]
-                    universityAdapter.updateList(schoolList, position)
+                    selectedSchool = getUniversityList[position]
+                    universityAdapter.updateList(getUniversityList, position)
                 }
+            }
+        }
+    }
+
+    fun observeViewModel() {
+        viewModel.run {
+            universities.observe(viewLifecycleOwner) {
+                getUniversityList = it as MutableList<String>
+
+                universityAdapter.updateList(getUniversityList, -1)
             }
         }
     }
@@ -88,8 +104,10 @@ class UniversityFragment : Fragment() {
     private fun initView() {
         mainActivity.hideBottomNavigation(true)
 
+        viewModel.getUniversities(mainActivity)
+
         binding.toolbar.run {
-            textViewHead.text = "회원가입"
+            textViewHead.text = if(arguments?.getBoolean("isEdit") == true) "학교 변경" else "회원가입"
             buttonBack.setOnClickListener {
                 fragmentManager?.popBackStack()
             }

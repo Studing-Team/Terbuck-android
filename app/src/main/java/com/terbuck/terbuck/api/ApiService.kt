@@ -38,6 +38,10 @@ interface ApiService {
         @Body request: SignUpRequest
     ): Call<BaseResponse<String>>
 
+    // 대학교 리스트 조회
+    @GET("/info/universities")
+    fun getUniversities(): Call<BaseResponse<List<String>>>
+
     // 학생증 등록
     @Multipart
     @PUT("/member/studentID")
