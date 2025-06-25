@@ -6,12 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.terbuck.terbuck.R
 import com.terbuck.terbuck.api.response.home.PartnershipInfo
-import com.terbuck.terbuck.api.response.home.StoreInfo
 import com.terbuck.terbuck.databinding.RowHomePartnershipBinding
-import com.terbuck.terbuck.databinding.RowHomeStoreBinding
-import com.terbuck.terbuck.databinding.RowSchoolBinding
 
 class HomePartnershipAdapter(
     private var activity: Activity,

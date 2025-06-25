@@ -10,22 +10,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.terbuck.terbuck.R
 import com.terbuck.terbuck.api.TokenManager
-import com.terbuck.terbuck.databinding.FragmentSchoolBinding
+import com.terbuck.terbuck.databinding.FragmentUniversityBinding
 import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.ui.home.HomeFragment
-import com.terbuck.terbuck.ui.user.adapter.SchoolAdapter
+import com.terbuck.terbuck.ui.user.adapter.UniversityAdapter
 import com.terbuck.terbuck.viewModel.OnboardingViewModel
-import kotlin.text.replace
 
-class SchoolFragment : Fragment() {
+class UniversityFragment : Fragment() {
 
-    lateinit var binding: FragmentSchoolBinding
+    lateinit var binding: FragmentUniversityBinding
     lateinit var mainActivity: MainActivity
     private val viewModel: OnboardingViewModel by lazy {
         ViewModelProvider(requireActivity())[OnboardingViewModel::class.java]
     }
 
-    lateinit var schoolAdapter: SchoolAdapter
+    lateinit var universityAdapter: UniversityAdapter
 
     var schoolList = mutableListOf<String>("광운대학교", "서울과학기술대학교", "성신여자대학교", "삼육대학교")
 
@@ -36,14 +35,14 @@ class SchoolFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        binding = FragmentSchoolBinding.inflate(layoutInflater)
+        binding = FragmentUniversityBinding.inflate(layoutInflater)
         mainActivity = activity as MainActivity
 
         initAdapter()
 
         binding.run {
             recyclerViewSchool.apply {
-                adapter = schoolAdapter
+                adapter = universityAdapter
                 layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             }
 
@@ -70,17 +69,17 @@ class SchoolFragment : Fragment() {
     }
 
     fun initAdapter() {
-        schoolAdapter = SchoolAdapter(
+        universityAdapter = UniversityAdapter(
             mainActivity,
             schoolList
         ).apply {
-            itemClickListener = object : SchoolAdapter.OnItemClickListener {
+            itemClickListener = object : UniversityAdapter.OnItemClickListener {
                 override fun onItemClick(position: Int) {
                     // 학교 선택
                     binding.buttonNext.isEnabled = true
 
                     selectedSchool = schoolList[position]
-                    schoolAdapter.updateList(schoolList, position)
+                    universityAdapter.updateList(schoolList, position)
                 }
             }
         }

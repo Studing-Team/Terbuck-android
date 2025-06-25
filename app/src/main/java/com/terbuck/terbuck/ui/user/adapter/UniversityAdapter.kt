@@ -4,16 +4,15 @@ import android.app.Activity
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.terbuck.terbuck.R
-import com.terbuck.terbuck.databinding.RowSchoolBinding
+import com.terbuck.terbuck.databinding.RowUniversityBinding
 
-class SchoolAdapter(
+class UniversityAdapter(
     private var activity: Activity,
     private var schools: List<String>?
 ) :
-    RecyclerView.Adapter<SchoolAdapter.ViewHolder>() {
+    RecyclerView.Adapter<UniversityAdapter.ViewHolder>() {
 
     private var onItemClickListener: ((Int) -> Unit)? = null
     private var context: Context? = null
@@ -39,7 +38,7 @@ class SchoolAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         context = parent.context
         val binding =
-            RowSchoolBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            RowUniversityBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
         return ViewHolder(binding)
     }
@@ -55,7 +54,7 @@ class SchoolAdapter(
     override fun getItemCount() = schools?.size ?: 0
 
 
-    inner class ViewHolder(val binding: RowSchoolBinding) :
+    inner class ViewHolder(val binding: RowUniversityBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         init {

@@ -10,9 +10,7 @@ import com.terbuck.terbuck.api.request.onboarding.SignUpRequest
 import com.terbuck.terbuck.api.response.BaseResponse
 import com.terbuck.terbuck.api.response.onboarding.LoginResponse
 import com.terbuck.terbuck.ui.MainActivity
-import com.terbuck.terbuck.ui.home.HomeFragment
 import com.terbuck.terbuck.ui.onboarding.SignUpAgreementFragment
-import com.terbuck.terbuck.ui.user.SchoolFragment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

@@ -8,8 +8,7 @@ import androidx.fragment.app.Fragment
 import com.terbuck.terbuck.R
 import com.terbuck.terbuck.databinding.FragmentSignUpAgreementBinding
 import com.terbuck.terbuck.ui.MainActivity
-import com.terbuck.terbuck.ui.user.SchoolFragment
-import com.terbuck.terbuck.ui.user.adapter.SchoolAdapter
+import com.terbuck.terbuck.ui.user.UniversityFragment
 
 class SignUpAgreementFragment : Fragment() {
 
@@ -36,7 +35,7 @@ class SignUpAgreementFragment : Fragment() {
 
             buttonNext.setOnClickListener {
                 mainActivity.supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainerView, SchoolFragment())
+                    .replace(R.id.fragmentContainerView, UniversityFragment())
                     .addToBackStack(null)
                     .commit()
             }
