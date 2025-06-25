@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Terbuck</string>
+    <!-- version -->
+    <string name="version">앱 버전  V.1.0.0</string>
 
     <!-- 버튼 텍스트 -->
     <string name="register_button"><u>등록하기</u></string>
