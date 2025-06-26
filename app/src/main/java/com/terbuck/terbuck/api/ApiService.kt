@@ -15,6 +15,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
@@ -39,6 +40,12 @@ interface ApiService {
         @Header("authorization") token: String,
         @Body request: SignUpRequest
     ): Call<BaseResponse<String>>
+
+    // 회원 탈퇴
+    @DELETE("/member")
+    fun withdrawal(
+        @Header("authorization") token: String
+    ): Call<BaseResponse<String?>>
 
     // 대학교 리스트 조회
     @GET("/info/universities")

@@ -93,6 +93,11 @@ class MypageFragment : Fragment() {
                 dialog.setBasicDialogInterface(object : BasicButtonDialogInterface {
                     override fun onClickYesButton() {
                         // 회원탈퇴
+                        viewModel.withdrawal(mainActivity) {
+                            TokenManager(mainActivity).clearAll()
+
+                            mainActivity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                        }
                     }
                 })
 
