@@ -9,6 +9,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
@@ -16,9 +19,11 @@ import com.terbuck.terbuck.R
 import com.terbuck.terbuck.databinding.FragmentStudentCardRegisterBinding
 import com.terbuck.terbuck.ui.BasicToast
 import com.terbuck.terbuck.ui.MainActivity
+import com.terbuck.terbuck.ui.mypage.MypageNotificationFragment
 import com.terbuck.terbuck.utils.MainUtil
 import com.terbuck.terbuck.utils.MainUtil.applyWindowInsetsListenerForKeyboard
 import com.terbuck.terbuck.utils.MainUtil.hideKeyboard
+import com.terbuck.terbuck.utils.MyApplication
 import com.terbuck.terbuck.viewModel.OnboardingViewModel
 import com.terbuck.terbuck.viewModel.UserViewModel
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -82,6 +87,13 @@ class StudentCardRegisterFragment : Fragment() {
         applyWindowInsetsListenerForKeyboard(binding.scrollView)
         BasicToast.showBasicToast(requireContext(), "얼굴, 이름, 학번이 보이는 이미지를 넣어주세요", R.drawable.ic_star, binding.buttonRegister)
 
+        ViewCompat.setOnApplyWindowInsetsListener(requireActivity().window.decorView.rootView) { _, insets ->
+            val sysBarInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            updateViewPositionForKeyboard(imeHeight - sysBarInsets.bottom)
+            insets
+        }
+
         binding.run {
             scrollView.setOnTouchListener { v, event ->
                 mainActivity.hideKeyboard()
@@ -139,6 +151,17 @@ class StudentCardRegisterFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun updateViewPositionForKeyboard(keyboardHeight: Int) {
+        val layoutParams =
+            binding.scrollView.layoutParams as ConstraintLayout.LayoutParams
+        if (keyboardHeight > 0) {
+            layoutParams.bottomMargin = keyboardHeight
+        } else {
+            layoutParams.bottomMargin = 0
+        }
+        binding.scrollView.layoutParams = layoutParams
     }
 
 }
