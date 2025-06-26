@@ -77,6 +77,9 @@ class MypageFragment : Fragment() {
                 dialog.setBasicDialogInterface(object : BasicButtonDialogInterface {
                     override fun onClickYesButton() {
                         // 로그아웃
+                        TokenManager(mainActivity).clearAll()
+
+                        mainActivity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
                     }
                 })
 
