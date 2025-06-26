@@ -69,7 +69,7 @@ class UserViewModel: ViewModel() {
             })
     }
 
-    fun getStudentCard(activity: MainActivity, onSuccess: () -> Unit, onFailure: () -> Unit) {
+    fun getStudentCard(activity: MainActivity) {
         val apiClient = ApiClient(activity)
         val tokenManager = TokenManager(activity)
 
@@ -93,9 +93,6 @@ class UserViewModel: ViewModel() {
                             studentCardImage.value = result.data.imageURL
                             studentNumber.value = result.data.studentNumber
                             name.value = result.data.name
-                            onSuccess()
-                        } else {
-                            onFailure()
                         }
                     } else {
                         // 통신이 실패한 경우(응답코드 3xx, 4xx 등)
@@ -103,10 +100,6 @@ class UserViewModel: ViewModel() {
                         Log.d("터벅터벅", "onResponse 실패: " + response.body())
                         val errorBody = response.errorBody()?.string() // 에러 응답 데이터를 문자열로 얻음
                         Log.d("터벅터벅", "Error Response: $errorBody")
-
-                        when(response.code()) {
-                            400 -> { onFailure() }
-                        }
                     }
                 }
 

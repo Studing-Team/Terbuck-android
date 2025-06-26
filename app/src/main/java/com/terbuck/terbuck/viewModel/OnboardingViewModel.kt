@@ -55,7 +55,7 @@ class OnboardingViewModel: ViewModel() {
             })
     }
 
-    fun login(activity: MainActivity, token: String) {
+    fun login(activity: MainActivity, token: String, onSuccess: () -> Unit) {
         val apiClient = ApiClient(activity)
         val tokenManager = TokenManager(activity)
 
@@ -82,6 +82,7 @@ class OnboardingViewModel: ViewModel() {
                                 .commit()
                         } else {
                             // 홈화면 이동
+                            onSuccess()
                             activity.setBottomNavigationHome()
                         }
 

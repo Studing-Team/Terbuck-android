@@ -1,21 +1,22 @@
 package com.terbuck.terbuck.ui
 
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import android.view.View
-import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.terbuck.terbuck.R
 import com.terbuck.terbuck.databinding.ActivityMainBinding
 import com.terbuck.terbuck.ui.home.HomeFragment
 import com.terbuck.terbuck.ui.mypage.MypageFragment
+import com.terbuck.terbuck.ui.mypage.MypageNotificationFragment
 import com.terbuck.terbuck.ui.terbuck.MapFragment
+import com.terbuck.terbuck.ui.user.StudentCardRegisterFragment
 import com.terbuck.terbuck.utils.MainUtil.setStatusBarTransparent
 import com.terbuck.terbuck.utils.MyApplication
 import com.terbuck.terbuck.utils.PreferenceUtil

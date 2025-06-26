@@ -121,16 +121,13 @@ class HomeFragment : Fragment() {
         }
 
         binding.run {
-            viewModel.getStudentCard(mainActivity,
-                onSuccess = {
-                    // 학생증 등록 O
-                    toolbar.imageViewCard.setImageResource(R.drawable.ic_studentcard_green10)
-                },
-                onFailure = {
-                    // 학생증 등록 X
-                    toolbar.imageViewCard.setImageResource(R.drawable.ic_studentcard_black5)
-                }
-            )
+            if(isRegisterStudentCard) {
+                // 학생증 등록 O
+                toolbar.imageViewCard.setImageResource(R.drawable.ic_studentcard_green10)
+            } else {
+                // 학생증 등록 X
+                toolbar.imageViewCard.setImageResource(R.drawable.ic_studentcard_black5)
+            }
 
             toolbar.imageViewCard.setOnClickListener {
                 if(isRegisterStudentCard) {

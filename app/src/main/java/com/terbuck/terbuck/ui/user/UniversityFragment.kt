@@ -16,7 +16,9 @@ import com.terbuck.terbuck.ui.BasicToast
 import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.ui.home.HomeFragment
 import com.terbuck.terbuck.ui.user.adapter.UniversityAdapter
+import com.terbuck.terbuck.utils.MyApplication
 import com.terbuck.terbuck.viewModel.OnboardingViewModel
+import com.terbuck.terbuck.viewModel.UserViewModel
 
 class UniversityFragment : Fragment() {
 
@@ -24,6 +26,9 @@ class UniversityFragment : Fragment() {
     lateinit var mainActivity: MainActivity
     private val viewModel: OnboardingViewModel by lazy {
         ViewModelProvider(requireActivity())[OnboardingViewModel::class.java]
+    }
+    private val userViewModel: UserViewModel by lazy {
+        ViewModelProvider(requireActivity())[UserViewModel::class.java]
     }
 
     lateinit var universityAdapter: UniversityAdapter
@@ -56,18 +61,11 @@ class UniversityFragment : Fragment() {
                     // 학교 변경 API 호출
                     viewModel.editUniversity(mainActivity, selectedSchool) {
                         TokenManager(mainActivity).saveUniversity(selectedSchool)
+                        MyApplication.isUniversityChanged = true
+
+                        userViewModel.getStudentCard(mainActivity)
 
                         fragmentManager?.popBackStack()
-
-                        BasicToast.showBasicButtonToast(
-                            requireContext(),
-                            mainActivity,
-                            "학교가 변경되었어요",
-                            R.drawable.ic_pencil,
-                            resources.getString(R.string.re_register_button),
-                            mainActivity.binding.bottomNavBar,
-                            binding.root
-                        )
                     }
                 } else {
                     // 회원가입 API 호출
