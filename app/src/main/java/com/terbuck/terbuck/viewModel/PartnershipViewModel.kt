@@ -19,11 +19,11 @@ class PartnershipViewModel: ViewModel() {
     var storeInfo: MutableLiveData<MapStoreListResponse> = MutableLiveData()
     var storeDetailInfo: MutableLiveData<StoreDetailResponse> = MutableLiveData()
 
-    fun getMapStoreList(activity: MainActivity, category: String?, latitude: Double, longitude: Double) {
+    fun getMapStoreList(activity: MainActivity, category: String?, latitude: String?, longitude: String?) {
         val apiClient = ApiClient(activity)
         val tokenManager = TokenManager(activity)
 
-        apiClient.apiService.getMapStoreList(tokenManager.getAccessToken().toString(), tokenManager.getUniversity().toString(), category, latitude.toString(), longitude.toString())
+        apiClient.apiService.getMapStoreList(tokenManager.getAccessToken().toString(), tokenManager.getUniversity().toString(), category, latitude, longitude)
             .enqueue(object :
                 Callback<BaseResponse<MapStoreListResponse>> {
                 override fun onResponse(
