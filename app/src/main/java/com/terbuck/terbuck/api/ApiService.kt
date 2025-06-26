@@ -1,5 +1,6 @@
 package com.terbuck.terbuck.api
 
+import com.terbuck.terbuck.api.request.onboarding.FcmRequest
 import com.terbuck.terbuck.api.request.onboarding.LoginRequest
 import com.terbuck.terbuck.api.request.onboarding.SignUpRequest
 import com.terbuck.terbuck.api.request.user.UniversityRequest
@@ -40,6 +41,13 @@ interface ApiService {
         @Header("authorization") token: String,
         @Body request: SignUpRequest
     ): Call<BaseResponse<String>>
+
+    // FCM 토큰 설정
+    @POST("/fcm/token")
+    fun setFcmToken(
+        @Header("authorization") token: String,
+        @Body request: FcmRequest
+    ): Call<BaseResponse<String?>>
 
     // 회원 탈퇴
     @DELETE("/member")

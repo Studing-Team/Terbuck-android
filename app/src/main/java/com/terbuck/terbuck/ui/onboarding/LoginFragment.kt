@@ -1,12 +1,17 @@
 package com.terbuck.terbuck.ui.onboarding
 
+import android.Manifest
 import android.content.ContentValues.TAG
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
@@ -15,6 +20,7 @@ import com.kakao.sdk.user.UserApiClient
 import com.terbuck.terbuck.R
 import com.terbuck.terbuck.databinding.FragmentLoginBinding
 import com.terbuck.terbuck.ui.MainActivity
+import com.terbuck.terbuck.utils.MyApplication
 import com.terbuck.terbuck.viewModel.OnboardingViewModel
 import com.terbuck.terbuck.viewModel.UserViewModel
 
@@ -53,6 +59,12 @@ class LoginFragment : Fragment() {
         binding = FragmentLoginBinding.inflate(layoutInflater)
         mainActivity = activity as MainActivity
 
+        if(MyApplication.preferences.getIsFirstLoginView() == true) {
+            MyApplication.preferences.setIsFirstLoginView(false)
+
+            checkNotificationPermission()
+        }
+
         binding.run {
             buttonKakao.setOnClickListener {
                 // 카카오 로그인
@@ -85,6 +97,25 @@ class LoginFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    fun checkNotificationPermission() {
+        // 알림 권한 설정
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            PackageManager.PERMISSION_DENIED == ContextCompat.checkSelfPermission(
+                mainActivity,
+                Manifest.permission.POST_NOTIFICATIONS
+            )
+        ) {
+            // 푸쉬 권한 없음 -> 권한 요청
+            ActivityCompat.requestPermissions(
+                mainActivity,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                123
+            )
+        } else {
+            // 이미 권한이 있는 경우 바로 화면 전환
+        }
     }
 
     override fun onResume() {

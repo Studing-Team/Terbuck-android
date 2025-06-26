@@ -10,6 +10,7 @@ import android.view.View
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.google.firebase.messaging.FirebaseMessaging
 import com.terbuck.terbuck.R
 import com.terbuck.terbuck.databinding.ActivityMainBinding
 import com.terbuck.terbuck.ui.home.HomeFragment
@@ -26,6 +27,7 @@ import java.security.NoSuchAlgorithmException
 class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
+    lateinit var sharedPreferenceManager: PreferenceUtil
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +36,7 @@ class MainActivity : AppCompatActivity() {
         MyApplication.preferences = PreferenceUtil(applicationContext)
 
         setBottomNavigationView()
+        setFCMToken()
 
         binding.bottomNavBar.itemIconTintList = null
 
@@ -84,6 +87,27 @@ class MainActivity : AppCompatActivity() {
 
     fun hideBottomNavigation(isHide: Boolean) {
         binding.bottomNavBar.visibility = if(isHide) View.GONE else View.VISIBLE
+    }
+
+    fun setFCMToken() {
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.d("FCM Token", "Fetching FCM registration token failed", task.exception)
+                return@addOnCompleteListener
+            }
+
+            // Get new FCM registration token
+            val token = task.result
+            Log.d("FCM Token", "$token")
+            MyApplication.preferences.setFCMToken(token)
+            Log.d("FCM Token", "FCM 토큰 : ${MyApplication.preferences.getFCMToken()}")
+
+            if (this::sharedPreferenceManager.isInitialized) {
+                Log.d("FCM Token", "this::sharedPreferenceManager.isInitialized")
+                sharedPreferenceManager.setFCMToken(token)
+            }
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
