@@ -13,7 +13,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.terbuck.terbuck.R
-import com.terbuck.terbuck.api.TokenManager
 import com.terbuck.terbuck.databinding.FragmentHomeBinding
 import com.terbuck.terbuck.ui.BasicToast
 import com.terbuck.terbuck.ui.MainActivity
@@ -27,6 +26,8 @@ import android.location.Location
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.terbuck.terbuck.ui.mypage.MypageNotificationFragment
+import com.terbuck.terbuck.ui.user.StudentCardRegisterFragment
 import com.terbuck.terbuck.utils.MyApplication.Companion.isRegisterStudentCard
 
 
@@ -110,7 +111,10 @@ class HomeFragment : Fragment() {
     }
 
     fun initView() {
-        mainActivity.hideBottomNavigation(false)
+        mainActivity.run {
+            hideBottomNavigation(false)
+        }
+        showToast()
 
         if(MyApplication.preferences.getIsFirst() == true) {
             MyApplication.preferences.setIsFirst(false)
@@ -142,7 +146,8 @@ class HomeFragment : Fragment() {
                         R.drawable.ic_face,
                         resources.getString(R.string.register_button),
                         mainActivity.binding.bottomNavBar,
-                        binding.root
+                        binding.root,
+                        StudentCardRegisterFragment()
                     )
                 }
             }
@@ -193,6 +198,38 @@ class HomeFragment : Fragment() {
             .addOnFailureListener {
 
             }
+    }
+
+    fun showToast() {
+        binding.root.post {
+            if(MyApplication.isUniversityChanged) {
+                MyApplication.isUniversityChanged = false
+
+                BasicToast.showBasicButtonToast(
+                    requireContext(),
+                    mainActivity,
+                    "학교가 변경되었어요",
+                    R.drawable.ic_pencil,
+                    resources.getString(R.string.re_register_button),
+                    mainActivity.binding.bottomNavBar,
+                    binding.root,
+                    StudentCardRegisterFragment()
+                )
+            } else if(MyApplication.isStudentCardChanged) {
+                MyApplication.isStudentCardChanged = false
+
+                BasicToast.showBasicButtonToast(
+                    requireContext(),
+                    mainActivity,
+                    "등록까지 최대 24시간이 걸려요",
+                    R.drawable.ic_bell,
+                    resources.getString(R.string.notification_button),
+                    mainActivity.binding.bottomNavBar,
+                    binding.root,
+                    MypageNotificationFragment()
+                )
+            }
+        }
     }
 
 }

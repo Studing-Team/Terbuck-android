@@ -106,6 +106,8 @@ class StudentCardRegisterFragment : Fragment() {
             buttonRegister.setOnClickListener {
                 // 학생증 등록
                 viewModel.registerStudentCard(mainActivity, studentCardImage, editTextName.text.toString(), editTextStudentId.text.toString()) {
+                    MyApplication.isStudentCardChanged = true
+
                     fragmentManager?.popBackStack()
                 }
             }

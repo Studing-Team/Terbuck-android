@@ -12,8 +12,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.terbuck.terbuck.R
 import com.terbuck.terbuck.api.TokenManager
 import com.terbuck.terbuck.databinding.FragmentMypageBinding
+import com.terbuck.terbuck.ui.BasicToast
 import com.terbuck.terbuck.ui.MainActivity
-import com.terbuck.terbuck.ui.terbuck.ImageDetailFragment
+import com.terbuck.terbuck.ui.user.StudentCardRegisterFragment
 import com.terbuck.terbuck.ui.user.UniversityFragment
 import com.terbuck.terbuck.utils.MyApplication
 import com.terbuck.terbuck.viewModel.UserViewModel
@@ -121,7 +122,11 @@ class MypageFragment : Fragment() {
     }
 
     fun initView() {
-        mainActivity.hideBottomNavigation(false)
+        mainActivity.run {
+            hideBottomNavigation(false)
+        }
+        showToast()
+
 
         binding.run {
             textViewUniversity.text = TokenManager(mainActivity).getUniversity()
@@ -146,6 +151,38 @@ class MypageFragment : Fragment() {
             }
 
             toolbar.textViewHead.text = "마이페이지"
+        }
+    }
+
+    fun showToast() {
+        binding.root.post {
+            if(MyApplication.isUniversityChanged) {
+                MyApplication.isUniversityChanged = false
+
+                BasicToast.showBasicButtonToast(
+                    requireContext(),
+                    mainActivity,
+                    "학교가 변경되었어요",
+                    R.drawable.ic_pencil,
+                    resources.getString(R.string.re_register_button),
+                    mainActivity.binding.bottomNavBar,
+                    binding.root,
+                    StudentCardRegisterFragment()
+                )
+            } else if(MyApplication.isStudentCardChanged) {
+                MyApplication.isStudentCardChanged = false
+
+                BasicToast.showBasicButtonToast(
+                    requireContext(),
+                    mainActivity,
+                    "등록까지 최대 24시간이 걸려요",
+                    R.drawable.ic_bell,
+                    resources.getString(R.string.notification_button),
+                    mainActivity.binding.bottomNavBar,
+                    binding.root,
+                    MypageNotificationFragment()
+                )
+            }
         }
     }
 

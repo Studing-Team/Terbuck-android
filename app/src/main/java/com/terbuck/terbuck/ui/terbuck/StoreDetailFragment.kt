@@ -21,6 +21,7 @@ import com.terbuck.terbuck.ui.terbuck.adapter.PartnershipImageAdapter
 import com.terbuck.terbuck.ui.terbuck.adapter.StoreBenefitAdapter
 import com.terbuck.terbuck.ui.terbuck.adapter.StoreImageAdapter
 import com.terbuck.terbuck.ui.user.StudentCardFragment
+import com.terbuck.terbuck.ui.user.StudentCardRegisterFragment
 import com.terbuck.terbuck.utils.MyApplication
 import com.terbuck.terbuck.viewModel.PartnershipViewModel
 
@@ -206,7 +207,8 @@ class StoreDetailFragment : Fragment() {
                             R.drawable.ic_face,
                             resources.getString(R.string.register_button),
                             mainActivity.binding.bottomNavBar,
-                            binding.root
+                            binding.root,
+                            StudentCardRegisterFragment()
                         )
                     }
                 }
