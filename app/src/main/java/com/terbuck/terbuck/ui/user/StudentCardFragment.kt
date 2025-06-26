@@ -40,8 +40,17 @@ class StudentCardFragment : DialogFragment() {
             }
 
             buttonReRegister.setOnClickListener {
+                val bundle = Bundle().apply {
+                    putBoolean("isEdit", true)
+                }
+
+                // 전달할 Fragment 생성
+                var nextFragment = StudentCardRegisterFragment().apply {
+                    arguments = bundle
+                }
+
                 mainActivity.supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainerView, StudentCardRegisterFragment())
+                    .replace(R.id.fragmentContainerView, nextFragment)
                     .addToBackStack(null)
                     .commit()
 

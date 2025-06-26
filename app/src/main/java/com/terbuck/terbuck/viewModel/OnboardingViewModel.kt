@@ -85,7 +85,6 @@ class OnboardingViewModel: ViewModel() {
                         } else {
                             // 홈화면 이동
                             onSuccess()
-                            activity.setBottomNavigationHome()
                         }
 
                     } else {

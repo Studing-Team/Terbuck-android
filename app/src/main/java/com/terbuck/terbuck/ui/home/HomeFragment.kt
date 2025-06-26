@@ -125,7 +125,7 @@ class HomeFragment : Fragment() {
         }
 
         binding.run {
-            if(isRegisterStudentCard) {
+            if(MyApplication.isRegisterStudentCard) {
                 // 학생증 등록 O
                 toolbar.imageViewCard.setImageResource(R.drawable.ic_studentcard_green10)
             } else {

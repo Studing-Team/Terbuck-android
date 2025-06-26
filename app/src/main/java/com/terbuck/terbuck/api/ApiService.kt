@@ -68,6 +68,12 @@ interface ApiService {
         @PartMap parameters: Map<String, @JvmSuppressWildcards RequestBody>
     ): Call<BaseResponse<String?>>
 
+    // 학생증 삭제
+    @DELETE("/member/studentID")
+    fun deleteStudentCard(
+        @Header("authorization") token: String
+    ): Call<BaseResponse<String?>>
+
     // 학생증 조회
     @GET("/member/studentID")
     fun getStudentCard(

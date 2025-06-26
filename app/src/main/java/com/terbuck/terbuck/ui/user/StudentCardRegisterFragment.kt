@@ -89,13 +89,6 @@ class StudentCardRegisterFragment : Fragment() {
         applyWindowInsetsListenerForKeyboard(binding.scrollView)
         BasicToast.showBasicToast(requireContext(), "얼굴, 이름, 학번이 보이는 이미지를 넣어주세요", R.drawable.ic_star, binding.buttonRegister)
 
-        ViewCompat.setOnApplyWindowInsetsListener(requireActivity().window.decorView.rootView) { _, insets ->
-            val sysBarInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-            updateViewPositionForKeyboard(imeHeight - sysBarInsets.bottom)
-            insets
-        }
-
         binding.run {
             scrollView.setOnTouchListener { v, event ->
                 mainActivity.hideKeyboard()
@@ -118,11 +111,24 @@ class StudentCardRegisterFragment : Fragment() {
             }
 
             buttonRegister.setOnClickListener {
-                // 학생증 등록
-                viewModel.registerStudentCard(mainActivity, studentCardImage, editTextName.text.toString(), editTextStudentId.text.toString()) {
-                    MyApplication.isStudentCardChanged = true
+                if(arguments?.getBoolean("isEdit") == true) {
+                    // 학생증 삭제 후 등록
+                    viewModel.deleteStudentCard(mainActivity) {
+                        MyApplication.isRegisterStudentCard = false
 
-                    fragmentManager?.popBackStack()
+                        viewModel.registerStudentCard(mainActivity, studentCardImage, editTextName.text.toString(), editTextStudentId.text.toString()) {
+                            MyApplication.isStudentCardChanged = true
+
+                            fragmentManager?.popBackStack()
+                        }
+                    }
+                } else {
+                    // 학생증 등록
+                    viewModel.registerStudentCard(mainActivity, studentCardImage, editTextName.text.toString(), editTextStudentId.text.toString()) {
+                        MyApplication.isStudentCardChanged = true
+
+                        fragmentManager?.popBackStack()
+                    }
                 }
             }
         }
@@ -144,6 +150,13 @@ class StudentCardRegisterFragment : Fragment() {
 
     fun initView() {
         mainActivity.hideBottomNavigation(true)
+
+        ViewCompat.setOnApplyWindowInsetsListener(requireActivity().window.decorView.rootView) { _, insets ->
+            val sysBarInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            updateViewPositionForKeyboard(imeHeight - sysBarInsets.bottom)
+            insets
+        }
 
         binding.run {
             toolbar.run {

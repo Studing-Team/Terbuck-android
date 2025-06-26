@@ -62,8 +62,7 @@ class UniversityFragment : Fragment() {
                     viewModel.editUniversity(mainActivity, selectedSchool) {
                         TokenManager(mainActivity).saveUniversity(selectedSchool)
                         MyApplication.isUniversityChanged = true
-
-                        userViewModel.getStudentCard(mainActivity)
+                        MyApplication.isRegisterStudentCard = false
 
                         fragmentManager?.popBackStack()
                     }
