@@ -18,6 +18,16 @@ class PreferenceUtil(context: Context) {
         return preferences.getBoolean("isFirst", true)
     }
 
+    fun setIsFirstLoginView(value: Boolean) {
+        val editor = preferences.edit()
+        editor.putBoolean("isFirstLoginView", value)
+        editor.apply()
+    }
+
+    fun getIsFirstLoginView(): Boolean {
+        return preferences.getBoolean("isFirstLoginView", true)
+    }
+
     fun setFCMToken(token: String) {
         preferences.edit().putString("FCM_TOKEN", token).apply()
     }
