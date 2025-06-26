@@ -52,6 +52,13 @@ class MypageFragment : Fragment() {
                     .commit()
             }
 
+            layoutNotification.setOnClickListener {
+                mainActivity.supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainerView, MypageNotificationFragment())
+                    .addToBackStack(null)
+                    .commit()
+            }
+
             layoutQna.setOnClickListener {
                 // 카카오톡 채널
                 var intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://pf.kakao.com/_BzmZn"))
