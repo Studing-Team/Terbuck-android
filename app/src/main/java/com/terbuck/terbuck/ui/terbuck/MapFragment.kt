@@ -1,21 +1,13 @@
 package com.terbuck.terbuck.ui.terbuck
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.content.res.Resources
-import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
-import android.view.DragEvent
-import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
-import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,20 +26,15 @@ import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.terbuck.terbuck.BuildConfig
 import com.terbuck.terbuck.R
-import com.terbuck.terbuck.api.response.terbuck.MapStoreInfo
 import com.terbuck.terbuck.api.response.terbuck.MapStoreListResponse
 import com.terbuck.terbuck.databinding.FragmentMapBinding
 import com.terbuck.terbuck.ui.MainActivity
-import com.terbuck.terbuck.ui.terbuck.adapter.PartnershipImageAdapter
 import com.terbuck.terbuck.ui.terbuck.adapter.CategoryAdapter
 import com.terbuck.terbuck.ui.terbuck.adapter.StoreAdapter
-import com.terbuck.terbuck.utils.MainUtil
 import com.terbuck.terbuck.utils.MainUtil.getCategoryIndex
 import com.terbuck.terbuck.utils.MainUtil.getDrawableResIds
-import com.terbuck.terbuck.utils.MainUtil.setStatusBarTransparent
 import com.terbuck.terbuck.utils.MainUtil.toPx
 import com.terbuck.terbuck.viewModel.PartnershipViewModel
-import kotlin.text.replace
 
 class MapFragment : Fragment(), OnMapReadyCallback {
 
@@ -118,7 +105,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             recyclerViewCategory.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
                     val height = recyclerViewCategory.measuredHeight
-                    Log.d("터벅터벅", "RecyclerViewCategory 높이 = $height")
 
                     bottomSheetBehavior.peekHeight = (height+28+34).toPx()
 
@@ -144,27 +130,42 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 }
             })
 
+            // 리사이클러뷰 항목이 모두 보이는지 체크
+            binding.recyclerViewStore.post {
+                val canScrollMore = binding.recyclerViewStore.canScrollVertically(1)
+                BottomSheetBehavior.from(binding.bottomSheet).isDraggable = !canScrollMore
+            }
+
 
             bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     when (newState) {
                         BottomSheetBehavior.STATE_EXPANDED -> {
-                            bottomSheetBehavior.isDraggable = false
+                            // 지도 스크롤 막기
+//                            naverMap.uiSettings.isScrollGesturesEnabled = false
+                            val canScrollMore = binding.recyclerViewStore.canScrollVertically(1)
+                            bottomSheetBehavior.isDraggable = !canScrollMore
                         }
                         BottomSheetBehavior.STATE_COLLAPSED,
-                        BottomSheetBehavior.STATE_HALF_EXPANDED,
                         BottomSheetBehavior.STATE_DRAGGING,
                         BottomSheetBehavior.STATE_SETTLING -> {
+                            // 지도 스크롤 허용
+//                            naverMap.uiSettings.isScrollGesturesEnabled = true
                             bottomSheetBehavior.isDraggable = true
                         }
-
                     }
                 }
 
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                    // 필요 시 애니메이션 처리 가능
+                    // Optional: 애니메이션 효과 등
                 }
             })
+
+            binding.bottomsheetContent.setOnTouchListener { _, _ ->
+                BottomSheetBehavior.from(binding.bottomSheet).isDraggable = true
+                false // false를 반환해야 터치 이벤트가 하위 뷰에도 전달됩니다
+            }
+
 
 
             recyclerViewCategory.apply {
@@ -230,7 +231,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             itemClickListener = object : StoreAdapter.OnItemClickListener {
                 override fun onItemClick(position: Int) {
                     // 스토어 상세 화면 이동
-//                    viewModel.getStoreDetailInfo(mainActivity, getStoreInfo?.list?.get(position)?.shopId?.toInt() ?: 0)
                     var nextFragment = StoreDetailFragment()
 
                     val bundle = Bundle().apply { putInt("storeId",
@@ -377,7 +377,16 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 binding.bottomSheet.requestLayout()
 
                 getStoreInfo = it
-                storeAdapter.updateList(getStoreInfo?.list)
+                binding.run {
+                    if(getStoreInfo?.list?.size == 0) {
+                        textViewEmpty.visibility = View.VISIBLE
+                        recyclerViewStore.visibility = View.GONE
+                    } else {
+                        textViewEmpty.visibility = View.GONE
+                        recyclerViewStore.visibility = View.VISIBLE
+                        storeAdapter.updateList(getStoreInfo?.list)
+                    }
+                }
 
                 // 기존 마커 클리어
                 markers.forEach { it.map = null }
@@ -416,11 +425,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
                             layoutStore.setOnClickListener {
                                 // 스토어 상세 화면 이동
-//                                viewModel.getStoreDetailInfo(mainActivity, getStoreInfo?.list?.get(m)?.shopId?.toInt() ?: 0)
                                 var nextFragment = StoreDetailFragment()
 
                                 val bundle = Bundle().apply { putInt("storeId",
-                                    getStoreInfo?.list?.get(m)?.shopId?.toInt() ?: 0
+                                    storeInfo?.shopId?.toInt() ?: 0
                                 ) }
 
                                 nextFragment = StoreDetailFragment().apply {
