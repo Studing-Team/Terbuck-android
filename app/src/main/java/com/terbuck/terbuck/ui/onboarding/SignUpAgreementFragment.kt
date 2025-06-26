@@ -1,5 +1,7 @@
 package com.terbuck.terbuck.ui.onboarding
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,8 +10,7 @@ import androidx.fragment.app.Fragment
 import com.terbuck.terbuck.R
 import com.terbuck.terbuck.databinding.FragmentSignUpAgreementBinding
 import com.terbuck.terbuck.ui.MainActivity
-import com.terbuck.terbuck.ui.user.SchoolFragment
-import com.terbuck.terbuck.ui.user.adapter.SchoolAdapter
+import com.terbuck.terbuck.ui.user.UniversityFragment
 
 class SignUpAgreementFragment : Fragment() {
 
@@ -34,9 +35,21 @@ class SignUpAgreementFragment : Fragment() {
             imageViewCheckbox2.setOnClickListener { toggleAgreement(1) }
             textViewAgreementAgreement2.setOnClickListener { toggleAgreement(1) }
 
+            imageViewNext1.setOnClickListener {
+                // 서비스 이용 약관
+                var intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://terbuck.notion.site/11905c1258e080ee91cecfb7ff633bab"))
+                startActivity(intent)
+            }
+
+            imageViewNext2.setOnClickListener {
+                // 개인정보 수집 및 이용동의
+                var intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://terbuck.notion.site/11905c1258e08063bba2f82d320de454"))
+                startActivity(intent)
+            }
+
             buttonNext.setOnClickListener {
                 mainActivity.supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainerView, SchoolFragment())
+                    .replace(R.id.fragmentContainerView, UniversityFragment())
                     .addToBackStack(null)
                     .commit()
             }

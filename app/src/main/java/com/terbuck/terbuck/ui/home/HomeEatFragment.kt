@@ -8,14 +8,11 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.terbuck.terbuck.R
 import com.terbuck.terbuck.api.response.home.StoreInfo
 import com.terbuck.terbuck.databinding.FragmentHomeEatBinding
 import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.ui.home.adapter.HomeStoreAdapter
-import com.terbuck.terbuck.ui.user.adapter.SchoolAdapter
 import com.terbuck.terbuck.viewModel.HomeViewModel
-import com.terbuck.terbuck.viewModel.OnboardingViewModel
 
 class HomeEatFragment : Fragment() {
 

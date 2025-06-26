@@ -16,6 +16,7 @@ import com.terbuck.terbuck.R
 import com.terbuck.terbuck.databinding.FragmentLoginBinding
 import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.viewModel.OnboardingViewModel
+import com.terbuck.terbuck.viewModel.UserViewModel
 
 class LoginFragment : Fragment() {
 
@@ -23,6 +24,9 @@ class LoginFragment : Fragment() {
     lateinit var mainActivity: MainActivity
     private val viewModel: OnboardingViewModel by lazy {
         ViewModelProvider(requireActivity())[OnboardingViewModel::class.java]
+    }
+    private val userViewModel: UserViewModel by lazy {
+        ViewModelProvider(requireActivity())[UserViewModel::class.java]
     }
 
 
@@ -35,7 +39,9 @@ class LoginFragment : Fragment() {
         } else if (token != null) {
             Log.i(TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
             // 로그인 기능 구현
-            viewModel.login(mainActivity, token.accessToken.toString())
+            viewModel.login(mainActivity, token.accessToken.toString()) {
+                userViewModel.getStudentCard(mainActivity)
+            }
         }
     }
 
@@ -67,7 +73,9 @@ class LoginFragment : Fragment() {
                         } else if (token != null) {
                             Log.i(TAG, "카카오톡으로 로그인 성공 ${token.accessToken}")
                             // 로그인 기능 구현
-                            viewModel.login(mainActivity, token.accessToken.toString())
+                            viewModel.login(mainActivity, token.accessToken.toString()) {
+                                userViewModel.getStudentCard(mainActivity)
+                            }
                         }
                     }
                 } else {

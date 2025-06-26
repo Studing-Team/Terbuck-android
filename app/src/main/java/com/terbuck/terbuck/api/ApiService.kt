@@ -2,6 +2,7 @@ package com.terbuck.terbuck.api
 
 import com.terbuck.terbuck.api.request.onboarding.LoginRequest
 import com.terbuck.terbuck.api.request.onboarding.SignUpRequest
+import com.terbuck.terbuck.api.request.user.UniversityRequest
 import com.terbuck.terbuck.api.response.BaseResponse
 import com.terbuck.terbuck.api.response.home.HomePartnershipResponse
 import com.terbuck.terbuck.api.response.home.HomeStoreResponse
@@ -14,9 +15,11 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
@@ -38,6 +41,16 @@ interface ApiService {
         @Body request: SignUpRequest
     ): Call<BaseResponse<String>>
 
+    // 회원 탈퇴
+    @DELETE("/member")
+    fun withdrawal(
+        @Header("authorization") token: String
+    ): Call<BaseResponse<String?>>
+
+    // 대학교 리스트 조회
+    @GET("/info/universities")
+    fun getUniversities(): Call<BaseResponse<List<String>>>
+
     // 학생증 등록
     @Multipart
     @PUT("/member/studentID")
@@ -52,6 +65,13 @@ interface ApiService {
     fun getStudentCard(
         @Header("authorization") token: String
     ): Call<BaseResponse<StudentCardResponse>>
+
+    // 대학교 변경
+    @PATCH("/member/univ")
+    fun editUniversity(
+        @Header("authorization") token: String,
+        @Body request: UniversityRequest
+    ): Call<BaseResponse<String?>>
 
     // 홈화면 제휴 업체 정보 조회
     @GET("/shops/home")

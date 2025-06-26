@@ -11,5 +11,8 @@ class MyApplication : Application() {
         var longitude: String? = null
 
         var isRegisterStudentCard = false
+
+        var isUniversityChanged = false
+        var isStudentCardChanged = false
     }
 }

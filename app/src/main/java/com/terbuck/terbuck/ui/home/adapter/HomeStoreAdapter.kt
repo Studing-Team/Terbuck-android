@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.terbuck.terbuck.R
 import com.terbuck.terbuck.api.response.home.StoreInfo
 import com.terbuck.terbuck.databinding.RowHomeStoreBinding
-import com.terbuck.terbuck.databinding.RowSchoolBinding
 
 class HomeStoreAdapter(
     private var activity: Activity,
