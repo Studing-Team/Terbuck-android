@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import com.terbuck.terbuck.R
 import com.terbuck.terbuck.api.TokenManager
@@ -67,6 +68,32 @@ class MypageFragment : Fragment() {
                 // 개인정보 수집 및 이용동의
                 var intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://terbuck.notion.site/11905c1258e08063bba2f82d320de454"))
                 startActivity(intent)
+            }
+
+            layoutLogout.setOnClickListener {
+                // 로그아웃
+                val dialog = DialogBasic("로그아웃 하시겠습니까?", null, "취소", "로그아웃")
+
+                dialog.setBasicDialogInterface(object : BasicButtonDialogInterface {
+                    override fun onClickYesButton() {
+                        // 로그아웃
+                    }
+                })
+
+                dialog.show(mainActivity.supportFragmentManager, "DialogLogout")
+            }
+
+            layoutWithdrawal.setOnClickListener {
+                // 회원탈퇴
+                val dialog = DialogBasic("정말 탈퇴하시겠습니까?", "탈퇴 회원의 정보는 완전히 삭제되며\n터벅을 떠나면 회원가입부터 다시 해야해요", "취소", "탙퇴할게요")
+
+                dialog.setBasicDialogInterface(object : BasicButtonDialogInterface {
+                    override fun onClickYesButton() {
+                        // 회원탈퇴
+                    }
+                })
+
+                dialog.show(mainActivity.supportFragmentManager, "DialogWithdrawal")
             }
         }
 
