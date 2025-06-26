@@ -75,6 +75,8 @@ class StudentCardRegisterFragment : Fragment() {
                         imageViewStudentCard.setImageURI(uri)
                         textViewImageDescription.visibility = View.INVISIBLE
                     }
+
+                    checkComplete()
                 } else {
                     Log.e("ImageCompression", "압축된 파일이 존재하지 않거나 비어 있습니다.")
                     Toast.makeText(mainActivity, "파일 변환에 실패하였습니다.\n이미지를 다시 업로드해주세요", Toast.LENGTH_SHORT).show()
