@@ -2,6 +2,7 @@ package com.terbuck.terbuck.api
 
 import com.terbuck.terbuck.api.request.onboarding.LoginRequest
 import com.terbuck.terbuck.api.request.onboarding.SignUpRequest
+import com.terbuck.terbuck.api.request.user.UniversityRequest
 import com.terbuck.terbuck.api.response.BaseResponse
 import com.terbuck.terbuck.api.response.home.HomePartnershipResponse
 import com.terbuck.terbuck.api.response.home.HomeStoreResponse
@@ -17,6 +18,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
@@ -56,6 +58,13 @@ interface ApiService {
     fun getStudentCard(
         @Header("authorization") token: String
     ): Call<BaseResponse<StudentCardResponse>>
+
+    // 대학교 변경
+    @PATCH("/member/univ")
+    fun editUniversity(
+        @Header("authorization") token: String,
+        @Body request: UniversityRequest
+    ): Call<BaseResponse<String?>>
 
     // 홈화면 제휴 업체 정보 조회
     @GET("/shops/home")

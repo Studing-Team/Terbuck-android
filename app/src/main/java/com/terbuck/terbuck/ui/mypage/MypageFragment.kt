@@ -46,7 +46,7 @@ class MypageFragment : Fragment() {
                 }
 
                 mainActivity.supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainerView, UniversityFragment())
+                    .replace(R.id.fragmentContainerView, nextFragment)
                     .addToBackStack(null)
                     .commit()
             }
@@ -79,6 +79,8 @@ class MypageFragment : Fragment() {
     }
 
     fun initView() {
+        mainActivity.hideBottomNavigation(false)
+
         binding.run {
             textViewUniversity.text = TokenManager(mainActivity).getUniversity()
             if(MyApplication.isRegisterStudentCard) {
