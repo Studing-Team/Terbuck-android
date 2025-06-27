@@ -74,7 +74,7 @@ class SearchFragment : Fragment() {
 
     private fun initView() {
         mainActivity.hideBottomNavigation(true)
-        
+
         binding.toolbar.textViewSearch.run {
             setOnTouchListener { v, event ->
                 if (event.action == MotionEvent.ACTION_UP) {
@@ -122,13 +122,9 @@ class SearchFragment : Fragment() {
                     val store = filteredStoreList[position]
                     MyApplication.preferences.saveRecentSearchLimited(mainActivity, store.name)
 
-                    val bundle = Bundle().apply { putInt("storeId", store.shopId) }
-                    val nextFragment = StoreDetailFragment().apply { arguments = bundle }
+                    MyApplication.selectedStoreId = store.shopId
 
-                    mainActivity.supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragmentContainerView, nextFragment)
-                        .addToBackStack(null)
-                        .commit()
+                    fragmentManager?.popBackStack()
                 }
             }
         }
@@ -140,6 +136,8 @@ class SearchFragment : Fragment() {
                     MyApplication.preferences.removeRecentSearch(mainActivity,
                         MyApplication.preferences.getRecentSearchesLimited(mainActivity)[position]
                     )
+
+                    recentSearchAdapter.updateList(MyApplication.preferences.getRecentSearchesLimited(mainActivity))
                 }
             }
         }

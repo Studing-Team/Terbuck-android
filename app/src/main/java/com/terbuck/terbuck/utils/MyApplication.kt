@@ -14,5 +14,7 @@ class MyApplication : Application() {
 
         var isUniversityChanged = false
         var isStudentCardChanged = false
+
+        var selectedStoreId: Int? = null
     }
 }

@@ -42,30 +42,30 @@ class PreferenceUtil(context: Context) {
     fun saveRecentSearchLimited(context: Context, keyword: String) {
         val prefs = context.getSharedPreferences("recent_search", Context.MODE_PRIVATE)
         val existing = prefs.getString("keywords", "") ?: ""
-        val list = existing.split(",").filter { it.isNotBlank() }.toMutableList()
+        val list = existing.split("|").filter { it.isNotBlank() }.toMutableList()
 
         list.remove(keyword)
         list.add(0, keyword)
 
         if (list.size > 10) list.removeLast()
 
-        prefs.edit().putString("keywords", list.joinToString(",")).apply()
+        prefs.edit().putString("keywords", list.joinToString("|")).apply()
     }
 
     fun getRecentSearchesLimited(context: Context): List<String> {
         val prefs = context.getSharedPreferences("recent_search", Context.MODE_PRIVATE)
         val data = prefs.getString("keywords", "") ?: ""
-        return data.split(",").filter { it.isNotBlank() }
+        return data.split("|").filter { it.isNotBlank() }
     }
 
 
     fun removeRecentSearch(context: Context, keyword: String) {
         val prefs = context.getSharedPreferences("recent_search", Context.MODE_PRIVATE)
         val existing = prefs.getString("keywords", "") ?: ""
-        val list = existing.split(",").filter { it.isNotBlank() }.toMutableList()
+        val list = existing.split("|").filter { it.isNotBlank() }.toMutableList()
 
         list.remove(keyword)
 
-        prefs.edit().putString("keywords", list.joinToString(",")).apply()
+        prefs.edit().putString("keywords", list.joinToString("|")).apply()
     }
 }

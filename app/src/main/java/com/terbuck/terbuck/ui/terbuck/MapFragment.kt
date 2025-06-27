@@ -34,6 +34,7 @@ import com.terbuck.terbuck.ui.terbuck.adapter.StoreAdapter
 import com.terbuck.terbuck.utils.MainUtil.getCategoryIndex
 import com.terbuck.terbuck.utils.MainUtil.getDrawableResIds
 import com.terbuck.terbuck.utils.MainUtil.toPx
+import com.terbuck.terbuck.utils.MyApplication
 import com.terbuck.terbuck.viewModel.PartnershipViewModel
 
 class MapFragment : Fragment(), OnMapReadyCallback {
@@ -129,6 +130,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
 
         mainActivity.hideBottomNavigation(false)
+
+        if (MyApplication.selectedStoreId != null) {
+            moveToStoreMarker(MyApplication.selectedStoreId ?: -1)
+            MyApplication.selectedStoreId = null
+        }
     }
 
     fun initAdapter() {
@@ -400,39 +406,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     marker.map = naverMap
                     marker.setOnClickListener {
                         // 하단 바 표시 및 마커 이동 처리
-                        binding.run {
-                            bottomSheet.visibility = View.GONE
-                            bottomSheetStoreList.layoutStore.visibility = View.VISIBLE
-                        }
+                        var storeInfo = getStoreInfo?.list?.get(m)
+                        moveToStoreMarker(storeInfo?.shopId?.toInt() ?: 0)
 
-                        binding.bottomSheetStoreList.run {
-                            var storeInfo = getStoreInfo?.list?.get(m)
-                            var categoryImage = getDrawableResIds(R.array.partnership_category_image_unselected, resources)
-
-                            Glide.with(mainActivity).load(storeInfo?.thumbnailImage)
-                                .into(imageViewStore)
-                            textViewStoreName.text = storeInfo?.name
-                            textViewStoreAddress.text = storeInfo?.address
-                            textViewBenefitNum.text = "혜택 ${storeInfo?.benefitCount}가지"
-                            imageViewCategory.setImageResource(categoryImage[getCategoryIndex(storeInfo?.category) + 1])
-
-                            layoutStore.setOnClickListener {
-                                // 스토어 상세 화면 이동
-                                var nextFragment = StoreDetailFragment()
-
-                                val bundle = Bundle().apply { putInt("storeId",
-                                    storeInfo?.shopId?.toInt() ?: 0
-                                ) }
-
-                                nextFragment = StoreDetailFragment().apply {
-                                    arguments = bundle
-                                }
-                                mainActivity.supportFragmentManager.beginTransaction()
-                                    .replace(R.id.fragmentContainerView, nextFragment)
-                                    .addToBackStack(null)
-                                    .commit()
-                            }
-                        }
 
                         val cameraUpdate = CameraUpdate.scrollTo(marker.position).animate(CameraAnimation.Easing)
                         naverMap.moveCamera(cameraUpdate)
@@ -445,8 +421,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                         binding.run {
                             bottomSheet.visibility = View.VISIBLE
                             bottomSheetStoreList.layoutStore.visibility = View.GONE
+                            BottomSheetBehavior.from(bottomSheet).isDraggable = true
                         }
-
+                        
                         fetchStoresBasedOnMapView()
                     }
                 }
@@ -481,6 +458,41 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         return markerResId
     }
+
+    fun moveToStoreMarker(shopId: Int) {
+        val store = getStoreInfo?.list?.find { it.shopId == shopId } ?: return
+        val markerIndex = getStoreInfo?.list?.indexOf(store) ?: return
+
+        val position = LatLng(store.latitude, store.longitude)
+        val cameraUpdate = CameraUpdate.scrollTo(position).animate(CameraAnimation.Easing)
+        naverMap.moveCamera(cameraUpdate)
+
+        // 기존 마커 클릭 리스너와 동일한 UI 표시
+        binding.run {
+            bottomSheet.visibility = View.GONE
+            bottomSheetStoreList.layoutStore.visibility = View.VISIBLE
+        }
+
+        binding.bottomSheetStoreList.run {
+            Glide.with(mainActivity).load(store.thumbnailImage)
+                .into(imageViewStore)
+            textViewStoreName.text = store.name
+            textViewStoreAddress.text = store.address
+            textViewBenefitNum.text = "혜택 ${store.benefitCount}가지"
+            imageViewCategory.setImageResource(getDrawableResIds(R.array.partnership_category_image_unselected, resources)[getCategoryIndex(store.category) + 1])
+
+            layoutStore.setOnClickListener {
+                val bundle = Bundle().apply { putInt("storeId", store.shopId) }
+                val nextFragment = StoreDetailFragment().apply { arguments = bundle }
+
+                mainActivity.supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainerView, nextFragment)
+                    .addToBackStack(null)
+                    .commit()
+            }
+        }
+    }
+
 
     private fun fetchStoresBasedOnMapView() {
         if (!this::naverMap.isInitialized) return // 지도 초기화 확인
