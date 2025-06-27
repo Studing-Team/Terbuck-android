@@ -74,6 +74,16 @@
                 android:background="@drawable/background_bottomsheet_handle" />
 
             <!-- 스토어 리스트 -->
+            <TextView
+                android:id="@+id/textView_empty"
+                style="@style/Text_Semi_16"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                android:text="등록된 매장이 없습니다"
+                android:textAlignment="center"
+                android:textColor="@color/black_10"/>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView_store"
                 android:layout_width="match_parent"

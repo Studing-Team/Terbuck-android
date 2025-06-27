@@ -103,7 +103,12 @@ class PartnershipDetailFragment : Fragment() {
                     }
 
                     imageUrls = it?.imageList
-                    partnershipImageAdapter.updateList(imageUrls)
+                    if(imageUrls?.size == 0) {
+                        recyclerViewPartnershipImage.visibility = View.GONE
+                    } else {
+                        recyclerViewPartnershipImage.visibility = View.VISIBLE
+                        partnershipImageAdapter.updateList(imageUrls)
+                    }
 
                     scrollView.post {
                         setupTooltipBehavior()

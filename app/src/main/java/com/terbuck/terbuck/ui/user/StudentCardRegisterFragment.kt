@@ -9,6 +9,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
@@ -16,9 +19,11 @@ import com.terbuck.terbuck.R
 import com.terbuck.terbuck.databinding.FragmentStudentCardRegisterBinding
 import com.terbuck.terbuck.ui.BasicToast
 import com.terbuck.terbuck.ui.MainActivity
+import com.terbuck.terbuck.ui.mypage.MypageNotificationFragment
 import com.terbuck.terbuck.utils.MainUtil
 import com.terbuck.terbuck.utils.MainUtil.applyWindowInsetsListenerForKeyboard
 import com.terbuck.terbuck.utils.MainUtil.hideKeyboard
+import com.terbuck.terbuck.utils.MyApplication
 import com.terbuck.terbuck.viewModel.OnboardingViewModel
 import com.terbuck.terbuck.viewModel.UserViewModel
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -70,6 +75,8 @@ class StudentCardRegisterFragment : Fragment() {
                         imageViewStudentCard.setImageURI(uri)
                         textViewImageDescription.visibility = View.INVISIBLE
                     }
+
+                    checkComplete()
                 } else {
                     Log.e("ImageCompression", "압축된 파일이 존재하지 않거나 비어 있습니다.")
                     Toast.makeText(mainActivity, "파일 변환에 실패하였습니다.\n이미지를 다시 업로드해주세요", Toast.LENGTH_SHORT).show()
@@ -104,11 +111,24 @@ class StudentCardRegisterFragment : Fragment() {
             }
 
             buttonRegister.setOnClickListener {
-                // 학생증 등록
-                viewModel.registerStudentCard(mainActivity, studentCardImage, editTextName.text.toString(), editTextStudentId.text.toString()) {
-                    MyApplication.isStudentCardChanged = true
+                if(arguments?.getBoolean("isEdit") == true) {
+                    // 학생증 삭제 후 등록
+                    viewModel.deleteStudentCard(mainActivity) {
+                        MyApplication.isRegisterStudentCard = false
 
-                    fragmentManager?.popBackStack()
+                        viewModel.registerStudentCard(mainActivity, studentCardImage, editTextName.text.toString(), editTextStudentId.text.toString()) {
+                            MyApplication.isStudentCardChanged = true
+
+                            fragmentManager?.popBackStack()
+                        }
+                    }
+                } else {
+                    // 학생증 등록
+                    viewModel.registerStudentCard(mainActivity, studentCardImage, editTextName.text.toString(), editTextStudentId.text.toString()) {
+                        MyApplication.isStudentCardChanged = true
+
+                        fragmentManager?.popBackStack()
+                    }
                 }
             }
         }
@@ -131,6 +151,13 @@ class StudentCardRegisterFragment : Fragment() {
     fun initView() {
         mainActivity.hideBottomNavigation(true)
 
+        ViewCompat.setOnApplyWindowInsetsListener(requireActivity().window.decorView.rootView) { _, insets ->
+            val sysBarInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            updateViewPositionForKeyboard(imeHeight - sysBarInsets.bottom)
+            insets
+        }
+
         binding.run {
             toolbar.run {
                 textViewHead.text = "학생증 등록"
@@ -139,6 +166,17 @@ class StudentCardRegisterFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun updateViewPositionForKeyboard(keyboardHeight: Int) {
+        val layoutParams =
+            binding.scrollView.layoutParams as ConstraintLayout.LayoutParams
+        if (keyboardHeight > 0) {
+            layoutParams.bottomMargin = keyboardHeight
+        } else {
+            layoutParams.bottomMargin = 0
+        }
+        binding.scrollView.layoutParams = layoutParams
     }
 
 }

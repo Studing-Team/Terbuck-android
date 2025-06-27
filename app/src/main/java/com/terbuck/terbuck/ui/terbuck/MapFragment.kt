@@ -1,21 +1,13 @@
 package com.terbuck.terbuck.ui.terbuck
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.content.res.Resources
-import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
-import android.view.DragEvent
-import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
-import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,20 +26,16 @@ import com.naver.maps.map.overlay.OverlayImage
 import com.naver.maps.map.util.FusedLocationSource
 import com.terbuck.terbuck.BuildConfig
 import com.terbuck.terbuck.R
-import com.terbuck.terbuck.api.response.terbuck.MapStoreInfo
 import com.terbuck.terbuck.api.response.terbuck.MapStoreListResponse
 import com.terbuck.terbuck.databinding.FragmentMapBinding
 import com.terbuck.terbuck.ui.MainActivity
-import com.terbuck.terbuck.ui.terbuck.adapter.PartnershipImageAdapter
 import com.terbuck.terbuck.ui.terbuck.adapter.CategoryAdapter
 import com.terbuck.terbuck.ui.terbuck.adapter.StoreAdapter
-import com.terbuck.terbuck.utils.MainUtil
 import com.terbuck.terbuck.utils.MainUtil.getCategoryIndex
 import com.terbuck.terbuck.utils.MainUtil.getDrawableResIds
-import com.terbuck.terbuck.utils.MainUtil.setStatusBarTransparent
 import com.terbuck.terbuck.utils.MainUtil.toPx
+import com.terbuck.terbuck.utils.MyApplication
 import com.terbuck.terbuck.viewModel.PartnershipViewModel
-import kotlin.text.replace
 
 class MapFragment : Fragment(), OnMapReadyCallback {
 
@@ -92,80 +80,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         initAdapter()
         observeViewModel()
+        setupBottomSheet()
+        setupRecyclerViews()
 
 
         binding.run {
             NaverMapSdk.getInstance(mainActivity).client =
                 NaverMapSdk.NaverCloudPlatformClient("${BuildConfig.MAP_API_KEY}")
-
-            val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
-
-            toolbar.buttonSearch.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    toolbar.buttonSearch.viewTreeObserver.removeOnGlobalLayoutListener(this)
-
-                    val screenHeight = Resources.getSystem().displayMetrics.heightPixels
-                    val toolbarBottom = toolbar.buttonSearch.bottom
-
-                    val maxHeight = screenHeight - toolbarBottom - 250 // 👈 이 높이가 BottomSheet의 maxHeight가 됨
-
-                    binding.bottomSheet.layoutParams.height = maxHeight
-                    binding.bottomSheet.requestLayout()
-                }
-            })
-
-
-            recyclerViewCategory.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    val height = recyclerViewCategory.measuredHeight
-                    Log.d("터벅터벅", "RecyclerViewCategory 높이 = $height")
-
-                    bottomSheetBehavior.peekHeight = (height+28+34).toPx()
-
-                    // 리스너 제거 (중복 호출 방지)
-                    binding.recyclerViewCategory.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                }
-            })
-
-            bottomSheetBehavior.run {
-                isFitToContents = true
-                skipCollapsed = false
-                isHideable = false
-                state = BottomSheetBehavior.STATE_COLLAPSED
-            }
-
-
-            recyclerViewStore.isNestedScrollingEnabled = true
-            recyclerViewStore.overScrollMode = View.OVER_SCROLL_IF_CONTENT_SCROLLS
-            recyclerViewStore.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    val canScrollUp = recyclerView.canScrollVertically(-1)
-                    bottomSheetBehavior.isDraggable = !canScrollUp
-                }
-            })
-
-
-            bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-                override fun onStateChanged(bottomSheet: View, newState: Int) {
-                    when (newState) {
-                        BottomSheetBehavior.STATE_EXPANDED -> {
-                            bottomSheetBehavior.isDraggable = false
-                        }
-                        BottomSheetBehavior.STATE_COLLAPSED,
-                        BottomSheetBehavior.STATE_HALF_EXPANDED,
-                        BottomSheetBehavior.STATE_DRAGGING,
-                        BottomSheetBehavior.STATE_SETTLING -> {
-                            bottomSheetBehavior.isDraggable = true
-                        }
-
-                    }
-                }
-
-                override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                    // 필요 시 애니메이션 처리 가능
-                }
-            })
-
 
             recyclerViewCategory.apply {
                 adapter = categoryAdapter
@@ -175,6 +96,13 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             recyclerViewStore.apply {
                 adapter = storeAdapter
                 layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            }
+
+            toolbar.buttonSearch.setOnClickListener {
+                mainActivity.supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainerView, SearchFragment())
+                    .addToBackStack(null)
+                    .commit()
             }
 
             toolbar.buttonLocation.setOnClickListener {
@@ -202,6 +130,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         }
 
         mainActivity.hideBottomNavigation(false)
+
+        if (MyApplication.selectedStoreId != null) {
+            moveToStoreMarker(MyApplication.selectedStoreId ?: -1)
+            MyApplication.selectedStoreId = null
+        }
     }
 
     fun initAdapter() {
@@ -230,7 +163,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             itemClickListener = object : StoreAdapter.OnItemClickListener {
                 override fun onItemClick(position: Int) {
                     // 스토어 상세 화면 이동
-//                    viewModel.getStoreDetailInfo(mainActivity, getStoreInfo?.list?.get(position)?.shopId?.toInt() ?: 0)
                     var nextFragment = StoreDetailFragment()
 
                     val bundle = Bundle().apply { putInt("storeId",
@@ -247,6 +179,73 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 }
             }
         }
+    }
+
+    private fun setupRecyclerViews() {
+        binding.recyclerViewStore.apply {
+            adapter = storeAdapter
+            layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            isNestedScrollingEnabled = false
+            overScrollMode = View.OVER_SCROLL_IF_CONTENT_SCROLLS
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    val canScrollUp = recyclerView.canScrollVertically(-1)
+                    BottomSheetBehavior.from(binding.bottomSheet).isDraggable = !canScrollUp
+                }
+            })
+        }
+    }
+
+
+    private fun setupBottomSheet() {
+        val bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet)
+        bottomSheetBehavior.run {
+            isFitToContents = true
+            skipCollapsed = false
+            isHideable = false
+            state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
+        binding.recyclerViewStore.post {
+            val canScrollMore = binding.recyclerViewStore.canScrollVertically(1)
+            bottomSheetBehavior.isDraggable = !canScrollMore
+        }
+
+        binding.bottomsheetContent.setOnTouchListener { _, _ ->
+            bottomSheetBehavior.isDraggable = true
+            false
+        }
+
+        binding.recyclerViewCategory.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                val height = binding.recyclerViewCategory.measuredHeight
+                bottomSheetBehavior.peekHeight = (height + 62).toPx()
+                binding.recyclerViewCategory.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+        })
+
+        binding.toolbar.buttonSearch.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                binding.toolbar.buttonSearch.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                val screenHeight = Resources.getSystem().displayMetrics.heightPixels
+                val toolbarBottom = binding.toolbar.buttonSearch.bottom
+                binding.bottomSheet.layoutParams.height = screenHeight - toolbarBottom - 300
+                binding.bottomSheet.requestLayout()
+            }
+        })
+
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                val canScrollMore = binding.recyclerViewStore.canScrollVertically(1)
+                bottomSheetBehavior.isDraggable = newState != BottomSheetBehavior.STATE_EXPANDED || !canScrollMore
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                if (!bottomSheetBehavior.isDraggable) {
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                }
+            }
+        })
     }
 
     private fun moveToCurrentLocation() {
@@ -377,7 +376,16 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 binding.bottomSheet.requestLayout()
 
                 getStoreInfo = it
-                storeAdapter.updateList(getStoreInfo?.list)
+                binding.run {
+                    if(getStoreInfo?.list?.size == 0) {
+                        textViewEmpty.visibility = View.VISIBLE
+                        recyclerViewStore.visibility = View.GONE
+                    } else {
+                        textViewEmpty.visibility = View.GONE
+                        recyclerViewStore.visibility = View.VISIBLE
+                        storeAdapter.updateList(getStoreInfo?.list)
+                    }
+                }
 
                 // 기존 마커 클리어
                 markers.forEach { it.map = null }
@@ -398,40 +406,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     marker.map = naverMap
                     marker.setOnClickListener {
                         // 하단 바 표시 및 마커 이동 처리
-                        binding.run {
-                            bottomSheet.visibility = View.GONE
-                            bottomSheetStoreList.layoutStore.visibility = View.VISIBLE
-                        }
+                        var storeInfo = getStoreInfo?.list?.get(m)
+                        moveToStoreMarker(storeInfo?.shopId?.toInt() ?: 0)
 
-                        binding.bottomSheetStoreList.run {
-                            var storeInfo = getStoreInfo?.list?.get(m)
-                            var categoryImage = getDrawableResIds(R.array.partnership_category_image_unselected, resources)
-
-                            Glide.with(mainActivity).load(storeInfo?.thumbnailImage)
-                                .into(imageViewStore)
-                            textViewStoreName.text = storeInfo?.name
-                            textViewStoreAddress.text = storeInfo?.address
-                            textViewBenefitNum.text = "혜택 ${storeInfo?.benefitCount}가지"
-                            imageViewCategory.setImageResource(categoryImage[getCategoryIndex(storeInfo?.category) + 1])
-
-                            layoutStore.setOnClickListener {
-                                // 스토어 상세 화면 이동
-//                                viewModel.getStoreDetailInfo(mainActivity, getStoreInfo?.list?.get(m)?.shopId?.toInt() ?: 0)
-                                var nextFragment = StoreDetailFragment()
-
-                                val bundle = Bundle().apply { putInt("storeId",
-                                    getStoreInfo?.list?.get(m)?.shopId?.toInt() ?: 0
-                                ) }
-
-                                nextFragment = StoreDetailFragment().apply {
-                                    arguments = bundle
-                                }
-                                mainActivity.supportFragmentManager.beginTransaction()
-                                    .replace(R.id.fragmentContainerView, nextFragment)
-                                    .addToBackStack(null)
-                                    .commit()
-                            }
-                        }
 
                         val cameraUpdate = CameraUpdate.scrollTo(marker.position).animate(CameraAnimation.Easing)
                         naverMap.moveCamera(cameraUpdate)
@@ -444,8 +421,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                         binding.run {
                             bottomSheet.visibility = View.VISIBLE
                             bottomSheetStoreList.layoutStore.visibility = View.GONE
+                            BottomSheetBehavior.from(bottomSheet).isDraggable = true
                         }
-
+                        
                         fetchStoresBasedOnMapView()
                     }
                 }
@@ -481,6 +459,41 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         return markerResId
     }
 
+    fun moveToStoreMarker(shopId: Int) {
+        val store = getStoreInfo?.list?.find { it.shopId == shopId } ?: return
+        val markerIndex = getStoreInfo?.list?.indexOf(store) ?: return
+
+        val position = LatLng(store.latitude, store.longitude)
+        val cameraUpdate = CameraUpdate.scrollTo(position).animate(CameraAnimation.Easing)
+        naverMap.moveCamera(cameraUpdate)
+
+        // 기존 마커 클릭 리스너와 동일한 UI 표시
+        binding.run {
+            bottomSheet.visibility = View.GONE
+            bottomSheetStoreList.layoutStore.visibility = View.VISIBLE
+        }
+
+        binding.bottomSheetStoreList.run {
+            Glide.with(mainActivity).load(store.thumbnailImage)
+                .into(imageViewStore)
+            textViewStoreName.text = store.name
+            textViewStoreAddress.text = store.address
+            textViewBenefitNum.text = "혜택 ${store.benefitCount}가지"
+            imageViewCategory.setImageResource(getDrawableResIds(R.array.partnership_category_image_unselected, resources)[getCategoryIndex(store.category) + 1])
+
+            layoutStore.setOnClickListener {
+                val bundle = Bundle().apply { putInt("storeId", store.shopId) }
+                val nextFragment = StoreDetailFragment().apply { arguments = bundle }
+
+                mainActivity.supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainerView, nextFragment)
+                    .addToBackStack(null)
+                    .commit()
+            }
+        }
+    }
+
+
     private fun fetchStoresBasedOnMapView() {
         if (!this::naverMap.isInitialized) return // 지도 초기화 확인
 
@@ -499,6 +512,6 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         val radius = centerLatLng.distanceTo(LatLng(northLat, longitude))
 
         // ✅ 현재 지도 중심 좌표 및 반경을 기반으로 매장 목록 요청
-        viewModel.getMapStoreList(mainActivity, category, latitude, longitude)
+        viewModel.getMapStoreList(mainActivity, category, latitude.toString(), longitude.toString())
     }
 }
