@@ -37,27 +37,24 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearanceOverlay="@style/RoundSector16" />
+                app:shapeAppearanceOverlay="@style/RoundSector14" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <Button
+        <ImageView
             android:id="@+id/button_close"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="22dp"
-            android:backgroundTint="@color/black_10"
-            android:text="닫기"
-            android:textColor="@color/black_30" />
+            android:layout_marginTop="25dp"
+            android:src="@drawable/ic_close_circle" />
 
         <TextView
             android:id="@+id/button_re_register"
-            style="@style/Text_Medi_18"
+            style="@style/Text_Regular_14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="8dp"
             android:padding="10dp"
             android:text="@string/re_register_button"
             android:textColor="@color/black_10"
