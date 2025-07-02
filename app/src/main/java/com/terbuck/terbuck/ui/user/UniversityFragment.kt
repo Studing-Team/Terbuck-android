@@ -16,9 +16,11 @@ import com.terbuck.terbuck.ui.BasicToast
 import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.ui.home.HomeFragment
 import com.terbuck.terbuck.ui.user.adapter.UniversityAdapter
+import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
 import com.terbuck.terbuck.utils.MyApplication
 import com.terbuck.terbuck.viewModel.OnboardingViewModel
 import com.terbuck.terbuck.viewModel.UserViewModel
+import kotlin.collections.set
 
 class UniversityFragment : Fragment() {
 
@@ -61,6 +63,8 @@ class UniversityFragment : Fragment() {
                     // 학교 변경 API 호출
                     viewModel.editUniversity(mainActivity, selectedSchool) {
                         TokenManager(mainActivity).saveUniversity(selectedSchool)
+                        mixpanel.people.set("school", "$selectedSchool")
+
                         MyApplication.isUniversityChanged = true
                         MyApplication.isRegisterStudentCard = false
 
@@ -70,6 +74,8 @@ class UniversityFragment : Fragment() {
                     // 회원가입 API 호출
                     viewModel.signUp(mainActivity, selectedSchool) {
                         TokenManager(mainActivity).saveUniversity(selectedSchool)
+                        mixpanel.people.set("school", "$selectedSchool")
+                        mixpanel.people.set("platform", "Android")
 
                         // 홈화면 이동
                         mainActivity.supportFragmentManager.beginTransaction()
