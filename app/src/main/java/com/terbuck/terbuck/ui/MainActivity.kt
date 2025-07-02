@@ -82,7 +82,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun setBottomNavigationHome() {
-        binding.bottomNavBar.selectedItemId = R.id.menu_home
+        binding.bottomNavBar.post {
+            binding.bottomNavBar.selectedItemId = R.id.menu_home
+        }
     }
 
     fun hideBottomNavigation(isHide: Boolean) {
