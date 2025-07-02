@@ -16,6 +16,7 @@ import com.terbuck.terbuck.ui.BasicToast
 import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.ui.user.StudentCardRegisterFragment
 import com.terbuck.terbuck.ui.user.UniversityFragment
+import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
 import com.terbuck.terbuck.utils.MyApplication
 import com.terbuck.terbuck.viewModel.UserViewModel
 
@@ -37,6 +38,8 @@ class MypageFragment : Fragment() {
 
         binding.run {
             buttonEdit.setOnClickListener {
+                mixpanel.track("click_mypage_edit_univ", null)
+
                 // 학교 변경
                 val bundle = Bundle().apply {
                     putBoolean("isEdit", true)
@@ -54,6 +57,8 @@ class MypageFragment : Fragment() {
             }
 
             layoutNotification.setOnClickListener {
+                mixpanel.track("click_mypage_alarm", null)
+
                 mainActivity.supportFragmentManager.beginTransaction()
                     .replace(R.id.fragmentContainerView, MypageNotificationFragment())
                     .addToBackStack(null)
@@ -61,29 +66,39 @@ class MypageFragment : Fragment() {
             }
 
             layoutQna.setOnClickListener {
+                mixpanel.track("click_mypage_ask", null)
+
                 // 카카오톡 채널
                 var intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://pf.kakao.com/_BzmZn"))
                 startActivity(intent)
             }
 
             layoutService.setOnClickListener {
+                mixpanel.track("click_mypage_service", null)
+
                 // 서비스 이용 약관
                 var intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://terbuck.notion.site/11905c1258e080ee91cecfb7ff633bab"))
                 startActivity(intent)
             }
 
             layoutPrivacy.setOnClickListener {
+                mixpanel.track("click_mypage_personal_info", null)
+
                 // 개인정보 수집 및 이용동의
                 var intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://terbuck.notion.site/11905c1258e08063bba2f82d320de454"))
                 startActivity(intent)
             }
 
             layoutLogout.setOnClickListener {
+                mixpanel.track("click_mypage_logout", null)
+
                 // 로그아웃
                 val dialog = DialogBasic("로그아웃 하시겠습니까?", null, "취소", "로그아웃")
 
                 dialog.setBasicDialogInterface(object : BasicButtonDialogInterface {
                     override fun onClickYesButton() {
+                        mixpanel.track("click_mypage_logout_confirm", null)
+
                         // 로그아웃
                         TokenManager(mainActivity).clearAll()
 
@@ -95,11 +110,15 @@ class MypageFragment : Fragment() {
             }
 
             layoutWithdrawal.setOnClickListener {
+                mixpanel.track("click_mypage_signout", null)
+
                 // 회원탈퇴
                 val dialog = DialogBasic("정말 탈퇴하시겠습니까?", "탈퇴 회원의 정보는 완전히 삭제되며\n터벅을 떠나면 회원가입부터 다시 해야해요", "취소", "탙퇴할게요")
 
                 dialog.setBasicDialogInterface(object : BasicButtonDialogInterface {
                     override fun onClickYesButton() {
+                        mixpanel.track("click_mypage_signout_confirm", null)
+
                         // 회원탈퇴
                         viewModel.withdrawal(mainActivity) {
                             TokenManager(mainActivity).clearAll()

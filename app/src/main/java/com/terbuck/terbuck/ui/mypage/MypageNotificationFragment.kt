@@ -17,6 +17,7 @@ import androidx.core.content.ContextCompat
 import com.terbuck.terbuck.R
 import com.terbuck.terbuck.databinding.FragmentMypageNotificationBinding
 import com.terbuck.terbuck.ui.MainActivity
+import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
 
 class MypageNotificationFragment : Fragment() {
 
@@ -33,9 +34,12 @@ class MypageNotificationFragment : Fragment() {
 
         binding.run {
             buttonNotificationSetting.setOnClickListener {
+                mixpanel.track("move_alarm_to_setting", null)
+
                 // 앱 알림 설정 화면으로 이동
                 presentNotificationSetting(mainActivity)
             }
+
         }
 
         return binding.root
