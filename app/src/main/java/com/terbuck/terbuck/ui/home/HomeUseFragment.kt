@@ -14,6 +14,7 @@ import com.terbuck.terbuck.api.response.home.StoreInfo
 import com.terbuck.terbuck.databinding.FragmentHomeUseBinding
 import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.ui.home.adapter.HomeStoreAdapter
+import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
 import com.terbuck.terbuck.viewModel.HomeViewModel
 
 class HomeUseFragment : Fragment() {
@@ -61,6 +62,8 @@ class HomeUseFragment : Fragment() {
         ).apply {
             itemClickListener = object : HomeStoreAdapter.OnItemClickListener {
                 override fun onItemClick(position: Int) {
+                    mixpanel.track("click_home_benefit", null)
+
                     // 혜택 더보기 클릭
                     val dialog = DialogPartnership(getPartnershipInfo?.get(position))
 

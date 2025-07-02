@@ -16,6 +16,7 @@ import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.ui.home.adapter.HomePartnershipAdapter
 import com.terbuck.terbuck.ui.home.adapter.HomeStoreAdapter
 import com.terbuck.terbuck.ui.terbuck.PartnershipDetailFragment
+import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
 import com.terbuck.terbuck.viewModel.HomeViewModel
 
 class HomePartnershipFragment : Fragment() {
@@ -70,6 +71,8 @@ class HomePartnershipFragment : Fragment() {
         ).apply {
             itemClickListener = object : HomePartnershipAdapter.OnItemClickListener {
                 override fun onItemClick(position: Int) {
+                    mixpanel.track("move_partnership_detail", null)
+
                     // 파트너십 상세 정보 화면
                     val bundle = Bundle().apply { putInt("partnershipId", getPartnershipNewInfo?.get(position)?.id ?: 0) }
 

@@ -17,6 +17,7 @@ import com.terbuck.terbuck.databinding.FragmentPartnershipDetailBinding
 import com.terbuck.terbuck.ui.BasicToast
 import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.ui.terbuck.adapter.PartnershipImageAdapter
+import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
 import com.terbuck.terbuck.viewModel.HomeViewModel
 import kotlin.text.replace
 
@@ -98,6 +99,8 @@ class PartnershipDetailFragment : Fragment() {
                     var instaUrl = it?.snsLink.toString()
 
                     buttonInsta.setOnClickListener {
+                        mixpanel.track("move_partnership_to_instagram", null)
+
                         var intent = Intent(Intent.ACTION_VIEW, instaUrl.toUri())
                         startActivity(intent)
                     }

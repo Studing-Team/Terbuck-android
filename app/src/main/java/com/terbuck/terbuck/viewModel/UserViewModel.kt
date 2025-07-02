@@ -1,6 +1,7 @@
 package com.terbuck.terbuck.viewModel
 
 import android.util.Log
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.terbuck.terbuck.R
@@ -130,7 +131,10 @@ class UserViewModel: ViewModel() {
                             name.value = result.data.name
                         }
 
-                        activity.setBottomNavigationHome()
+                        activity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                        activity.supportFragmentManager.beginTransaction()
+                            .replace(R.id.fragmentContainerView, HomeFragment())
+                            .commit()
                     } else {
                         // 통신이 실패한 경우(응답코드 3xx, 4xx 등)
                         var result: BaseResponse<StudentCardResponse>? = response.body()

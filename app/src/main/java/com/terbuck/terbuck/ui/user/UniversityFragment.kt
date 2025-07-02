@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -80,9 +81,9 @@ class UniversityFragment : Fragment() {
                         mixpanel.track("click_signup2", null)
 
                         // 홈화면 이동
+                        mainActivity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
                         mainActivity.supportFragmentManager.beginTransaction()
                             .replace(R.id.fragmentContainerView, HomeFragment())
-                            .addToBackStack(null)
                             .commit()
                     }
                 }
