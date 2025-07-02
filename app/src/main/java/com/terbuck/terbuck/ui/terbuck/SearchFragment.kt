@@ -21,6 +21,7 @@ import com.terbuck.terbuck.ui.home.DialogPartnership
 import com.terbuck.terbuck.ui.home.adapter.HomeStoreAdapter
 import com.terbuck.terbuck.ui.terbuck.adapter.StoreRecentSearchAdapter
 import com.terbuck.terbuck.ui.terbuck.adapter.StoreSearchAdapter
+import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
 import com.terbuck.terbuck.utils.MainUtil.getDrawableResIds
 import com.terbuck.terbuck.utils.MyApplication
 import com.terbuck.terbuck.viewModel.PartnershipViewModel
@@ -119,6 +120,8 @@ class SearchFragment : Fragment() {
             itemClickListener = object : StoreSearchAdapter.OnItemClickListener {
                 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
                 override fun onItemClick(position: Int) {
+                    mixpanel.track("click_map_search_result", null)
+
                     val store = filteredStoreList[position]
                     MyApplication.preferences.saveRecentSearchLimited(mainActivity, store.name)
 
