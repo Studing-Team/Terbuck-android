@@ -76,7 +76,7 @@
                 android:layout_gravity="center"
                 android:layout_marginStart="6dp"
                 android:layout_weight="1"
-                android:text="선택약관 모두 동의하기" />
+                android:text="약관 모두 동의하기" />
         </LinearLayout>
 
         <LinearLayout
