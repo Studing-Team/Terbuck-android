@@ -11,6 +11,7 @@ import com.terbuck.terbuck.R
 import com.terbuck.terbuck.databinding.FragmentSignUpAgreementBinding
 import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.ui.user.UniversityFragment
+import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
 
 class SignUpAgreementFragment : Fragment() {
 
@@ -48,6 +49,8 @@ class SignUpAgreementFragment : Fragment() {
             }
 
             buttonNext.setOnClickListener {
+                mixpanel.track("click_signup1", null)
+
                 mainActivity.supportFragmentManager.beginTransaction()
                     .replace(R.id.fragmentContainerView, UniversityFragment())
                     .addToBackStack(null)

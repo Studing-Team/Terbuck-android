@@ -77,6 +77,8 @@ class UniversityFragment : Fragment() {
                         mixpanel.people.set("school", "$selectedSchool")
                         mixpanel.people.set("platform", "Android")
 
+                        mixpanel.track("click_signup2", null)
+
                         // 홈화면 이동
                         mainActivity.supportFragmentManager.beginTransaction()
                             .replace(R.id.fragmentContainerView, HomeFragment())
