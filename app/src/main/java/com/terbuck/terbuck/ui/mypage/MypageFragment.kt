@@ -14,6 +14,8 @@ import com.terbuck.terbuck.api.TokenManager
 import com.terbuck.terbuck.databinding.FragmentMypageBinding
 import com.terbuck.terbuck.ui.BasicToast
 import com.terbuck.terbuck.ui.MainActivity
+import com.terbuck.terbuck.ui.home.HomeFragment
+import com.terbuck.terbuck.ui.onboarding.LoginFragment
 import com.terbuck.terbuck.ui.user.StudentCardRegisterFragment
 import com.terbuck.terbuck.ui.user.UniversityFragment
 import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
@@ -103,6 +105,9 @@ class MypageFragment : Fragment() {
                         TokenManager(mainActivity).clearAll()
 
                         mainActivity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                        mainActivity.supportFragmentManager.beginTransaction()
+                            .replace(R.id.fragmentContainerView, LoginFragment())
+                            .commit()
                     }
                 })
 
@@ -124,6 +129,9 @@ class MypageFragment : Fragment() {
                             TokenManager(mainActivity).clearAll()
 
                             mainActivity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                            mainActivity.supportFragmentManager.beginTransaction()
+                                .replace(R.id.fragmentContainerView, LoginFragment())
+                                .commit()
                         }
                     }
                 })
