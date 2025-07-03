@@ -47,7 +47,7 @@ class PreferenceUtil(context: Context) {
         list.remove(keyword)
         list.add(0, keyword)
 
-        if (list.size > 10) list.removeLast()
+        if (list.size > 10) list.removeAt(list.lastIndex)
 
         prefs.edit().putString("keywords", list.joinToString("|")).apply()
     }

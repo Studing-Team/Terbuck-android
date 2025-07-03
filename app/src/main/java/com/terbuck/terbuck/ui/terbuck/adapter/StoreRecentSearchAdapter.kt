@@ -13,6 +13,7 @@ import com.terbuck.terbuck.databinding.RowStoreMapBinding
 import com.terbuck.terbuck.databinding.RowStoreSearchBinding
 import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.utils.MainUtil
+import com.terbuck.terbuck.utils.MyApplication
 
 class StoreRecentSearchAdapter(
     private var activity: MainActivity,
@@ -62,6 +63,16 @@ class StoreRecentSearchAdapter(
 
         init {
             binding.buttonDelete.setOnClickListener {
+                MyApplication.preferences.removeRecentSearch(activity,
+                    MyApplication.preferences.getRecentSearchesLimited(activity)[position]
+                )
+
+                updateList(MyApplication.preferences.getRecentSearchesLimited(activity))
+
+                true
+            }
+
+            binding.root.setOnClickListener {
                 itemClickListener?.onItemClick(adapterPosition)
 
                 // 클릭 리스너 호출
