@@ -4,20 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="16dp">
-
-    <ImageView
-        android:id="@+id/imageView_checkbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:src="@drawable/ic_checkbox_rectangle" />
+    android:orientation="vertical"
+    android:paddingTop="10dp"
+    android:paddingHorizontal="16dp"
+    android:layout_marginBottom="15dp">
 
     <TextView
         android:id="@+id/textView_benefit"
-        style="@style/Caption_Medi_12"
+        style="@style/Text_Regular_14"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginStart="4dp" />
+        android:textColor="@color/black_30"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView_store_benefit_detail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"/>
 </LinearLayout>

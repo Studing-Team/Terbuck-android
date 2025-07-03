@@ -136,11 +136,18 @@ class SearchFragment : Fragment() {
             itemClickListener = object : StoreRecentSearchAdapter.OnItemClickListener {
                 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
                 override fun onItemClick(position: Int) {
+                    val store = MyApplication.preferences.getRecentSearchesLimited(mainActivity)[position]
                     MyApplication.preferences.removeRecentSearch(mainActivity,
                         MyApplication.preferences.getRecentSearchesLimited(mainActivity)[position]
                     )
+                    MyApplication.preferences.saveRecentSearchLimited(mainActivity, store)
 
-                    recentSearchAdapter.updateList(MyApplication.preferences.getRecentSearchesLimited(mainActivity))
+                    filterSearch(store)
+                    binding.run {
+                        toolbar.textViewSearch.setText(store)
+                        recyclerViewSearchResult.visibility = View.VISIBLE
+                        layoutRecentSearch.visibility = View.GONE
+                    }
                 }
             }
         }
