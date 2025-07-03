@@ -21,7 +21,7 @@ android {
         minSdk = 24
         targetSdk = 35
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -29,6 +29,8 @@ android {
 
         buildConfigField("String", "KAKAO_APP_KEY", "\"${properties["kakao_key"]}\"")
         buildConfigField("String", "MAP_API_KEY", "\"${properties["map_client_id"]}\"")
+
+        buildConfigField("String", "MIXPANEL_KEY", "\"${properties["mixpanel_token"]}\"")
 
         manifestPlaceholders["kakao_native_key"] = kakaoNativeKey
     }
@@ -90,4 +92,7 @@ dependencies {
     // glide
     implementation("com.github.bumptech.glide:glide:4.13.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.13.0")
+
+    // mixpanel
+    implementation("com.mixpanel.android:mixpanel-android:7.+")
 }

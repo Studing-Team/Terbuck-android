@@ -20,6 +20,7 @@ import com.kakao.sdk.user.UserApiClient
 import com.terbuck.terbuck.R
 import com.terbuck.terbuck.databinding.FragmentLoginBinding
 import com.terbuck.terbuck.ui.MainActivity
+import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
 import com.terbuck.terbuck.utils.MyApplication
 import com.terbuck.terbuck.viewModel.OnboardingViewModel
 import com.terbuck.terbuck.viewModel.UserViewModel
@@ -67,6 +68,8 @@ class LoginFragment : Fragment() {
 
         binding.run {
             buttonKakao.setOnClickListener {
+                mixpanel.track("click_login_kakao", null)
+
                 // 카카오 로그인
                 // 카카오톡이 설치되어 있으면 카카오톡으로 로그인, 아니면 카카오계정으로 로그인
                 if (UserApiClient.instance.isKakaoTalkLoginAvailable(mainActivity)) {

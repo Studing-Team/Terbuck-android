@@ -1,6 +1,7 @@
 package com.terbuck.terbuck.ui
 
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -18,6 +19,7 @@ import com.terbuck.terbuck.ui.mypage.MypageFragment
 import com.terbuck.terbuck.ui.mypage.MypageNotificationFragment
 import com.terbuck.terbuck.ui.terbuck.MapFragment
 import com.terbuck.terbuck.ui.user.StudentCardRegisterFragment
+import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
 import com.terbuck.terbuck.utils.MainUtil.setStatusBarTransparent
 import com.terbuck.terbuck.utils.MyApplication
 import com.terbuck.terbuck.utils.PreferenceUtil
@@ -31,6 +33,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        handleNotificationIntent(intent)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         MyApplication.preferences = PreferenceUtil(applicationContext)
@@ -49,10 +52,17 @@ class MainActivity : AppCompatActivity() {
         hideBottomNavigation(false)
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleNotificationIntent(intent)
+    }
+
     private fun setBottomNavigationView() {
         binding.bottomNavBar.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.menu_home -> {
+                    mixpanel.track("click_bottom_tab_home", null)
+
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.fragmentContainerView, HomeFragment())
                         .addToBackStack(null)
@@ -61,6 +71,8 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.menu_partnership -> {
+                    mixpanel.track("click_bottom_tab_terbuck", null)
+
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.fragmentContainerView, MapFragment())
                         .addToBackStack(null)
@@ -69,6 +81,8 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.menu_mypage -> {
+                    mixpanel.track("click_bottom_tab_mypage", null)
+
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.fragmentContainerView, MypageFragment())
                         .addToBackStack(null)
@@ -89,6 +103,13 @@ class MainActivity : AppCompatActivity() {
 
     fun hideBottomNavigation(isHide: Boolean) {
         binding.bottomNavBar.visibility = if(isHide) View.GONE else View.VISIBLE
+    }
+
+    private fun handleNotificationIntent(intent: Intent) {
+        val fromNotification = intent.getBooleanExtra("notification", false)
+        if (fromNotification) {
+            mixpanel.track("click_push_alarm", null)
+        }
     }
 
     fun setFCMToken() {

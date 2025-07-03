@@ -13,6 +13,7 @@ import androidx.fragment.app.DialogFragment
 import com.terbuck.terbuck.R
 import com.terbuck.terbuck.databinding.FragmentStudentCardOnboardingBinding
 import com.terbuck.terbuck.ui.MainActivity
+import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
 
 class StudentCardOnboardingFragment : DialogFragment() {
 
@@ -49,6 +50,8 @@ class StudentCardOnboardingFragment : DialogFragment() {
 
 
             buttonRegister.setOnClickListener {
+                mixpanel.track("click_onboarding_register", null)
+
                 // 학생증 등록
                 mainActivity.supportFragmentManager.beginTransaction()
                     .replace(R.id.fragmentContainerView, StudentCardRegisterFragment())
@@ -59,6 +62,8 @@ class StudentCardOnboardingFragment : DialogFragment() {
             }
 
             buttonNext.setOnClickListener {
+                mixpanel.track("click_onboarding_later", null)
+                
                 dismiss()
             }
         }

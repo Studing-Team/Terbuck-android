@@ -28,6 +28,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.terbuck.terbuck.ui.mypage.MypageNotificationFragment
 import com.terbuck.terbuck.ui.user.StudentCardRegisterFragment
+import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
 import com.terbuck.terbuck.utils.MyApplication.Companion.isRegisterStudentCard
 
 
@@ -134,6 +135,8 @@ class HomeFragment : Fragment() {
             }
 
             toolbar.imageViewCard.setOnClickListener {
+                mixpanel.track("click_student_card", null)
+
                 if(isRegisterStudentCard) {
                     // 학생증 등록 O
                     StudentCardFragment().show(parentFragmentManager, "StudentCardDialog")
@@ -241,14 +244,20 @@ class TemplateCategoryVPAdapter(fragment: Fragment) : FragmentStateAdapter(fragm
     override fun createFragment(position: Int): Fragment {
         return when (position) {
             0 -> {
+                mixpanel.track("click_top_tab_eating", null)
+
                 // 먹고가기 Fragment
                 HomeEatFragment()
             }
             1 -> {
+                mixpanel.track("click_top_tab_using", null)
+
                 // 이용하기 Fragment
                 HomeUseFragment()
             }
             2 -> {
+                mixpanel.track("click_top_tab_partnership", null)
+
                 // 파트너십 Fragment
                 HomePartnershipFragment()
             }

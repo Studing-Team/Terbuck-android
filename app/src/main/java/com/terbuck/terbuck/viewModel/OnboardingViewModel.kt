@@ -15,6 +15,7 @@ import com.terbuck.terbuck.api.response.home.HomeStoreResponse
 import com.terbuck.terbuck.api.response.onboarding.LoginResponse
 import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.ui.onboarding.SignUpAgreementFragment
+import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
 import com.terbuck.terbuck.utils.MyApplication
 import retrofit2.Call
 import retrofit2.Callback
@@ -75,6 +76,8 @@ class OnboardingViewModel: ViewModel() {
                         Log.d("터벅터벅", "onResponse 성공: " + result?.toString())
 
                         tokenManager.saveTokens("Bearer ${result?.data?.accessToken}", result?.data?.refreshToken.toString())
+
+                        mixpanel.identify(result?.data?.id?.toString(), true)
 
                         if(result?.data?.redirect == true) {
                             // 회원가입 화면 이동

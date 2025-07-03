@@ -20,6 +20,7 @@ import com.terbuck.terbuck.databinding.FragmentStudentCardRegisterBinding
 import com.terbuck.terbuck.ui.BasicToast
 import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.ui.mypage.MypageNotificationFragment
+import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
 import com.terbuck.terbuck.utils.MainUtil
 import com.terbuck.terbuck.utils.MainUtil.applyWindowInsetsListenerForKeyboard
 import com.terbuck.terbuck.utils.MainUtil.hideKeyboard
@@ -111,6 +112,8 @@ class StudentCardRegisterFragment : Fragment() {
             }
 
             buttonRegister.setOnClickListener {
+                mixpanel.track("click_student_card_register", null)
+
                 if(arguments?.getBoolean("isEdit") == true) {
                     // 학생증 삭제 후 등록
                     viewModel.deleteStudentCard(mainActivity) {

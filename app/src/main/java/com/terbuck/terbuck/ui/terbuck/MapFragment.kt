@@ -31,6 +31,7 @@ import com.terbuck.terbuck.databinding.FragmentMapBinding
 import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.ui.terbuck.adapter.CategoryAdapter
 import com.terbuck.terbuck.ui.terbuck.adapter.StoreAdapter
+import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
 import com.terbuck.terbuck.utils.MainUtil.getCategoryIndex
 import com.terbuck.terbuck.utils.MainUtil.getDrawableResIds
 import com.terbuck.terbuck.utils.MainUtil.toPx
@@ -99,6 +100,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             }
 
             toolbar.buttonSearch.setOnClickListener {
+                mixpanel.track("click_map_searchbar", null)
+
                 mainActivity.supportFragmentManager.beginTransaction()
                     .replace(R.id.fragmentContainerView, SearchFragment())
                     .addToBackStack(null)
@@ -106,6 +109,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             }
 
             toolbar.buttonLocation.setOnClickListener {
+                mixpanel.track("click_map_gps", null)
+
                 // 현재 위치로 이동
                 toolbar.imageViewLocation.setImageResource(R.drawable.ic_location_selected)
                 checkLocationPermission()
@@ -146,6 +151,18 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         ).apply {
             itemClickListener = object : CategoryAdapter.OnItemClickListener {
                 override fun onItemClick(position: Int) {
+
+                    when(position) {
+                        0 -> { mixpanel.track("click_category_all", null) }
+                        1 -> { mixpanel.track("click_category_food", null) }
+                        2 -> { mixpanel.track("click_category_cafe", null) }
+                        3 -> { mixpanel.track("click_category_drink", null) }
+                        4 -> { mixpanel.track("click_category_hospital", null) }
+                        5 -> { mixpanel.track("click_category_exercise", null) }
+                        6 -> { mixpanel.track("click_category_culture", null) }
+                        7 -> { mixpanel.track("click_category_study", null) }
+                    }
+
                     // 카테고리 선택
                     category = if(position == 0) { null } else { resources.getTextArray(R.array.partnership_category_name)[position].toString() }
                     fetchStoresBasedOnMapView()
@@ -162,6 +179,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         ).apply {
             itemClickListener = object : StoreAdapter.OnItemClickListener {
                 override fun onItemClick(position: Int) {
+                    mixpanel.track("move_list_to_detail", null)
+
                     // 스토어 상세 화면 이동
                     var nextFragment = StoreDetailFragment()
 
@@ -405,6 +424,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 markers.forEachIndexed { m, marker ->
                     marker.map = naverMap
                     marker.setOnClickListener {
+                        mixpanel.track("click_map_pin", null)
+
                         // 하단 바 표시 및 마커 이동 처리
                         var storeInfo = getStoreInfo?.list?.get(m)
                         moveToStoreMarker(storeInfo?.shopId?.toInt() ?: 0)
@@ -482,6 +503,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             imageViewCategory.setImageResource(getDrawableResIds(R.array.partnership_category_image_unselected, resources)[getCategoryIndex(store.category) + 1])
 
             layoutStore.setOnClickListener {
+                mixpanel.track("move_map_to_detail", null)
+
+                // 스토어 상세 화면 이동
                 val bundle = Bundle().apply { putInt("storeId", store.shopId) }
                 val nextFragment = StoreDetailFragment().apply { arguments = bundle }
 

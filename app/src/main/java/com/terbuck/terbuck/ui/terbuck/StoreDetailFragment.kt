@@ -22,6 +22,7 @@ import com.terbuck.terbuck.ui.terbuck.adapter.StoreBenefitAdapter
 import com.terbuck.terbuck.ui.terbuck.adapter.StoreImageAdapter
 import com.terbuck.terbuck.ui.user.StudentCardFragment
 import com.terbuck.terbuck.ui.user.StudentCardRegisterFragment
+import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
 import com.terbuck.terbuck.utils.MyApplication
 import com.terbuck.terbuck.viewModel.PartnershipViewModel
 
@@ -62,12 +63,16 @@ class StoreDetailFragment : Fragment() {
             }
 
             buttonUsages.setOnClickListener {
+                mixpanel.track("click_detail_usage_info", null)
+
                 val dialog = DialogUsages(getStoreDetailInfo?.usagesList)
 
                 dialog.show(mainActivity.supportFragmentManager, "DialogUsages")
             }
 
             buttonNaver.setOnClickListener {
+                mixpanel.track("move_detail_to_naver", null)
+
                 // 네이버 플레이스 이동
                 var intent = Intent(Intent.ACTION_VIEW, Uri.parse(getStoreDetailInfo?.shopLink))
                 startActivity(intent)
@@ -113,6 +118,8 @@ class StoreDetailFragment : Fragment() {
         ).apply {
             itemClickListener = object : StoreBenefitAdapter.OnItemClickListener {
                 override fun onItemClick(position: Int) {
+                    mixpanel.track("click_detail_more_info", null)
+
                     // 혜택 상세 정보 bottom sheet
                     val benefitBottomSheet = StoreDetailBenefitBottomSheetFragment(mainActivity, getStoreDetailInfo?.benefitList?.get(position)?.detailList).apply {
 
@@ -191,6 +198,8 @@ class StoreDetailFragment : Fragment() {
                 toolbar.imageViewCard.run {
                     setImageResource(R.drawable.ic_studentcard_green10)
                     setOnClickListener {
+                        mixpanel.track("click_detail_student_card", null)
+
                         // 학생증 등록 O
                         StudentCardFragment().show(parentFragmentManager, "StudentCardDialog")
                     }
@@ -199,6 +208,8 @@ class StoreDetailFragment : Fragment() {
                 toolbar.imageViewCard.run {
                     setImageResource(R.drawable.ic_studentcard_white5)
                     setOnClickListener {
+                        mixpanel.track("click_detail_student_card", null)
+
                         // 학생증 등록 X
                         BasicToast.showBasicButtonToast(
                             requireContext(),
