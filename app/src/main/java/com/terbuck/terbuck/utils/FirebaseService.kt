@@ -55,10 +55,11 @@ class FirebaseService : FirebaseMessagingService() {
 
         createNotificationChannel(notificationManager)
 
-        val intent = Intent(this, MainActivity::class.java)
-            .apply {
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            }
+        val intent = Intent(this, MainActivity::class.java).apply {
+            putExtra("notification", true)
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        }
+
 
         val pendingIntent = PendingIntent.getActivity(
             this,
