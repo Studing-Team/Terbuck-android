@@ -58,7 +58,7 @@
 
         <Button
             android:id="@+id/button_close"
-            style="@style/DialogButton"
+            style="@style/DialogButton8"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"

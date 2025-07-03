@@ -4,15 +4,15 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.terbuck.terbuck.api.response.home.StoreInfo
 import com.terbuck.terbuck.databinding.RowHomeStoreBenefitBinding
+import com.terbuck.terbuck.databinding.RowHomeStoreBenefitDetailBinding
 
-class HomeStoreBenefitAdapter(
-    private var partnershipInfos: StoreInfo?
+class HomeStoreBenefitDetailAdapter(
+    private var partnershipBenefitDetails: List<String>?
 ) :
-    RecyclerView.Adapter<HomeStoreBenefitAdapter.ViewHolder>() {
+    RecyclerView.Adapter<HomeStoreBenefitDetailAdapter.ViewHolder>() {
 
     private var onItemClickListener: ((Int) -> Unit)? = null
     private var context: Context? = null
@@ -21,8 +21,8 @@ class HomeStoreBenefitAdapter(
         onItemClickListener = listener
     }
 
-    fun updateList(newPartnershipInfos: StoreInfo?) {
-        partnershipInfos = newPartnershipInfos
+    fun updateList(newPartnershipBenefitDetails: List<String>?) {
+        partnershipBenefitDetails = newPartnershipBenefitDetails
         notifyDataSetChanged()
     }
 
@@ -36,30 +36,27 @@ class HomeStoreBenefitAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         context = parent.context
         val binding =
-            RowHomeStoreBenefitBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            RowHomeStoreBenefitDetailBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
         return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         with(holder.binding) {
-            textViewBenefit.text = partnershipInfos?.benefitList?.get(position)?.title
-            if(partnershipInfos?.benefitList?.get(position)?.detailList?.size != 0) {
-                recyclerViewStoreBenefitDetail.run {
-                    visibility = View.VISIBLE
-                    layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-                    adapter = HomeStoreBenefitDetailAdapter(partnershipInfos?.benefitList?.get(position)?.detailList)
-                }
+            textViewBenefit.text = partnershipBenefitDetails?.get(position)
+
+            if(position == ((partnershipBenefitDetails?.size ?: 0) - 1)) {
+                space.visibility = View.GONE
             } else {
-                recyclerViewStoreBenefitDetail.visibility = View.GONE
+                space.visibility = View.VISIBLE
             }
         }
     }
 
-    override fun getItemCount() = partnershipInfos?.benefitList?.size ?: 0
+    override fun getItemCount() = partnershipBenefitDetails?.size ?: 0
 
 
-    inner class ViewHolder(val binding: RowHomeStoreBenefitBinding) :
+    inner class ViewHolder(val binding: RowHomeStoreBenefitDetailBinding) :
         RecyclerView.ViewHolder(binding.root) {
     }
 }

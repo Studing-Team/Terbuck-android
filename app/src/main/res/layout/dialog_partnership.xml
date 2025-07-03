@@ -3,15 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingHorizontal="15dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="15dp"
-        android:layout_marginHorizontal="15dp"
+        android:layout_height="270dp"
         android:background="@drawable/background_white_radius24"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -20,7 +19,8 @@
             android:id="@+id/layout_store"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_marginHorizontal="25dp"
+            android:layout_marginTop="25dp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -32,9 +32,8 @@
                 style="@style/Text_Semi_18"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:maxWidth="169dp"
                 android:layout_gravity="center"
-                android:ellipsize="end"
-                android:maxLines="1"
                 android:text="가게명"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -45,8 +44,9 @@
                 android:id="@+id/imageView_category"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:layout_gravity="center"
+                android:layout_gravity="center|top"
                 android:layout_marginStart="4dp"
+                android:layout_marginTop="2dp"
                 android:src="@drawable/ic_food_selected"
                 app:layout_constraintBottom_toBottomOf="@id/button_more"
                 app:layout_constraintEnd_toStartOf="@+id/button_more"
@@ -72,24 +72,27 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView_partnership"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="46dp"
-            app:layout_constraintEnd_toEndOf="@+id/layout_store"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/layout_store"
-            app:layout_constraintTop_toBottomOf="@+id/textView_store_address" />
-
-        <Button
-            android:id="@+id/button_close"
-            style="@style/DialogButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="44dp"
-            android:text="닫기"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="12dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="7dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recyclerView_partnership" />
-
+            app:layout_constraintTop_toBottomOf="@+id/textView_store_address"
+            app:layout_constraintVertical_bias="0.0" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/button_close"
+        style="@style/DialogButton16"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="닫기"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_content" />
 </androidx.constraintlayout.widget.ConstraintLayout>
