@@ -77,6 +77,30 @@ class CategoryAdapter(
         }
     }
 
+    fun setSelectedIndex(index: Int, reloadAll: Boolean = false) {
+        val size = category?.size ?: 0
+        if (size == 0) {
+            selectedPosition = 0
+            notifyDataSetChanged()
+            return
+        }
+
+        val newIndex = index.coerceIn(0, size - 1)
+        if (!reloadAll && newIndex == selectedPosition) return
+
+        val prev = selectedPosition
+        selectedPosition = newIndex
+
+        if (reloadAll) {
+            // 전체 리로딩 (스타일 리소스 바뀌었거나 테마 바뀜 등 전체 리바인딩 필요할 때)
+            notifyDataSetChanged()
+        } else {
+            // 최소 범위만 갱신 (성능 좋음)
+            if (prev in 0 until size) notifyItemChanged(prev)
+            notifyItemChanged(selectedPosition)
+        }
+    }
+
     override fun getItemCount() = category?.size ?: 0
 
 

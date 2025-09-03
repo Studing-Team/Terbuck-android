@@ -2,6 +2,7 @@ package com.terbuck.terbuck.ui.terbuck.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -11,6 +12,8 @@ import com.terbuck.terbuck.databinding.RowStoreBenefitBinding
 import com.terbuck.terbuck.databinding.RowStoreMapBinding
 import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.utils.MainUtil
+import com.terbuck.terbuck.utils.MainUtil.getCategoryIndex
+import com.terbuck.terbuck.utils.MainUtil.getDrawableResIds
 
 class StoreAdapter(
     private var activity: MainActivity,
@@ -49,12 +52,23 @@ class StoreAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         with(holder.binding) {
+            if(position == ((stores?.size ?: 0) - 1) ) {
+                space.visibility = View.VISIBLE
+            } else {
+                space.visibility = View.GONE
+            }
             layoutStore.setBackgroundResource(0)
             textViewStoreName.text = stores?.get(position)?.name
-            imageViewCategory.setImageResource(categoryImage[MainUtil.getCategoryIndex(stores?.get(position)?.category) + 1])
+            textViewStoreName.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                0,
+                0,
+                categoryImage[MainUtil.getCategoryIndex(stores?.get(position)?.category) + 1],
+                0)
             textViewStoreAddress.text = stores?.get(position)?.address
             textViewBenefitNum.text = "혜택 ${stores?.get(position)?.benefitCount}가지"
-            Glide.with(activity).load(stores?.get(position)?.thumbnailImage).into(imageViewStore)
+
+            var storeImage = if(stores?.get(position)?.thumbnailImage.isNullOrEmpty()) R.drawable.img_store_basic else stores?.get(position)?.thumbnailImage
+            Glide.with(activity).load(storeImage).into(imageViewStore)
         }
     }
 
