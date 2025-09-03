@@ -15,6 +15,7 @@ import com.terbuck.terbuck.api.response.user.StudentCardResponse
 import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.ui.home.HomeFragment
 import com.terbuck.terbuck.ui.onboarding.SignUpAgreementFragment
+import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
 import com.terbuck.terbuck.utils.MyApplication
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -105,7 +106,7 @@ class UserViewModel: ViewModel() {
             })
     }
 
-    fun getStudentCard(activity: MainActivity) {
+    fun getStudentCard(activity: MainActivity, onSuccess: () -> Unit) {
         val apiClient = ApiClient(activity)
         val tokenManager = TokenManager(activity)
 
@@ -131,10 +132,7 @@ class UserViewModel: ViewModel() {
                             name.value = result.data.name
                         }
 
-                        activity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-                        activity.supportFragmentManager.beginTransaction()
-                            .replace(R.id.fragmentContainerView, HomeFragment())
-                            .commit()
+                        onSuccess()
                     } else {
                         // 통신이 실패한 경우(응답코드 3xx, 4xx 등)
                         var result: BaseResponse<StudentCardResponse>? = response.body()
