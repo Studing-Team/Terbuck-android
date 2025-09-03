@@ -85,6 +85,8 @@ class UniversityFragment : Fragment() {
                         mainActivity.setBottomNavigationHome()
                     }
                 }
+
+                buttonNext.isEnabled = false
             }
         }
 
