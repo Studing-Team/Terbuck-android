@@ -3,6 +3,7 @@ package com.terbuck.terbuck.api
 import com.terbuck.terbuck.api.request.onboarding.FcmRequest
 import com.terbuck.terbuck.api.request.onboarding.LoginRequest
 import com.terbuck.terbuck.api.request.onboarding.SignUpRequest
+import com.terbuck.terbuck.api.request.user.RefreshTokenRequest
 import com.terbuck.terbuck.api.request.user.UniversityRequest
 import com.terbuck.terbuck.api.response.BaseResponse
 import com.terbuck.terbuck.api.response.home.HomePartnershipResponse
@@ -11,6 +12,7 @@ import com.terbuck.terbuck.api.response.home.PartnershipDetailResponse
 import com.terbuck.terbuck.api.response.onboarding.LoginResponse
 import com.terbuck.terbuck.api.response.terbuck.MapStoreListResponse
 import com.terbuck.terbuck.api.response.terbuck.StoreDetailResponse
+import com.terbuck.terbuck.api.response.user.RefreshTokenResponse
 import com.terbuck.terbuck.api.response.user.StudentCardResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -41,6 +43,12 @@ interface ApiService {
         @Header("authorization") token: String,
         @Body request: SignUpRequest
     ): Call<BaseResponse<String>>
+
+    // 토큰 재발급
+    @POST("/auth/reissue")
+    fun refreshToken(
+        @Body request: RefreshTokenRequest
+    ): Call<BaseResponse<RefreshTokenResponse>>
 
     // FCM 토큰 설정
     @POST("/fcm/token")

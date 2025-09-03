@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.terbuck.terbuck.R
 import com.terbuck.terbuck.api.ApiClient
 import com.terbuck.terbuck.api.TokenManager
+import com.terbuck.terbuck.api.TokenUtil
 import com.terbuck.terbuck.api.request.onboarding.FcmRequest
 import com.terbuck.terbuck.api.request.onboarding.LoginRequest
 import com.terbuck.terbuck.api.request.onboarding.SignUpRequest
@@ -24,7 +25,7 @@ import retrofit2.Response
 class OnboardingViewModel: ViewModel() {
     var universities: MutableLiveData<List<String>> = MutableLiveData()
 
-    fun getUniversities(activity: MainActivity,) {
+    fun getUniversities(activity: MainActivity) {
         val apiClient = ApiClient(activity)
 
         apiClient.apiService.getUniversities()
@@ -132,6 +133,14 @@ class OnboardingViewModel: ViewModel() {
                         Log.d("터벅터벅", "onResponse 실패: " + response.body())
                         val errorBody = response.errorBody()?.string() // 에러 응답 데이터를 문자열로 얻음
                         Log.d("터벅터벅", "Error Response: $errorBody")
+
+                        when(response.code()) {
+                            401 -> {
+                                TokenUtil.refreshToken(activity) {
+                                    signUp(activity, university, onSuccess)
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -167,6 +176,14 @@ class OnboardingViewModel: ViewModel() {
                         Log.d("터벅터벅", "onResponse 실패: " + response.body())
                         val errorBody = response.errorBody()?.string() // 에러 응답 데이터를 문자열로 얻음
                         Log.d("터벅터벅", "Error Response: $errorBody")
+
+                        when(response.code()) {
+                            401 -> {
+                                TokenUtil.refreshToken(activity) {
+                                    editUniversity(activity, university, onSuccess)
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -201,6 +218,14 @@ class OnboardingViewModel: ViewModel() {
                         Log.d("터벅터벅", "onResponse 실패: " + response.body())
                         val errorBody = response.errorBody()?.string() // 에러 응답 데이터를 문자열로 얻음
                         Log.d("터벅터벅", "Error Response: $errorBody")
+
+                        when(response.code()) {
+                            401 -> {
+                                TokenUtil.refreshToken(activity) {
+                                    setFcmToken(activity, token)
+                                }
+                            }
+                        }
                     }
                 }
 
