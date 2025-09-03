@@ -6,7 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
 import com.terbuck.terbuck.R
+import com.terbuck.terbuck.api.TokenManager
 import com.terbuck.terbuck.databinding.FragmentSplashBinding
 import com.terbuck.terbuck.ui.MainActivity
 import kotlin.text.replace
@@ -25,9 +27,15 @@ class SplashFragment : Fragment() {
         mainActivity = activity as MainActivity
 
         Handler().postDelayed({
-            mainActivity.supportFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainerView, LoginFragment())
-                .commit()
+            val tokenManager = TokenManager(mainActivity)
+            if(tokenManager.getAccessToken() != null) {
+                mainActivity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                mainActivity.setBottomNavigationHome()
+            } else {
+                mainActivity.supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainerView, LoginFragment())
+                    .commit()
+            }
         }, 2000)
 
         return binding.root
