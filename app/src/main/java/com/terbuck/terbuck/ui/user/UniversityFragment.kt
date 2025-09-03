@@ -82,9 +82,7 @@ class UniversityFragment : Fragment() {
 
                         // 홈화면 이동
                         mainActivity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-                        mainActivity.supportFragmentManager.beginTransaction()
-                            .replace(R.id.fragmentContainerView, HomeFragment())
-                            .commit()
+                        mainActivity.setBottomNavigationHome()
                     }
                 }
             }

@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -30,6 +31,9 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityMainBinding
     lateinit var sharedPreferenceManager: PreferenceUtil
+
+    private var backPressedTime: Long = 0
+    private val FINISH_INTERVAL_TIME: Long = 2000 // 2초
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +69,6 @@ class MainActivity : AppCompatActivity() {
 
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.fragmentContainerView, HomeFragment())
-                        .addToBackStack(null)
                         .commit()
                     true
                 }
@@ -75,7 +78,6 @@ class MainActivity : AppCompatActivity() {
 
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.fragmentContainerView, MapFragment())
-                        .addToBackStack(null)
                         .commit()
                     true
                 }
@@ -85,7 +87,6 @@ class MainActivity : AppCompatActivity() {
 
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.fragmentContainerView, MypageFragment())
-                        .addToBackStack(null)
                         .commit()
                     true
                 }
@@ -130,6 +131,27 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onBackPressed() {
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView)
+
+        // 백스택이 비어있고, 현재 화면이 첫 화면일 경우 → 두 번 눌러 종료 로직
+        if (supportFragmentManager.backStackEntryCount == 0 && (currentFragment is HomeFragment || currentFragment is MapFragment || currentFragment is MypageFragment)) {
+            val tempTime = System.currentTimeMillis()
+            val intervalTime = tempTime - backPressedTime
+
+            if (intervalTime in 0..FINISH_INTERVAL_TIME) {
+                super.onBackPressed() // 앱 종료
+            } else {
+                backPressedTime = tempTime
+                Toast.makeText(this, "뒤로가기를 한 번 더 누르면 앱이 종료됩니다", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            // 기본 뒤로가기 동작
+            super.onBackPressed()
+        }
+    }
+
 
     @RequiresApi(Build.VERSION_CODES.P)
     fun getKeyHash() {
