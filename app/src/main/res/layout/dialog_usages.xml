@@ -50,8 +50,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/pretendard_regular"
-                    android:textColor="#575960"
-                    android:text="이용방법" />
+                    android:textColor="#575960" />
             </LinearLayout>
         </ScrollView>
 

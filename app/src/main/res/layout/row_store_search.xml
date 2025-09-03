@@ -51,7 +51,6 @@
                     android:layout_gravity="center"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:text="가게명"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -63,7 +62,6 @@
                     android:layout_height="20dp"
                     android:layout_gravity="center"
                     android:layout_marginStart="5dp"
-                    android:src="@drawable/ic_food_unselected"
                     app:layout_constraintBottom_toBottomOf="@id/button_more"
                     app:layout_constraintEnd_toStartOf="@+id/button_more"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -80,7 +78,6 @@
                 android:layout_marginTop="4dp"
                 android:ellipsize="end"
                 android:maxLines="2"
-                android:text="가게 주소"
                 android:textColor="@color/black_10"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -112,7 +109,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginStart="2dp"
-                    android:text="혜택 0가지"
+                    android:text="혜택"
                     android:textColor="@color/black_30" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
