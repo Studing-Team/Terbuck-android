@@ -49,6 +49,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private lateinit var mapView: MapView
     private lateinit var naverMap: NaverMap
 
+    private var markersFiltered = false
+    private var suppressFetchOnce = false
+    private var pendingSelectedShopId: Int? = null
+    private var selectedShopId: Int? = null
+
 
     private val CURRENT_LOCATION_CODE = 200
     private val LOCATION_PERMISSTION_REQUEST_CODE: Int = 1000
@@ -61,6 +66,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     lateinit var storeAdapter: StoreAdapter
 
     var category: String? = null
+    var categoryIndex = 0
     var getStoreInfo: MapStoreListResponse? = null
 
     val markers = mutableListOf<Marker>()
@@ -102,6 +108,12 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             toolbar.buttonSearch.setOnClickListener {
                 mixpanel.track("click_map_searchbar", null)
 
+                category = null
+                categoryIndex = 0
+                fetchStoresBasedOnMapView()
+
+                categoryAdapter.notifyDataSetChanged()
+
                 mainActivity.supportFragmentManager.beginTransaction()
                     .replace(R.id.fragmentContainerView, SearchFragment())
                     .addToBackStack(null)
@@ -125,6 +137,9 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     override fun onResume() {
         super.onResume()
         mapView.onResume()
+
+        resetMapState()
+        categoryAdapter.setSelectedIndex(categoryIndex)
 
         isInitialCameraMoved = false
 
@@ -165,6 +180,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
                     // 카테고리 선택
                     category = if(position == 0) { null } else { resources.getTextArray(R.array.partnership_category_name)[position].toString() }
+                    categoryIndex = position
                     fetchStoresBasedOnMapView()
 
                     categoryAdapter.notifyDataSetChanged()
@@ -370,12 +386,31 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         // 확대/이동이 발생하면 다시 매장 데이터 로드
         naverMap.addOnCameraIdleListener {
+            if (markersFiltered) return@addOnCameraIdleListener
+
+            // ✅ 직전 이동에 대해서만 한 번 억제 (선택)
+            if (suppressFetchOnce) {
+                suppressFetchOnce = false
+                return@addOnCameraIdleListener
+            }
+
             val currentCenter = naverMap.cameraPosition.target
 
             // 위치 변경 없으면 리턴
             if (lastCameraPosition != null && lastCameraPosition == currentCenter) return@addOnCameraIdleListener
 
             lastCameraPosition = currentCenter
+            fetchStoresBasedOnMapView()
+        }
+
+        naverMap.setOnMapClickListener { _, _ ->
+            binding.run {
+                bottomSheet.visibility = View.VISIBLE
+                bottomSheetStoreList.layoutStore.visibility = View.GONE
+                BottomSheetBehavior.from(bottomSheet).isDraggable = true
+            }
+            selectedShopId = null
+            showAllMarkers()
             fetchStoresBasedOnMapView()
         }
 
@@ -387,13 +422,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         naverMap.locationTrackingMode = LocationTrackingMode.None
     }
 
-
     fun observeViewModel() {
         viewModel.run {
             storeInfo.observe(viewLifecycleOwner) {
                 binding.bottomSheet.layoutParams.height = binding.bottomSheet.layoutParams.height
                 binding.bottomSheet.requestLayout()
-
                 getStoreInfo = it
                 binding.run {
                     if(getStoreInfo?.list?.size == 0) {
@@ -402,8 +435,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     } else {
                         textViewEmpty.visibility = View.GONE
                         recyclerViewStore.visibility = View.VISIBLE
-                        storeAdapter.updateList(getStoreInfo?.list)
-                    }
+                        storeAdapter.updateList(getStoreInfo?.list) }
                 }
 
                 // 기존 마커 클리어
@@ -417,55 +449,51 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     val longitude = getStoreInfo?.list?.get(i)?.longitude?.toDouble()
                     marker.position = LatLng(latitude!!, longitude!!)
                     marker.icon = OverlayImage.fromResource(setMarker(i))
-
                     markers.add(marker)
                 }
 
-                markers.forEachIndexed { m, marker ->
+                // 클릭 리스너 등록 (간소화)
+                markers.forEachIndexed { idx, marker ->
                     marker.map = naverMap
                     marker.setOnClickListener {
                         mixpanel.track("click_map_pin", null)
-
-                        // 하단 바 표시 및 마커 이동 처리
-                        var storeInfo = getStoreInfo?.list?.get(m)
-                        moveToStoreMarker(storeInfo?.shopId?.toInt() ?: 0)
-
-
-                        val cameraUpdate = CameraUpdate.scrollTo(marker.position).animate(CameraAnimation.Easing)
-                        naverMap.moveCamera(cameraUpdate)
-
+                        val shopId = getStoreInfo?.list?.get(idx)?.shopId?.toInt()
+                            ?: return@setOnClickListener true
+                        moveToStoreMarker(shopId)   // ← 내부에서 숨김/선택/카메라/억제 처리
                         true
-                    }
-
-                    // 지도 클릭한 경우
-                    naverMap.setOnMapClickListener { pointF, latLng ->
-                        binding.run {
-                            bottomSheet.visibility = View.VISIBLE
-                            bottomSheetStoreList.layoutStore.visibility = View.GONE
-                            BottomSheetBehavior.from(bottomSheet).isDraggable = true
-                        }
-                        
-                        fetchStoresBasedOnMapView()
                     }
                 }
 
-                // 마커 중앙 위치로 지도 이동
+                pendingSelectedShopId?.let { pendingId ->
+                    moveToStoreMarker(pendingId)
+                    pendingSelectedShopId = null
+                }
+
+                selectedShopId?.let { selId ->
+                    val idx = getStoreInfo?.list?.indexOfFirst { it.shopId == selId } ?: -1
+                    if (idx in markers.indices) {
+                        showOnlyMarker(markers[idx])
+                    } else {
+                        // 새 데이터에 선택 매장이 없으면 선택 해제
+                        selectedShopId = null
+                        markersFiltered = false
+                    }
+                }
+
+                // 초기 카메라 이동 유지
                 if (!isInitialCameraMoved && markers.isNotEmpty()) {
                     val latLngBoundsBuilder = com.naver.maps.geometry.LatLngBounds.Builder()
-                    markers.forEach { marker ->
-                        latLngBoundsBuilder.include(marker.position)
-                    }
-
+                    markers.forEach { marker -> latLngBoundsBuilder.include(marker.position) }
                     val bounds = latLngBoundsBuilder.build()
                     val cameraUpdate = CameraUpdate.fitBounds(bounds, 100)
                         .animate(CameraAnimation.Easing)
                     naverMap.moveCamera(cameraUpdate)
-
                     isInitialCameraMoved = true
                 }
             }
         }
     }
+
 
     fun setMarker(position: Int): Int {
         val category = getStoreInfo?.list?.get(position)?.category
@@ -481,34 +509,48 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     }
 
     fun moveToStoreMarker(shopId: Int) {
-        val store = getStoreInfo?.list?.find { it.shopId == shopId } ?: return
-        val markerIndex = getStoreInfo?.list?.indexOf(store) ?: return
+        val store = getStoreInfo?.list?.find { it.shopId == shopId }
+        val markerIndex = getStoreInfo?.list?.indexOfFirst { it.shopId == shopId } ?: -1
 
+        // 데이터/마커 아직 없음 → 보류
+        if (store == null || markerIndex !in markers.indices) {
+            pendingSelectedShopId = shopId
+            return
+        }
+
+        selectedShopId = shopId
+
+        // 카메라 이동
         val position = LatLng(store.latitude, store.longitude)
         val cameraUpdate = CameraUpdate.scrollTo(position).animate(CameraAnimation.Easing)
         naverMap.moveCamera(cameraUpdate)
 
-        // 기존 마커 클릭 리스너와 동일한 UI 표시
+        showOnlyMarker(markers[markerIndex])
+        suppressFetchOnce = true
+
+        // 하단 프리뷰 UI
         binding.run {
-            bottomSheet.visibility = View.GONE
+            bottomSheet.visibility = View.INVISIBLE
             bottomSheetStoreList.layoutStore.visibility = View.VISIBLE
         }
 
         binding.bottomSheetStoreList.run {
-            Glide.with(mainActivity).load(store.thumbnailImage)
+            var storeImage = if(store.thumbnailImage.isEmpty()) R.drawable.img_store_basic else store.thumbnailImage
+            Glide.with(mainActivity).load(storeImage)
                 .into(imageViewStore)
             textViewStoreName.text = store.name
             textViewStoreAddress.text = store.address
             textViewBenefitNum.text = "혜택 ${store.benefitCount}가지"
-            imageViewCategory.setImageResource(getDrawableResIds(R.array.partnership_category_image_unselected, resources)[getCategoryIndex(store.category) + 1])
+            textViewStoreName.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                0,
+                0,
+                getDrawableResIds(R.array.partnership_category_image_unselected, resources)[getCategoryIndex(store.category) + 1],
+                0)
 
             layoutStore.setOnClickListener {
                 mixpanel.track("move_map_to_detail", null)
-
-                // 스토어 상세 화면 이동
                 val bundle = Bundle().apply { putInt("storeId", store.shopId) }
                 val nextFragment = StoreDetailFragment().apply { arguments = bundle }
-
                 mainActivity.supportFragmentManager.beginTransaction()
                     .replace(R.id.fragmentContainerView, nextFragment)
                     .addToBackStack(null)
@@ -516,6 +558,7 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             }
         }
     }
+
 
 
     private fun fetchStoresBasedOnMapView() {
@@ -535,7 +578,31 @@ class MapFragment : Fragment(), OnMapReadyCallback {
         // 4️⃣ 반경(Radius) 계산 (중심 좌표 ↔ 북쪽 경계 거리)
         val radius = centerLatLng.distanceTo(LatLng(northLat, longitude))
 
-        // ✅ 현재 지도 중심 좌표 및 반경을 기반으로 매장 목록 요청
+        // 제휴업체 조회 API
         viewModel.getMapStoreList(mainActivity, category, latitude.toString(), longitude.toString())
+    }
+
+    private fun showOnlyMarker(target: Marker) {
+        markers.forEach { m ->
+            if (m == target) {
+                if (m.map == null) m.map = naverMap
+            } else {
+                m.map = null
+            }
+        }
+        markersFiltered = true
+    }
+
+    private fun showAllMarkers() {
+        markers.forEach { it.map = naverMap }
+        markersFiltered = false
+    }
+
+    private fun resetMapState() {
+        markersFiltered = false
+        suppressFetchOnce = false
+        pendingSelectedShopId = null
+        selectedShopId = null
+        showAllMarkers()
     }
 }

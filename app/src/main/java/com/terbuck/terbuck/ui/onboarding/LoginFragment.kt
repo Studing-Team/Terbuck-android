@@ -12,14 +12,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import com.terbuck.terbuck.R
+import com.terbuck.terbuck.api.TokenManager
 import com.terbuck.terbuck.databinding.FragmentLoginBinding
 import com.terbuck.terbuck.ui.MainActivity
+import com.terbuck.terbuck.ui.home.HomeFragment
 import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
 import com.terbuck.terbuck.utils.MyApplication
 import com.terbuck.terbuck.viewModel.OnboardingViewModel
@@ -47,7 +50,13 @@ class LoginFragment : Fragment() {
             Log.i(TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
             // 로그인 기능 구현
             viewModel.login(mainActivity, token.accessToken.toString()) {
-                userViewModel.getStudentCard(mainActivity)
+                userViewModel.getStudentCard(mainActivity) {
+                    mixpanel.people.set("School", "${TokenManager(mainActivity).getUniversity()}")
+                    mixpanel.people.set("Platform", "Android")
+
+                    mainActivity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                    mainActivity.setBottomNavigationHome()
+                }
             }
         }
     }
@@ -89,7 +98,13 @@ class LoginFragment : Fragment() {
                             Log.i(TAG, "카카오톡으로 로그인 성공 ${token.accessToken}")
                             // 로그인 기능 구현
                             viewModel.login(mainActivity, token.accessToken.toString()) {
-                                userViewModel.getStudentCard(mainActivity)
+                                userViewModel.getStudentCard(mainActivity) {
+                                    mixpanel.people.set("School", "${TokenManager(mainActivity).getUniversity()}")
+                                    mixpanel.people.set("Platform", "Android")
+
+                                    mainActivity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                                    mainActivity.setBottomNavigationHome()
+                                }
                             }
                         }
                     }

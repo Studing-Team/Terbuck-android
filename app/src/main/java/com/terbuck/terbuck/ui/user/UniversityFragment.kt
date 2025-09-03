@@ -64,7 +64,7 @@ class UniversityFragment : Fragment() {
                     // 학교 변경 API 호출
                     viewModel.editUniversity(mainActivity, selectedSchool) {
                         TokenManager(mainActivity).saveUniversity(selectedSchool)
-                        mixpanel.people.set("school", "$selectedSchool")
+                        mixpanel.people.set("School", "$selectedSchool")
 
                         MyApplication.isUniversityChanged = true
                         MyApplication.isRegisterStudentCard = false
@@ -75,18 +75,18 @@ class UniversityFragment : Fragment() {
                     // 회원가입 API 호출
                     viewModel.signUp(mainActivity, selectedSchool) {
                         TokenManager(mainActivity).saveUniversity(selectedSchool)
-                        mixpanel.people.set("school", "$selectedSchool")
-                        mixpanel.people.set("platform", "Android")
+                        mixpanel.people.set("School", "$selectedSchool")
+                        mixpanel.people.set("Platform", "Android")
 
                         mixpanel.track("click_signup2", null)
 
                         // 홈화면 이동
                         mainActivity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-                        mainActivity.supportFragmentManager.beginTransaction()
-                            .replace(R.id.fragmentContainerView, HomeFragment())
-                            .commit()
+                        mainActivity.setBottomNavigationHome()
                     }
                 }
+
+                buttonNext.isEnabled = false
             }
         }
 

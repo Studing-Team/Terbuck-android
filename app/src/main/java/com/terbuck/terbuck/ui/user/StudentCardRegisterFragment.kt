@@ -133,6 +133,8 @@ class StudentCardRegisterFragment : Fragment() {
                         fragmentManager?.popBackStack()
                     }
                 }
+
+                buttonRegister.isEnabled = false
             }
         }
 

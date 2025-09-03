@@ -9,13 +9,14 @@
         android:id="@+id/layout_store"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingVertical="12dp"
-        android:paddingHorizontal="15dp"
         android:background="@drawable/background_white_radius16_stroke_gray"
+        android:paddingHorizontal="15dp"
+        android:paddingVertical="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imageView_store"
@@ -23,6 +24,7 @@
             android:layout_height="88dp"
             android:layout_gravity="center"
             android:scaleType="centerCrop"
+            android:src="@drawable/img_store_basic"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -47,43 +49,20 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0">
 
-            <LinearLayout
-                android:id="@+id/layout_store_name"
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/textView_store_name"
+                style="@style/Text_Semi_14"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_gravity="center"
+                android:layout_marginEnd="5dp"
+                android:drawablePadding="5dp"
+                android:ellipsize="end"
+                android:maxLines="1"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                    android:id="@+id/textView_store_name"
-                    style="@style/Text_Semi_14"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:text="가게명"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:id="@+id/imageView_category"
-                    android:layout_width="wrap_content"
-                    android:layout_height="20dp"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="5dp"
-                    android:src="@drawable/ic_food_unselected"
-                    app:layout_constraintBottom_toBottomOf="@id/button_more"
-                    app:layout_constraintEnd_toStartOf="@+id/button_more"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toEndOf="@+id/textView_store_name"
-                    app:layout_constraintTop_toTopOf="@id/button_more" />
-
-            </LinearLayout>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/textView_store_address"
@@ -95,11 +74,10 @@
                 android:ellipsize="end"
                 android:lines="2"
                 android:maxLines="2"
-                android:text="가게 주소"
                 android:textColor="@color/black_10"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_store_name" />
+                app:layout_constraintTop_toBottomOf="@+id/textView_store_name" />
 
             <LinearLayout
                 android:id="@+id/layout_benefit"
@@ -127,10 +105,20 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginStart="2dp"
-                    android:text="혜택 0가지"
+                    android:text="혜택"
                     android:textColor="@color/black_30" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Space
+        android:id="@+id/space"
+        android:layout_width="wrap_content"
+        android:layout_height="100dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_store" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
