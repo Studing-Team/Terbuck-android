@@ -37,6 +37,9 @@ class StoreDetailFragment : Fragment() {
     lateinit var storeBenefitAdapter: StoreBenefitAdapter
     lateinit var storeImageAdapter: StoreImageAdapter
 
+    private var globalLayoutListener: ViewTreeObserver.OnGlobalLayoutListener? = null
+    private var scrollChangeListener: View.OnScrollChangeListener? = null
+
     var getStoreDetailInfo: StoreDetailResponse? = null
 
     private var tooltipShown = false
@@ -86,6 +89,23 @@ class StoreDetailFragment : Fragment() {
         super.onResume()
         initView()
     }
+
+    override fun onDestroyView() {
+        try {
+            val sv = binding.scrollView
+            globalLayoutListener?.let { listener ->
+                val vto = sv.viewTreeObserver
+                if (vto.isAlive) vto.removeOnGlobalLayoutListener(listener)
+            }
+            sv.setOnScrollChangeListener(null)
+        } catch (_: Exception) { }
+
+        globalLayoutListener = null
+        scrollChangeListener = null
+
+        super.onDestroyView()
+    }
+
 
     fun initAdapter() {
         storeImageAdapter = StoreImageAdapter(
@@ -166,28 +186,58 @@ class StoreDetailFragment : Fragment() {
     private fun setupTooltipBehavior() {
         val scrollView = binding.scrollView
 
-        scrollView.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                scrollView.viewTreeObserver.removeOnGlobalLayoutListener(this)
+        globalLayoutListener?.let {
+            if (scrollView.viewTreeObserver.isAlive) {
+                scrollView.viewTreeObserver.removeOnGlobalLayoutListener(it)
+            }
+        }
+        scrollView.setOnScrollChangeListener(null)
 
-                val canScroll = scrollView.getChildAt(0).measuredHeight > scrollView.measuredHeight
+        globalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                if (!isAdded || view == null) return
+
+                if (scrollView.viewTreeObserver.isAlive) {
+                    scrollView.viewTreeObserver.removeOnGlobalLayoutListener(this)
+                }
+
+                val child = scrollView.getChildAt(0) ?: return
+                val canScroll = child.measuredHeight > scrollView.measuredHeight
 
                 if (!canScroll && !tooltipShown) {
                     tooltipShown = true
-                    BasicToast.showBasicToast(requireContext(), "더 자세한 정보와 후기를 볼 수 있어요", R.drawable.ic_finger_down, binding.buttonNaver)
+                    context?.let { ctx ->
+                        BasicToast.showBasicToast(
+                            ctx,
+                            "더 자세한 정보와 후기를 볼 수 있어요",
+                            R.drawable.ic_finger_down,
+                            binding.buttonNaver
+                        )
+                    }
                 }
             }
-        })
+        }
+        scrollView.viewTreeObserver.addOnGlobalLayoutListener(globalLayoutListener)
 
-        scrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
-            if (tooltipShown) return@setOnScrollChangeListener
+        scrollChangeListener = View.OnScrollChangeListener { _, _, scrollY, _, _ ->
+            if (!isAdded || view == null) return@OnScrollChangeListener
+            if (tooltipShown) return@OnScrollChangeListener
 
             if (scrollY > 0) {
                 tooltipShown = true
-                BasicToast.showBasicToast(requireContext(), "더 자세한 정보와 후기를 볼 수 있어요", R.drawable.ic_finger_down, binding.buttonNaver)
+                context?.let { ctx ->
+                    BasicToast.showBasicToast(
+                        ctx,
+                        "더 자세한 정보와 후기를 볼 수 있어요",
+                        R.drawable.ic_finger_down,
+                        binding.buttonNaver
+                    )
+                }
             }
         }
+        scrollView.setOnScrollChangeListener(scrollChangeListener)
     }
+
 
     fun initView() {
         mainActivity.hideBottomNavigation(true)
