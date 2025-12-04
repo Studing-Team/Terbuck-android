@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.terbuck.terbuck.api.ApiClient
 import com.terbuck.terbuck.api.TokenManager
+import com.terbuck.terbuck.api.TokenUtil
 import com.terbuck.terbuck.api.request.onboarding.SignUpRequest
 import com.terbuck.terbuck.api.response.BaseResponse
 import com.terbuck.terbuck.api.response.home.HomePartnershipResponse
@@ -48,6 +49,14 @@ class HomeViewModel: ViewModel() {
                         Log.d("터벅터벅", "onResponse 실패: " + response.body())
                         val errorBody = response.errorBody()?.string() // 에러 응답 데이터를 문자열로 얻음
                         Log.d("터벅터벅", "Error Response: $errorBody")
+
+                        when(response.code()) {
+                            401 -> {
+                                TokenUtil.refreshToken(activity) {
+                                    getHomeStoreInfo(activity, category)
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -83,6 +92,14 @@ class HomeViewModel: ViewModel() {
                         Log.d("터벅터벅", "onResponse 실패: " + response.body())
                         val errorBody = response.errorBody()?.string() // 에러 응답 데이터를 문자열로 얻음
                         Log.d("터벅터벅", "Error Response: $errorBody")
+
+                        when(response.code()) {
+                            401 -> {
+                                TokenUtil.refreshToken(activity) {
+                                    getHomePartnershipNewInfo(activity)
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -118,6 +135,14 @@ class HomeViewModel: ViewModel() {
                         Log.d("터벅터벅", "onResponse 실패: " + response.body())
                         val errorBody = response.errorBody()?.string() // 에러 응답 데이터를 문자열로 얻음
                         Log.d("터벅터벅", "Error Response: $errorBody")
+
+                        when(response.code()) {
+                            401 -> {
+                                TokenUtil.refreshToken(activity) {
+                                    getHomePartnershipInfo(activity)
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -153,6 +178,14 @@ class HomeViewModel: ViewModel() {
                         Log.d("터벅터벅", "onResponse 실패: " + response.body())
                         val errorBody = response.errorBody()?.string() // 에러 응답 데이터를 문자열로 얻음
                         Log.d("터벅터벅", "Error Response: $errorBody")
+
+                        when(response.code()) {
+                            401 -> {
+                                TokenUtil.refreshToken(activity) {
+                                    getPartnershipDetailInfo(activity, id)
+                                }
+                            }
+                        }
                     }
                 }
 
