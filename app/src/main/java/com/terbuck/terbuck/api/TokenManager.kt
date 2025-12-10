@@ -48,6 +48,16 @@ class TokenManager(val context: Context) {
         return sharedPreferences.getString("school", "")
     }
 
+    fun saveIsSignUp(isSignUp: Boolean) {
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("isSignUp", isSignUp)
+        editor.apply()
+    }
+
+    fun getIsSignUp(): Boolean {
+        return sharedPreferences.getBoolean("isSignUp", true)
+    }
+
     fun clearAll() {
         val editor = sharedPreferences.edit()
         editor.clear()

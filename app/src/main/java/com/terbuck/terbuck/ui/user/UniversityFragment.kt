@@ -88,6 +88,8 @@ class UniversityFragment : Fragment() {
                     // 회원가입 API 호출
                     viewModel.signUp(mainActivity, selectedSchool) {
                         TokenManager(mainActivity).saveUniversity(selectedSchool)
+                        TokenManager(mainActivity).saveIsSignUp(true)
+
                         mixpanel.people.set("School", "$selectedSchool")
                         mixpanel.people.set("Platform", "Android")
 

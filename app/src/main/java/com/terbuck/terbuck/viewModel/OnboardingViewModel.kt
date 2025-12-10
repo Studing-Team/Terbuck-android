@@ -81,6 +81,7 @@ class OnboardingViewModel: ViewModel() {
                         mixpanel.identify(result?.data?.id?.toString(), true)
 
                         if(result?.data?.redirect == true) {
+                            tokenManager.saveIsSignUp(false)
                             // 회원가입 화면 이동
                             activity.supportFragmentManager.beginTransaction()
                                 .replace(R.id.fragmentContainerView, SignUpAgreementFragment())
