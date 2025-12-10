@@ -28,12 +28,6 @@
             android:layout_weight="1"
             android:textColor="@color/black_30" />
 
-        <ImageView
-            android:id="@+id/imageView_checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_checkbox_white" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

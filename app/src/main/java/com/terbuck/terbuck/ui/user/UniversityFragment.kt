@@ -17,6 +17,7 @@ import com.terbuck.terbuck.ui.BasicToast
 import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.ui.home.HomeFragment
 import com.terbuck.terbuck.ui.user.adapter.UniversityAdapter
+import com.terbuck.terbuck.ui.user.adapter.UniversityRegionAdapter
 import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
 import com.terbuck.terbuck.utils.MyApplication
 import com.terbuck.terbuck.viewModel.OnboardingViewModel
@@ -30,11 +31,9 @@ class UniversityFragment : Fragment() {
     private val viewModel: OnboardingViewModel by lazy {
         ViewModelProvider(requireActivity())[OnboardingViewModel::class.java]
     }
-    private val userViewModel: UserViewModel by lazy {
-        ViewModelProvider(requireActivity())[UserViewModel::class.java]
-    }
 
     lateinit var universityAdapter: UniversityAdapter
+    lateinit var universityRegionAdapter: UniversityRegionAdapter
 
     var getUniversityList = mutableListOf<String>()
 
@@ -57,6 +56,20 @@ class UniversityFragment : Fragment() {
             recyclerViewSchool.apply {
                 adapter = universityAdapter
                 layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            }
+
+            recyclerViewRegion.apply {
+                adapter = universityRegionAdapter
+                layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            }
+
+            layoutRegion.setOnClickListener {
+                recyclerViewRegion.visibility = View.VISIBLE
+                recyclerViewSchool.visibility = View.GONE
+                imageViewRegionArrow.animate().apply {
+                    duration = 100
+                    rotation(270f)
+                }
             }
 
             buttonNext.setOnClickListener {
@@ -113,6 +126,26 @@ class UniversityFragment : Fragment() {
                 }
             }
         }
+
+        universityRegionAdapter = UniversityRegionAdapter(
+            mainActivity,
+            resources.getTextArray(R.array.university_region).map { it.toString() }
+        ).apply {
+            itemClickListener = object : UniversityRegionAdapter.OnItemClickListener {
+                override fun onItemClick(position: Int) {
+                    // 지역 선택
+                    binding.run {
+                        textViewRegion.text = resources.getTextArray(R.array.university_region)[position]
+                        recyclerViewSchool.visibility = View.VISIBLE
+                        recyclerViewRegion.visibility = View.GONE
+                        imageViewRegionArrow.animate().apply {
+                            duration = 100
+                            rotation(90f)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     fun observeViewModel() {
@@ -131,6 +164,9 @@ class UniversityFragment : Fragment() {
         viewModel.getUniversities(mainActivity)
 
         binding.run {
+            recyclerViewRegion.visibility = View.VISIBLE
+            textViewRegion.text = resources.getTextArray(R.array.university_region)[0]
+
             buttonNext.text = if(arguments?.getBoolean("isEdit") == true) "저장하기" else "터벅 들어가기"
             toolbar.run {
                 textViewHead.text = if(arguments?.getBoolean("isEdit") == true) "학교 변경" else "회원가입"
