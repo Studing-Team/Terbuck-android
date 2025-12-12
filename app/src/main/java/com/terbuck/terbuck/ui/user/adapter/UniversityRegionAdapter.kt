@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.terbuck.terbuck.R
 import com.terbuck.terbuck.databinding.RowUniversityBinding
+import com.terbuck.terbuck.databinding.RowUniversityRegionBinding
 
 class UniversityRegionAdapter(
     private var activity: Activity,
@@ -31,7 +32,7 @@ class UniversityRegionAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         context = parent.context
         val binding =
-            RowUniversityBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            RowUniversityRegionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
         return ViewHolder(binding)
     }
@@ -45,7 +46,7 @@ class UniversityRegionAdapter(
     override fun getItemCount() = regions?.size ?: 0
 
 
-    inner class ViewHolder(val binding: RowUniversityBinding) :
+    inner class ViewHolder(val binding: RowUniversityRegionBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         init {

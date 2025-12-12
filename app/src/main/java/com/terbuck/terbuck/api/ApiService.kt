@@ -14,6 +14,7 @@ import com.terbuck.terbuck.api.response.terbuck.MapStoreListResponse
 import com.terbuck.terbuck.api.response.terbuck.StoreDetailResponse
 import com.terbuck.terbuck.api.response.user.RefreshTokenResponse
 import com.terbuck.terbuck.api.response.user.StudentCardResponse
+import com.terbuck.terbuck.api.response.user.UniversityByRegionResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -66,6 +67,12 @@ interface ApiService {
     // 대학교 리스트 조회
     @GET("/info/universities")
     fun getUniversities(): Call<BaseResponse<List<String>>>
+
+    // 지역별 대학교 리스트 조회
+    @GET("/university/by-region")
+    fun getUniversitiesByRegion(
+        @Header("authorization") token: String
+    ): Call<BaseResponse<List<UniversityByRegionResponse>>>
 
     // 학생증 등록
     @Multipart
