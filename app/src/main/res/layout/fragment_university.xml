@@ -38,78 +38,83 @@
         app:layout_constraintStart_toStartOf="@+id/textView_title"
         app:layout_constraintTop_toBottomOf="@+id/textView_title" />
 
-    <androidx.core.widget.NestedScrollView
+    <LinearLayout
+        android:id="@+id/layout_region"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="13dp"
+        android:background="@drawable/background_white5_radius8"
+        android:orientation="horizontal"
+        android:layout_marginTop="100dp"
+        android:layout_marginHorizontal="20dp"
+        android:paddingHorizontal="18dp"
+        android:paddingVertical="16.5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView_description">
+
+        <TextView
+            android:id="@+id/textView_region"
+            style="@style/Text_Semi_16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="6dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/imageView_region_arrow"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:layout_gravity="center"
+            android:rotation="270"
+            android:src="@drawable/ic_back_black30"
+            app:tint="@color/black_10" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView_region"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toTopOf="@+id/button_next"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_description"
-        app:layout_constraintVertical_bias="1.0" >
+        app:layout_constraintTop_toBottomOf="@+id/layout_region"
+        app:layout_constraintVertical_bias="0.0" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView_school"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginHorizontal="20dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/button_next"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_region"
+        app:layout_constraintVertical_bias="0.0" />
 
-            <LinearLayout
-                android:id="@+id/layout_region"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/background_white5_radius8"
-                android:orientation="horizontal"
-                android:layout_marginHorizontal="20dp"
-                android:paddingHorizontal="18dp"
-                android:paddingVertical="16.5dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    android:id="@+id/textView_region"
-                    style="@style/Text_Semi_16"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginEnd="6dp"
-                    android:layout_weight="1" />
-
-                <ImageView
-                    android:id="@+id/imageView_region_arrow"
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
-                    android:layout_gravity="center"
-                    android:rotation="270"
-                    android:src="@drawable/ic_back_black30"
-                    app:tint="@color/black_10" />
-            </LinearLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView_region"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:layout_marginHorizontal="20dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_region" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView_school"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:layout_marginHorizontal="20dp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_region" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.core.widget.NestedScrollView>
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/textView_university_empty"
+        style="@style/Text_Regular_14"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_white_stroke_white5"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="12dp"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="17.5dp"
+        android:visibility="gone"
+        android:text="빠르게 학교를 등록할게요"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/layout_region"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/button_next"
@@ -117,7 +122,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:enabled="false"
-        android:text="터벅 들어가기"
+        android:text="다음"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

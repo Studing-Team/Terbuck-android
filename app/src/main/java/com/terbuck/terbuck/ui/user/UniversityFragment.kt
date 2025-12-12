@@ -82,6 +82,7 @@ class UniversityFragment : Fragment() {
             layoutRegion.setOnClickListener {
                 recyclerViewRegion.visibility = View.VISIBLE
                 recyclerViewSchool.visibility = View.GONE
+                textViewUniversityEmpty.visibility = View.GONE
                 imageViewRegionArrow.animate().apply {
                     duration = 100
                     rotation(270f)
@@ -153,6 +154,7 @@ class UniversityFragment : Fragment() {
                 override fun onItemClick(position: Int) {
                     // 지역 선택
                     binding.run {
+                        binding.buttonNext.isEnabled = false
                         textViewRegion.text = resources.getTextArray(R.array.university_region)[position]
 
                         val regionId = regionMap[position]
@@ -162,9 +164,16 @@ class UniversityFragment : Fragment() {
                             ?.toMutableList()
                             ?: mutableListOf()
 
-                        recyclerViewSchool.visibility = View.VISIBLE
-                        recyclerViewRegion.visibility = View.GONE
-                        universityAdapter.updateList(selectedUniversityList, null)
+                        if(selectedUniversityList.isEmpty()) {
+                            recyclerViewRegion.visibility = View.GONE
+                            textViewUniversityEmpty.visibility = View.VISIBLE
+                        } else {
+                            recyclerViewSchool.visibility = View.VISIBLE
+                            recyclerViewRegion.visibility = View.GONE
+                            textViewUniversityEmpty.visibility = View.GONE
+                            universityAdapter.updateList(selectedUniversityList, null)
+                        }
+
                         imageViewRegionArrow.animate().apply {
                             duration = 100
                             rotation(90f)
