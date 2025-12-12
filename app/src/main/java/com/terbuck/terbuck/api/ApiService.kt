@@ -12,6 +12,7 @@ import com.terbuck.terbuck.api.response.home.PartnershipDetailResponse
 import com.terbuck.terbuck.api.response.onboarding.LoginResponse
 import com.terbuck.terbuck.api.response.terbuck.MapStoreListResponse
 import com.terbuck.terbuck.api.response.terbuck.StoreDetailResponse
+import com.terbuck.terbuck.api.response.user.CollegeResponse
 import com.terbuck.terbuck.api.response.user.RefreshTokenResponse
 import com.terbuck.terbuck.api.response.user.StudentCardResponse
 import com.terbuck.terbuck.api.response.user.UniversityByRegionResponse
@@ -73,6 +74,13 @@ interface ApiService {
     fun getUniversitiesByRegion(
         @Header("authorization") token: String
     ): Call<BaseResponse<List<UniversityByRegionResponse>>>
+
+    // 단과 대학교 리스트 조회
+    @GET("/university/colleges")
+    fun getColleges(
+        @Header("authorization") token: String,
+        @Query ("universityName") universityName: String
+    ): Call<BaseResponse<List<CollegeResponse>>>
 
     // 학생증 등록
     @Multipart

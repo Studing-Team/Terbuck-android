@@ -36,8 +36,6 @@ class UniversityFragment : Fragment() {
 
     lateinit var universityAdapter: UniversityAdapter
     lateinit var universityRegionAdapter: UniversityRegionAdapter
-
-    var getUniversityList = mutableListOf<String>()
     var getUniversityByRegionList = mutableListOf<UniversityByRegionResponse>()
 
 
@@ -83,6 +81,8 @@ class UniversityFragment : Fragment() {
                 recyclerViewRegion.visibility = View.VISIBLE
                 recyclerViewSchool.visibility = View.GONE
                 textViewUniversityEmpty.visibility = View.GONE
+                binding.buttonNext.isEnabled = false
+
                 imageViewRegionArrow.animate().apply {
                     duration = 100
                     rotation(270f)
@@ -90,35 +90,21 @@ class UniversityFragment : Fragment() {
             }
 
             buttonNext.setOnClickListener {
-                if(arguments?.getBoolean("isEdit") == true) {
-                    // 학교 변경 API 호출
-                    viewModel.editUniversity(mainActivity, selectedSchool) {
-                        TokenManager(mainActivity).saveUniversity(selectedSchool)
-                        mixpanel.people.set("School", "$selectedSchool")
 
-                        MyApplication.isUniversityChanged = true
-                        MyApplication.isRegisterStudentCard = false
-
-                        fragmentManager?.popBackStack()
-                    }
-                } else {
-                    // 회원가입 API 호출
-                    viewModel.signUp(mainActivity, selectedSchool) {
-                        TokenManager(mainActivity).saveUniversity(selectedSchool)
-                        TokenManager(mainActivity).saveIsSignUp(true)
-
-                        mixpanel.people.set("School", "$selectedSchool")
-                        mixpanel.people.set("Platform", "Android")
-
-                        mixpanel.track("click_signup2", null)
-
-                        // 홈화면 이동
-                        mainActivity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-                        mainActivity.setBottomNavigationHome()
-                    }
+                val bundle = Bundle().apply {
+                    putString("university", selectedSchool)
+                    putBoolean("isEdit", arguments?.getBoolean("isEdit") == true)
                 }
 
-                buttonNext.isEnabled = false
+                // 전달할 Fragment 생성
+                var nextFragment = CollegeFragment().apply {
+                    arguments = bundle
+                }
+
+                mainActivity.supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainerView, nextFragment)
+                    .addToBackStack(null)
+                    .commit()
             }
         }
 
@@ -154,7 +140,6 @@ class UniversityFragment : Fragment() {
                 override fun onItemClick(position: Int) {
                     // 지역 선택
                     binding.run {
-                        binding.buttonNext.isEnabled = false
                         textViewRegion.text = resources.getTextArray(R.array.university_region)[position]
 
                         val regionId = regionMap[position]
@@ -202,7 +187,6 @@ class UniversityFragment : Fragment() {
             recyclerViewRegion.visibility = View.VISIBLE
             textViewRegion.text = resources.getTextArray(R.array.university_region)[0]
 
-            buttonNext.text = if(arguments?.getBoolean("isEdit") == true) "저장하기" else "터벅 들어가기"
             toolbar.run {
                 textViewHead.text = if(arguments?.getBoolean("isEdit") == true) "학교 변경" else "회원가입"
                 buttonBack.setOnClickListener {

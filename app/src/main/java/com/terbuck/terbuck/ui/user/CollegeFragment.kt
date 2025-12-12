@@ -1,6 +1,7 @@
 package com.terbuck.terbuck.ui.user
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,9 +10,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.terbuck.terbuck.R
+import com.terbuck.terbuck.api.response.user.CollegeResponse
 import com.terbuck.terbuck.api.response.user.UniversityByRegionResponse
 import com.terbuck.terbuck.databinding.FragmentCollegeBinding
 import com.terbuck.terbuck.ui.MainActivity
+import com.terbuck.terbuck.ui.user.adapter.CollegeAdapter
 import com.terbuck.terbuck.ui.user.adapter.UniversityAdapter
 import com.terbuck.terbuck.viewModel.OnboardingViewModel
 
@@ -24,7 +27,9 @@ class CollegeFragment : Fragment() {
         ViewModelProvider(requireActivity())[OnboardingViewModel::class.java]
     }
 
-    lateinit var universityAdapter: UniversityAdapter
+    lateinit var collegeAdapter: CollegeAdapter
+
+    var getCollegeList = mutableListOf<CollegeResponse>()
 
     var selectedCollege = ""
 
@@ -41,7 +46,7 @@ class CollegeFragment : Fragment() {
 
         binding.run {
             recyclerViewSchool.apply {
-                adapter = universityAdapter
+                adapter = collegeAdapter
                 layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
             }
 
@@ -59,19 +64,44 @@ class CollegeFragment : Fragment() {
     }
 
     fun initAdapter() {
+        collegeAdapter = CollegeAdapter(
+            mainActivity,
+            getCollegeList
+        ).apply {
+            itemClickListener = object : CollegeAdapter.OnItemClickListener {
+                override fun onItemClick(position: Int) {
+                    // 단과대학 선택
+                    binding.buttonNext.isEnabled = true
+
+                    selectedCollege = getCollegeList[position].name
+                    collegeAdapter.updateList(getCollegeList, position)
+                }
+            }
+        }
     }
 
     fun observeViewModel() {
         viewModel.run {
+            colleges.observe(viewLifecycleOwner) {
+                getCollegeList = it as MutableList<CollegeResponse>
+                
+                collegeAdapter.updateList(getCollegeList, null)
+            }
         }
     }
 
     fun initView() {
         mainActivity.hideBottomNavigation(true)
 
+        var university = arguments?.getString("university").toString()
+        viewModel.getColleges(mainActivity, university)
+
         binding.run {
+            textViewTitle.text = university
+            buttonNext.text = if(arguments?.getBoolean("isEdit") == true) "저장하기" else "터벅 들어가기"
+
             toolbar.run {
-                buttonNext.text = if(arguments?.getBoolean("isEdit") == true) "저장하기" else "터벅 들어가기"
+                textViewHead.text = if(arguments?.getBoolean("isEdit") == true) "학교 변경" else "회원가입"
                 buttonBack.setOnClickListener {
                     fragmentManager?.popBackStack()
                 }
