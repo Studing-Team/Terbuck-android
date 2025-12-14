@@ -228,11 +228,11 @@ class OnboardingViewModel: ViewModel() {
             })
     }
 
-    fun editUniversity(activity: MainActivity, university: String, onSuccess: () -> Unit) {
+    fun editUniversity(activity: MainActivity, university: String, collegeId: Long, onSuccess: () -> Unit) {
         val apiClient = ApiClient(activity)
         val tokenManager = TokenManager(activity)
 
-        apiClient.apiService.editUniversity(tokenManager.getAccessToken().toString(), UniversityRequest(university))
+        apiClient.apiService.editUniversity(tokenManager.getAccessToken().toString(), UniversityRequest(university, collegeId))
             .enqueue(object :
                 Callback<BaseResponse<String?>> {
                 override fun onResponse(
@@ -256,7 +256,7 @@ class OnboardingViewModel: ViewModel() {
                         when(response.code()) {
                             401 -> {
                                 TokenUtil.refreshToken(activity) {
-                                    editUniversity(activity, university, onSuccess)
+                                    editUniversity(activity, university, collegeId, onSuccess)
                                 }
                             }
                         }

@@ -104,7 +104,7 @@ interface ApiService {
     ): Call<BaseResponse<StudentCardResponse>>
 
     // 대학교 변경
-    @PATCH("/member/univ")
+    @PATCH("/member/univ/v2")
     fun editUniversity(
         @Header("authorization") token: String,
         @Body request: UniversityRequest

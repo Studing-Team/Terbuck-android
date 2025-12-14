@@ -58,6 +58,15 @@ class CollegeFragment : Fragment() {
             buttonNext.setOnClickListener {
                 if(arguments?.getBoolean("isEdit") == true) {
                     // 학교 변경 API 호출
+                    viewModel.editUniversity(mainActivity, university, selectedCollege) {
+                        TokenManager(mainActivity).saveUniversity(university)
+                        mixpanel.people.set("School", "$university")
+
+                        MyApplication.isUniversityChanged = true
+                        MyApplication.isRegisterStudentCard = false
+
+                        mainActivity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                    }
                 } else {
                     // 회원가입 API 호출
                     viewModel.signUp(mainActivity, university, selectedCollege) {
