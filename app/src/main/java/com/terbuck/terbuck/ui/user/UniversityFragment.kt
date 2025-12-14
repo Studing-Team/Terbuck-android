@@ -90,7 +90,6 @@ class UniversityFragment : Fragment() {
             }
 
             buttonNext.setOnClickListener {
-
                 val bundle = Bundle().apply {
                     putString("university", selectedSchool)
                     putBoolean("isEdit", arguments?.getBoolean("isEdit") == true)

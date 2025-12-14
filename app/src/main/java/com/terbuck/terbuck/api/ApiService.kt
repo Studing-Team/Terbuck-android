@@ -39,12 +39,12 @@ interface ApiService {
         @Body request: LoginRequest
     ): Call<BaseResponse<LoginResponse>>
 
-    // 회원가입
-    @POST("/member/signin")
+    // 회원가입 (대학교, 단과대학 정보 포함)
+    @POST("/member/signin/v2")
     fun signUp(
         @Header("authorization") token: String,
         @Body request: SignUpRequest
-    ): Call<BaseResponse<String>>
+    ): Call<BaseResponse<String?>>
 
     // 토큰 재발급
     @POST("/auth/reissue")

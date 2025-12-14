@@ -6,16 +6,20 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.terbuck.terbuck.R
+import com.terbuck.terbuck.api.TokenManager
 import com.terbuck.terbuck.api.response.user.CollegeResponse
 import com.terbuck.terbuck.api.response.user.UniversityByRegionResponse
 import com.terbuck.terbuck.databinding.FragmentCollegeBinding
 import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.ui.user.adapter.CollegeAdapter
 import com.terbuck.terbuck.ui.user.adapter.UniversityAdapter
+import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
+import com.terbuck.terbuck.utils.MyApplication
 import com.terbuck.terbuck.viewModel.OnboardingViewModel
 
 class CollegeFragment : Fragment() {
@@ -31,7 +35,8 @@ class CollegeFragment : Fragment() {
 
     var getCollegeList = mutableListOf<CollegeResponse>()
 
-    var selectedCollege = ""
+    var selectedCollege = 0L
+    var university = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,7 +56,24 @@ class CollegeFragment : Fragment() {
             }
 
             buttonNext.setOnClickListener {
+                if(arguments?.getBoolean("isEdit") == true) {
+                    // 학교 변경 API 호출
+                } else {
+                    // 회원가입 API 호출
+                    viewModel.signUp(mainActivity, university, selectedCollege) {
+                        TokenManager(mainActivity).saveUniversity(university)
+                        TokenManager(mainActivity).saveIsSignUp(true)
 
+                        mixpanel.people.set("School", "$university")
+                        mixpanel.people.set("Platform", "Android")
+
+                        mixpanel.track("click_signup2", null)
+
+                        // 홈화면 이동
+                        mainActivity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                        mainActivity.setBottomNavigationHome()
+                    }
+                }
             }
         }
 
@@ -73,7 +95,7 @@ class CollegeFragment : Fragment() {
                     // 단과대학 선택
                     binding.buttonNext.isEnabled = true
 
-                    selectedCollege = getCollegeList[position].name
+                    selectedCollege = getCollegeList[position].id
                     collegeAdapter.updateList(getCollegeList, position)
                 }
             }
@@ -84,7 +106,7 @@ class CollegeFragment : Fragment() {
         viewModel.run {
             colleges.observe(viewLifecycleOwner) {
                 getCollegeList = it as MutableList<CollegeResponse>
-                
+
                 collegeAdapter.updateList(getCollegeList, null)
             }
         }
@@ -93,7 +115,7 @@ class CollegeFragment : Fragment() {
     fun initView() {
         mainActivity.hideBottomNavigation(true)
 
-        var university = arguments?.getString("university").toString()
+        university = arguments?.getString("university").toString()
         viewModel.getColleges(mainActivity, university)
 
         binding.run {
