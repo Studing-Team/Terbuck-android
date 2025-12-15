@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.terbuck.terbuck.R
 import com.terbuck.terbuck.api.TokenManager
@@ -23,11 +24,16 @@ import com.terbuck.terbuck.ui.user.StudentCardRegisterFragment
 import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
 import com.terbuck.terbuck.utils.MyApplication
 import com.terbuck.terbuck.utils.MyApplication.Companion.isRegisterStudentCard
+import com.terbuck.terbuck.viewModel.HomeViewModel
 
 class HomeEmptyFragment : Fragment() {
 
     lateinit var binding: FragmentHomeEmptyBinding
     lateinit var mainActivity: MainActivity
+
+    private val homeViewModel: HomeViewModel by lazy {
+        ViewModelProvider(requireActivity())[HomeViewModel::class.java]
+    }
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val LOCATION_PERMISSION_REQUEST_CODE = 1001
@@ -43,6 +49,25 @@ class HomeEmptyFragment : Fragment() {
         binding.run {
             buttonRequestUniversity.setOnClickListener {
                 // 제휴 혜택 정보 요청 API 호출
+                homeViewModel.openUniversity(mainActivity, TokenManager(mainActivity).getUniversity().toString()) {
+
+                    layoutRequestUniversity.visibility = View.GONE
+                    buttonRequestUniversity.visibility = View.GONE
+                    layoutSuccessRequestUniversity.visibility = View.VISIBLE
+
+                    TokenManager(mainActivity).saveIsUniversityRegistered(false, true)
+
+                    BasicToast.showBasicButtonToast(
+                        requireContext(),
+                        mainActivity,
+                        "업데이트 되는대로 알려드릴게요 :)",
+                        0,
+                        resources.getString(R.string.notification_button),
+                        mainActivity.binding.bottomNavBar,
+                        binding.root,
+                        MypageNotificationFragment()
+                    )
+                }
             }
         }
 
@@ -72,10 +97,12 @@ class HomeEmptyFragment : Fragment() {
             if(TokenManager(mainActivity).getIsUniversityRequestRegistered()) {
                 // 제휴업체 등록 신청 O
                 layoutRequestUniversity.visibility = View.GONE
+                buttonRequestUniversity.visibility = View.GONE
                 layoutSuccessRequestUniversity.visibility = View.VISIBLE
             } else {
                 // 제휴업체 등록 신청 X
                 layoutRequestUniversity.visibility = View.VISIBLE
+                buttonRequestUniversity.visibility = View.VISIBLE
                 layoutSuccessRequestUniversity.visibility = View.GONE
             }
 

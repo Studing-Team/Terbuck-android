@@ -8,6 +8,7 @@ import com.terbuck.terbuck.api.TokenManager
 import com.terbuck.terbuck.api.TokenUtil
 import com.terbuck.terbuck.api.request.onboarding.SignUpRequest
 import com.terbuck.terbuck.api.response.BaseResponse
+import com.terbuck.terbuck.api.response.home.HomeOpenUniversityResponse
 import com.terbuck.terbuck.api.response.home.HomePartnershipResponse
 import com.terbuck.terbuck.api.response.home.HomeStoreResponse
 import com.terbuck.terbuck.api.response.home.PartnershipDetailResponse
@@ -108,6 +109,49 @@ class HomeViewModel: ViewModel() {
                 }
 
                 override fun onFailure(call: Call<BaseResponse<Boolean>>, t: Throwable) {
+                    // 통신 실패
+                    Log.d("터벅터벅", "onFailure 에러: " + t.message.toString())
+
+                }
+            })
+    }
+
+    fun openUniversity(activity: MainActivity, universityName: String, onSuccess: () -> Unit) {
+        val apiClient = ApiClient(activity)
+        val tokenManager = TokenManager(activity)
+
+        apiClient.apiService.openUniversity(tokenManager.getAccessToken().toString(), universityName)
+            .enqueue(object :
+                Callback<BaseResponse<HomeOpenUniversityResponse>> {
+                override fun onResponse(
+                    call: Call<BaseResponse<HomeOpenUniversityResponse>>,
+                    response: Response<BaseResponse<HomeOpenUniversityResponse>>
+                ) {
+                    Log.d("터벅터벅", "onResponse 성공: " + response.body().toString())
+                    if (response.isSuccessful) {
+                        // 정상적으로 통신이 성공된 경우
+                        val result: BaseResponse<HomeOpenUniversityResponse>? = response.body()
+                        Log.d("터벅터벅", "onResponse 성공: " + result?.toString())
+
+                        onSuccess()
+                    } else {
+                        // 통신이 실패한 경우(응답코드 3xx, 4xx 등)
+                        var result: BaseResponse<HomeOpenUniversityResponse>? = response.body()
+                        Log.d("터벅터벅", "onResponse 실패: " + response.body())
+                        val errorBody = response.errorBody()?.string() // 에러 응답 데이터를 문자열로 얻음
+                        Log.d("터벅터벅", "Error Response: $errorBody")
+
+                        when(response.code()) {
+                            401 -> {
+                                TokenUtil.refreshToken(activity) {
+                                    openUniversity(activity, universityName, onSuccess)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<BaseResponse<HomeOpenUniversityResponse>>, t: Throwable) {
                     // 통신 실패
                     Log.d("터벅터벅", "onFailure 에러: " + t.message.toString())
 

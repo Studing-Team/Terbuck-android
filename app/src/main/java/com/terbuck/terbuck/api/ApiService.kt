@@ -6,6 +6,7 @@ import com.terbuck.terbuck.api.request.onboarding.SignUpRequest
 import com.terbuck.terbuck.api.request.user.RefreshTokenRequest
 import com.terbuck.terbuck.api.request.user.UniversityRequest
 import com.terbuck.terbuck.api.response.BaseResponse
+import com.terbuck.terbuck.api.response.home.HomeOpenUniversityResponse
 import com.terbuck.terbuck.api.response.home.HomePartnershipResponse
 import com.terbuck.terbuck.api.response.home.HomeStoreResponse
 import com.terbuck.terbuck.api.response.home.PartnershipDetailResponse
@@ -122,6 +123,13 @@ interface ApiService {
     fun getUniversityIsRequestRegistered(
         @Header("authorization") token: String
     ): Call<BaseResponse<Boolean>>
+
+    // 제휴업체 등록 신청
+    @POST("/university/open")
+    fun openUniversity(
+        @Header("authorization") token: String,
+        @Query("universityName") universityName: String
+    ): Call<BaseResponse<HomeOpenUniversityResponse>>
 
     // 홈화면 제휴 업체 정보 조회
     @GET("/shops/home")
