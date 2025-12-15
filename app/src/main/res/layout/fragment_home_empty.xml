@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.home.HomeEmptyFragment" >
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar_logo_card"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView_background"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/img_terbuck_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_request_university"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="113dp"
+        app:layout_constraintBottom_toTopOf="@+id/button_request_university"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/textView_empty_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/gmarket_sans_bold"
+            android:text="아직 등록된 제휴 정보가 없어요"
+            android:textColor="@color/black_30"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView_empty_description"
+            style="@style/Text_Semi_16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="요청해주시면 빠르게 확인한 후"
+            android:textColor="@color/black_10"
+            app:layout_constraintEnd_toEndOf="@+id/textView_empty_title"
+            app:layout_constraintStart_toStartOf="@+id/textView_empty_title"
+            app:layout_constraintTop_toBottomOf="@+id/textView_empty_title" />
+
+        <TextView
+            android:id="@+id/textView_empty_description2"
+            style="@style/Text_Semi_16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="학교 주변 제휴 혜택을 열어드릴게요!"
+            android:textColor="@color/black_10"
+            app:layout_constraintEnd_toEndOf="@+id/textView_empty_description"
+            app:layout_constraintStart_toStartOf="@+id/textView_empty_description"
+            app:layout_constraintTop_toBottomOf="@+id/textView_empty_description" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_success_request_university"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginBottom="176dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/textView_success_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/gmarket_sans_bold"
+            android:text="요청 완료!"
+            android:textColor="@color/green_50"
+            android:textSize="32sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView_success_description"
+            style="@style/Text_Semi_16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="요청 인원이 많을수록"
+            android:textColor="@color/black_10"
+            app:layout_constraintEnd_toEndOf="@+id/textView_success_title"
+            app:layout_constraintStart_toStartOf="@+id/textView_success_title"
+            app:layout_constraintTop_toBottomOf="@+id/textView_success_title" />
+
+        <TextView
+            android:id="@+id/textView_success_description2"
+            style="@style/Text_Semi_16"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="더 빠르게 제휴 혜택이 열려요!"
+            android:textColor="@color/black_10"
+            app:layout_constraintEnd_toEndOf="@+id/textView_success_description"
+            app:layout_constraintStart_toStartOf="@+id/textView_success_description"
+            app:layout_constraintTop_toBottomOf="@+id/textView_success_description" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/button_request_university"
+        style="@style/NextButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="제휴혜택 정보 요청하기"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
