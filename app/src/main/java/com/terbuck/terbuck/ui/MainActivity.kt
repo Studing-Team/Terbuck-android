@@ -14,7 +14,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.google.firebase.messaging.FirebaseMessaging
 import com.terbuck.terbuck.R
+import com.terbuck.terbuck.api.TokenManager
 import com.terbuck.terbuck.databinding.ActivityMainBinding
+import com.terbuck.terbuck.ui.home.HomeEmptyFragment
 import com.terbuck.terbuck.ui.home.HomeFragment
 import com.terbuck.terbuck.ui.mypage.MypageFragment
 import com.terbuck.terbuck.ui.mypage.MypageNotificationFragment
@@ -67,9 +69,16 @@ class MainActivity : AppCompatActivity() {
                 R.id.menu_home -> {
                     mixpanel.track("click_bottom_tab_home", null)
 
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragmentContainerView, HomeFragment())
-                        .commit()
+                    if(TokenManager(this).getIsUniversityRegistered()) {
+                        supportFragmentManager.beginTransaction()
+                            .replace(R.id.fragmentContainerView, HomeFragment())
+                            .commit()
+                    } else {
+                        supportFragmentManager.beginTransaction()
+                            .replace(R.id.fragmentContainerView, HomeEmptyFragment())
+                            .commit()
+                    }
+
                     true
                 }
 

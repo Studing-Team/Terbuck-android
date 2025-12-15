@@ -20,6 +20,7 @@ import com.terbuck.terbuck.ui.user.adapter.CollegeAdapter
 import com.terbuck.terbuck.ui.user.adapter.UniversityAdapter
 import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
 import com.terbuck.terbuck.utils.MyApplication
+import com.terbuck.terbuck.viewModel.HomeViewModel
 import com.terbuck.terbuck.viewModel.OnboardingViewModel
 
 class CollegeFragment : Fragment() {
@@ -29,6 +30,9 @@ class CollegeFragment : Fragment() {
 
     private val viewModel: OnboardingViewModel by lazy {
         ViewModelProvider(requireActivity())[OnboardingViewModel::class.java]
+    }
+    private val homeViewModel: HomeViewModel by lazy {
+        ViewModelProvider(requireActivity())[HomeViewModel::class.java]
     }
 
     lateinit var collegeAdapter: CollegeAdapter
@@ -65,7 +69,9 @@ class CollegeFragment : Fragment() {
                         MyApplication.isUniversityChanged = true
                         MyApplication.isRegisterStudentCard = false
 
-                        mainActivity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                        homeViewModel.getUniversityIsRegistered(mainActivity, TokenManager(mainActivity).getUniversity().toString()) {
+                            mainActivity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                        }
                     }
                 } else {
                     // 회원가입 API 호출
@@ -78,9 +84,10 @@ class CollegeFragment : Fragment() {
 
                         mixpanel.track("click_signup2", null)
 
-                        // 홈화면 이동
-                        mainActivity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-                        mainActivity.setBottomNavigationHome()
+                        homeViewModel.getUniversityIsRegistered(mainActivity, TokenManager(mainActivity).getUniversity().toString()) {
+                            mainActivity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                            mainActivity.setBottomNavigationHome()
+                        }
                     }
                 }
             }

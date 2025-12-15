@@ -110,6 +110,13 @@ interface ApiService {
         @Body request: UniversityRequest
     ): Call<BaseResponse<String?>>
 
+    // 제휴업체 등록 여부 조회
+    @GET("/university/is-registered")
+    fun getUniversityIsRegistered(
+        @Header("authorization") token: String,
+        @Query("universityName") universityName: String
+    ): Call<BaseResponse<Boolean>>
+
     // 홈화면 제휴 업체 정보 조회
     @GET("/shops/home")
     fun getHomeStoreInfo(

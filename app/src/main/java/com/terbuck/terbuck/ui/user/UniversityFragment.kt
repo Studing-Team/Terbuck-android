@@ -179,7 +179,6 @@ class UniversityFragment : Fragment() {
     private fun initView() {
         mainActivity.hideBottomNavigation(true)
 
-//        viewModel.getUniversities(mainActivity)
         viewModel.getUniversityByRegion(mainActivity)
 
         binding.run {

@@ -25,6 +25,7 @@ import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.ui.home.HomeFragment
 import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
 import com.terbuck.terbuck.utils.MyApplication
+import com.terbuck.terbuck.viewModel.HomeViewModel
 import com.terbuck.terbuck.viewModel.OnboardingViewModel
 import com.terbuck.terbuck.viewModel.UserViewModel
 
@@ -37,6 +38,9 @@ class LoginFragment : Fragment() {
     }
     private val userViewModel: UserViewModel by lazy {
         ViewModelProvider(requireActivity())[UserViewModel::class.java]
+    }
+    private val homeViewModel: HomeViewModel by lazy {
+        ViewModelProvider(requireActivity())[HomeViewModel::class.java]
     }
 
 
@@ -54,8 +58,10 @@ class LoginFragment : Fragment() {
                     mixpanel.people.set("School", "${TokenManager(mainActivity).getUniversity()}")
                     mixpanel.people.set("Platform", "Android")
 
-                    mainActivity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-                    mainActivity.setBottomNavigationHome()
+                    homeViewModel.getUniversityIsRegistered(mainActivity, TokenManager(mainActivity).getUniversity().toString()) {
+                        mainActivity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                        mainActivity.setBottomNavigationHome()
+                    }
                 }
             }
         }
