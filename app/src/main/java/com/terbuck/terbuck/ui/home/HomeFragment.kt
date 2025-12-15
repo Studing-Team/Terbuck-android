@@ -36,9 +36,6 @@ class HomeFragment : Fragment() {
 
     lateinit var binding: FragmentHomeBinding
     lateinit var mainActivity: MainActivity
-    private val viewModel: UserViewModel by lazy {
-        ViewModelProvider(requireActivity())[UserViewModel::class.java]
-    }
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val LOCATION_PERMISSION_REQUEST_CODE = 1001
