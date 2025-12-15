@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.terbuck.terbuck.R
+import com.terbuck.terbuck.api.TokenManager
 import com.terbuck.terbuck.databinding.FragmentHomeEmptyBinding
 import com.terbuck.terbuck.ui.BasicToast
 import com.terbuck.terbuck.ui.MainActivity
@@ -59,7 +60,7 @@ class HomeEmptyFragment : Fragment() {
         }
         showToast()
 
-        if(MyApplication.preferences.getIsFirst() == true) {
+        if(MyApplication.preferences.getIsFirst()) {
             MyApplication.preferences.setIsFirst(false)
 
             StudentCardOnboardingFragment().show(parentFragmentManager, "StudentCardOnboardingDialog")
@@ -68,6 +69,16 @@ class HomeEmptyFragment : Fragment() {
         }
 
         binding.run {
+            if(TokenManager(mainActivity).getIsUniversityRequestRegistered()) {
+                // 제휴업체 등록 신청 O
+                layoutRequestUniversity.visibility = View.GONE
+                layoutSuccessRequestUniversity.visibility = View.VISIBLE
+            } else {
+                // 제휴업체 등록 신청 X
+                layoutRequestUniversity.visibility = View.VISIBLE
+                layoutSuccessRequestUniversity.visibility = View.GONE
+            }
+
             if(isRegisterStudentCard) {
                 // 학생증 등록 O
                 toolbar.imageViewCard.setImageResource(R.drawable.ic_studentcard_green10)

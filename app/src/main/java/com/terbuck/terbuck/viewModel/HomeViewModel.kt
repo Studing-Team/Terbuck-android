@@ -40,7 +40,11 @@ class HomeViewModel: ViewModel() {
                         val result: BaseResponse<Boolean>? = response.body()
                         Log.d("터벅터벅", "onResponse 성공: " + result?.toString())
 
-                        tokenManager.saveIsUniversityRegistered(result?.data == true)
+                        tokenManager.saveIsUniversityRegistered(result?.data == true, false)
+
+                        if(result?.data == true) {
+                            getUniversityIsRequestRegistered(activity, true)
+                        }
 
                         onSuccess()
                     } else {
@@ -54,6 +58,49 @@ class HomeViewModel: ViewModel() {
                             401 -> {
                                 TokenUtil.refreshToken(activity) {
                                     getUniversityIsRegistered(activity, university, onSuccess)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<BaseResponse<Boolean>>, t: Throwable) {
+                    // 통신 실패
+                    Log.d("터벅터벅", "onFailure 에러: " + t.message.toString())
+
+                }
+            })
+    }
+
+    fun getUniversityIsRequestRegistered(activity: MainActivity, isRegistered: Boolean) {
+        val apiClient = ApiClient(activity)
+        val tokenManager = TokenManager(activity)
+
+        apiClient.apiService.getUniversityIsRequestRegistered(tokenManager.getAccessToken().toString())
+            .enqueue(object :
+                Callback<BaseResponse<Boolean>> {
+                override fun onResponse(
+                    call: Call<BaseResponse<Boolean>>,
+                    response: Response<BaseResponse<Boolean>>
+                ) {
+                    Log.d("터벅터벅", "onResponse 성공: " + response.body().toString())
+                    if (response.isSuccessful) {
+                        // 정상적으로 통신이 성공된 경우
+                        val result: BaseResponse<Boolean>? = response.body()
+                        Log.d("터벅터벅", "onResponse 성공: " + result?.toString())
+
+                        tokenManager.saveIsUniversityRegistered(isRegistered, result?.data == true)
+                    } else {
+                        // 통신이 실패한 경우(응답코드 3xx, 4xx 등)
+                        var result: BaseResponse<Boolean>? = response.body()
+                        Log.d("터벅터벅", "onResponse 실패: " + response.body())
+                        val errorBody = response.errorBody()?.string() // 에러 응답 데이터를 문자열로 얻음
+                        Log.d("터벅터벅", "Error Response: $errorBody")
+
+                        when(response.code()) {
+                            401 -> {
+                                TokenUtil.refreshToken(activity) {
+                                    getUniversityIsRequestRegistered(activity, isRegistered)
                                 }
                             }
                         }

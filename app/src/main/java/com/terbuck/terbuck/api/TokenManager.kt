@@ -58,14 +58,19 @@ class TokenManager(val context: Context) {
         return sharedPreferences.getBoolean("isSignUp", true)
     }
 
-    fun saveIsUniversityRegistered(isRegistered: Boolean) {
+    fun saveIsUniversityRegistered(isRegistered: Boolean, isRequestRegistered: Boolean) {
         val editor = sharedPreferences.edit()
         editor.putBoolean("isRegistered", isRegistered)
+        editor.putBoolean("isRequestRegistered", isRequestRegistered)
         editor.apply()
     }
 
     fun getIsUniversityRegistered(): Boolean {
         return sharedPreferences.getBoolean("isRegistered", false)
+    }
+
+    fun getIsUniversityRequestRegistered(): Boolean {
+        return sharedPreferences.getBoolean("isRequestRegistered", false)
     }
 
     fun clearAll() {
