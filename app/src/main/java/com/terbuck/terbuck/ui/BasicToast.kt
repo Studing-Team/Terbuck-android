@@ -55,6 +55,44 @@ object BasicToast {
         }
     }
 
+    fun showBasicTextToast(context: Context, message: String, anchorView: View) {
+        val inflater = LayoutInflater.from(context)
+        val binding: ToastBasicBinding =
+            DataBindingUtil.inflate(inflater, R.layout.toast_basic, null, false)
+
+        binding.run {
+            textViewTooltip.text = message
+            imageViewTooltip.visibility = View.GONE
+        }
+
+        val screenWidth = Resources.getSystem().displayMetrics.widthPixels
+        val marginPx = 20.toPx()
+        val popupWidth = screenWidth - marginPx * 2
+
+        val popupWindow = PopupWindow(binding.root,
+            popupWidth,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            false
+        )
+
+        anchorView.post {
+            binding.root.measure(
+                View.MeasureSpec.UNSPECIFIED,
+                View.MeasureSpec.UNSPECIFIED
+            )
+            val popupHeight = binding.root.measuredHeight
+
+            val yOffset = -(anchorView.height + popupHeight + 8.toPx())
+            val xOffset = (20.toPx())
+
+            popupWindow.showAsDropDown(anchorView, xOffset, yOffset)
+
+            binding.root.postDelayed({
+                popupWindow.dismiss()
+            }, 2000)
+        }
+    }
+
     fun showBasicButtonToast(
         context: Context,
         activity: MainActivity,

@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.menu_home -> {
                     mixpanel.track("click_bottom_tab_home", null)
 
-                    if(TokenManager(this).getIsUniversityRegistered()) {
+                    if(MyApplication.preferences.getIsUniversityRegistered()) {
                         supportFragmentManager.beginTransaction()
                             .replace(R.id.fragmentContainerView, HomeFragment())
                             .commit()

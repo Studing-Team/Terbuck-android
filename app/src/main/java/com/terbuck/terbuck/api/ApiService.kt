@@ -15,6 +15,7 @@ import com.terbuck.terbuck.api.response.terbuck.MapStoreListResponse
 import com.terbuck.terbuck.api.response.terbuck.StoreDetailResponse
 import com.terbuck.terbuck.api.response.user.CollegeResponse
 import com.terbuck.terbuck.api.response.user.RefreshTokenResponse
+import com.terbuck.terbuck.api.response.user.StudentCardPendingResponse
 import com.terbuck.terbuck.api.response.user.StudentCardResponse
 import com.terbuck.terbuck.api.response.user.UniversityByRegionResponse
 import okhttp3.MultipartBody
@@ -103,6 +104,12 @@ interface ApiService {
     fun getStudentCard(
         @Header("authorization") token: String
     ): Call<BaseResponse<StudentCardResponse>>
+
+    // 학생증 심사 여부 조회
+    @GET("/member/studentID/pending")
+    fun getIsStudentCardPending(
+        @Header("authorization") token: String
+    ): Call<BaseResponse<StudentCardPendingResponse>>
 
     // 대학교 변경
     @PATCH("/member/univ/v2")
