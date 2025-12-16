@@ -77,6 +77,7 @@ class SearchFragment : Fragment() {
         mainActivity.hideBottomNavigation(true)
 
         binding.toolbar.textViewSearch.run {
+            // toolbar 내 뒤로가기 버튼
             setOnTouchListener { v, event ->
                 if (event.action == MotionEvent.ACTION_UP) {
                     val drawableStart = binding.toolbar.textViewSearch.compoundDrawables[0]

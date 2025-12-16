@@ -25,12 +25,16 @@ import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
 import com.terbuck.terbuck.utils.MyApplication
 import com.terbuck.terbuck.utils.MyApplication.Companion.isRegisterStudentCard
 import com.terbuck.terbuck.viewModel.HomeViewModel
+import com.terbuck.terbuck.viewModel.UserViewModel
 
 class HomeEmptyFragment : Fragment() {
 
     lateinit var binding: FragmentHomeEmptyBinding
     lateinit var mainActivity: MainActivity
 
+    private val viewModel: UserViewModel by lazy {
+        ViewModelProvider(requireActivity())[UserViewModel::class.java]
+    }
     private val homeViewModel: HomeViewModel by lazy {
         ViewModelProvider(requireActivity())[HomeViewModel::class.java]
     }
@@ -122,15 +126,33 @@ class HomeEmptyFragment : Fragment() {
                     StudentCardFragment().show(parentFragmentManager, "StudentCardDialog")
                 } else {
                     // 학생증 등록 X
-                    BasicToast.showBasicButtonToast(
-                        requireContext(),
-                        mainActivity,
-                        "아직 학생증이 등록되지 않았어요!",
-                        R.drawable.ic_face,
-                        resources.getString(R.string.register_button),
-                        mainActivity.binding.bottomNavBar,
-                        binding.root,
-                        StudentCardRegisterFragment()
+                    viewModel.getIsStudentCardPending(mainActivity,
+                        onPending = {
+                            MyApplication.isPendingStudentCard = true
+                            BasicToast.showBasicTextToast(requireContext(), "학생증을 확인 중이에요. 잠시만 기다려주세요 :)", mainActivity.binding.bottomNavBar)
+                        },
+                        onNotPending = {
+                            if(MyApplication.isPendingStudentCard) {
+                                MyApplication.isPendingStudentCard = false
+                                viewModel.getStudentCard(mainActivity) {
+                                    mixpanel.people.set("School", "${TokenManager(mainActivity).getUniversity()}")
+                                    mixpanel.people.set("Platform", "Android")
+
+                                    StudentCardFragment().show(parentFragmentManager, "StudentCardDialog")
+                                }
+                            } else {
+                                BasicToast.showBasicButtonToast(
+                                    requireContext(),
+                                    mainActivity,
+                                    "아직 학생증이 등록되지 않았어요!",
+                                    R.drawable.ic_face,
+                                    resources.getString(R.string.register_button),
+                                    mainActivity.binding.bottomNavBar,
+                                    binding.root,
+                                    StudentCardRegisterFragment()
+                                )
+                            }
+                        }
                     )
                 }
             }

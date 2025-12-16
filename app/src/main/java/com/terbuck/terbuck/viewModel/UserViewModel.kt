@@ -12,6 +12,7 @@ import com.terbuck.terbuck.api.request.onboarding.LoginRequest
 import com.terbuck.terbuck.api.response.BaseResponse
 import com.terbuck.terbuck.api.response.home.HomeStoreResponse
 import com.terbuck.terbuck.api.response.onboarding.LoginResponse
+import com.terbuck.terbuck.api.response.user.StudentCardPendingResponse
 import com.terbuck.terbuck.api.response.user.StudentCardResponse
 import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.ui.home.HomeFragment
@@ -168,6 +169,53 @@ class UserViewModel: ViewModel() {
                 }
 
                 override fun onFailure(call: Call<BaseResponse<StudentCardResponse>>, t: Throwable) {
+                    // 통신 실패
+                    Log.d("터벅터벅", "onFailure 에러: " + t.message.toString())
+
+                }
+            })
+    }
+
+    fun getIsStudentCardPending(activity: MainActivity, onPending: () -> Unit, onNotPending: () -> Unit) {
+        val apiClient = ApiClient(activity)
+        val tokenManager = TokenManager(activity)
+
+        apiClient.apiService.getIsStudentCardPending(tokenManager.getAccessToken().toString())
+            .enqueue(object :
+                Callback<BaseResponse<StudentCardPendingResponse>> {
+                override fun onResponse(
+                    call: Call<BaseResponse<StudentCardPendingResponse>>,
+                    response: Response<BaseResponse<StudentCardPendingResponse>>
+                ) {
+                    Log.d("터벅터벅", "onResponse 성공: " + response.body().toString())
+                    if (response.isSuccessful) {
+                        // 정상적으로 통신이 성공된 경우
+                        val result: BaseResponse<StudentCardPendingResponse>? = response.body()
+                        Log.d("터벅터벅", "onResponse 성공: " + result?.toString())
+
+                        if(result?.data?.isPending == true) {
+                            onPending()
+                        } else {
+                            onNotPending()
+                        }
+                    } else {
+                        // 통신이 실패한 경우(응답코드 3xx, 4xx 등)
+                        var result: BaseResponse<StudentCardPendingResponse>? = response.body()
+                        Log.d("터벅터벅", "onResponse 실패: " + response.body())
+                        val errorBody = response.errorBody()?.string() // 에러 응답 데이터를 문자열로 얻음
+                        Log.d("터벅터벅", "Error Response: $errorBody")
+
+                        when(response.code()) {
+                            401 -> {
+                                TokenUtil.refreshToken(activity) {
+                                    getIsStudentCardPending(activity, onPending, onNotPending)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<BaseResponse<StudentCardPendingResponse>>, t: Throwable) {
                     // 통신 실패
                     Log.d("터벅터벅", "onFailure 에러: " + t.message.toString())
 

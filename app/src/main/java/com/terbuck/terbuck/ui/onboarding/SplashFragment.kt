@@ -7,17 +7,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.ViewModelProvider
 import com.terbuck.terbuck.R
 import com.terbuck.terbuck.api.TokenManager
 import com.terbuck.terbuck.databinding.FragmentSplashBinding
 import com.terbuck.terbuck.ui.MainActivity
+import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
 import com.terbuck.terbuck.utils.MyApplication
+import com.terbuck.terbuck.viewModel.HomeViewModel
+import com.terbuck.terbuck.viewModel.UserViewModel
 import kotlin.text.replace
 
 class SplashFragment : Fragment() {
 
     lateinit var binding: FragmentSplashBinding
     lateinit var mainActivity: MainActivity
+
+    private val viewModel: UserViewModel by lazy {
+        ViewModelProvider(requireActivity())[UserViewModel::class.java]
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,14 +38,19 @@ class SplashFragment : Fragment() {
         Handler().postDelayed({
             val tokenManager = TokenManager(mainActivity)
             if(tokenManager.getAccessToken() != null && MyApplication.preferences.getIsSignUp()) {
-                mainActivity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-                mainActivity.setBottomNavigationHome()
+                viewModel.getStudentCard(mainActivity) {
+                    mixpanel.people.set("School", "${TokenManager(mainActivity).getUniversity()}")
+                    mixpanel.people.set("Platform", "Android")
+
+                    mainActivity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                    mainActivity.setBottomNavigationHome()
+                }
             } else {
                 mainActivity.supportFragmentManager.beginTransaction()
                     .replace(R.id.fragmentContainerView, LoginFragment())
                     .commit()
             }
-        }, 2000)
+        }, 3000)
 
         return binding.root
     }
