@@ -43,11 +43,13 @@ class HomeViewModel: ViewModel() {
 
                         tokenManager.saveIsUniversityRegistered(result?.data == true, false)
 
-                        if(result?.data == true) {
-                            getUniversityIsRequestRegistered(activity, true)
+                        if(result?.data != true) {
+                            getUniversityIsRequestRegistered(activity, result?.data == true) {
+                                onSuccess()
+                            }
+                        } else {
+                            onSuccess()
                         }
-
-                        onSuccess()
                     } else {
                         // 통신이 실패한 경우(응답코드 3xx, 4xx 등)
                         var result: BaseResponse<Boolean>? = response.body()
@@ -73,7 +75,7 @@ class HomeViewModel: ViewModel() {
             })
     }
 
-    fun getUniversityIsRequestRegistered(activity: MainActivity, isRegistered: Boolean) {
+    fun getUniversityIsRequestRegistered(activity: MainActivity, isRegistered: Boolean, onSuccess: () -> Unit) {
         val apiClient = ApiClient(activity)
         val tokenManager = TokenManager(activity)
 
@@ -91,6 +93,8 @@ class HomeViewModel: ViewModel() {
                         Log.d("터벅터벅", "onResponse 성공: " + result?.toString())
 
                         tokenManager.saveIsUniversityRegistered(isRegistered, result?.data == true)
+
+                        onSuccess()
                     } else {
                         // 통신이 실패한 경우(응답코드 3xx, 4xx 등)
                         var result: BaseResponse<Boolean>? = response.body()
@@ -101,7 +105,7 @@ class HomeViewModel: ViewModel() {
                         when(response.code()) {
                             401 -> {
                                 TokenUtil.refreshToken(activity) {
-                                    getUniversityIsRequestRegistered(activity, isRegistered)
+                                    getUniversityIsRequestRegistered(activity, isRegistered, onSuccess)
                                 }
                             }
                         }

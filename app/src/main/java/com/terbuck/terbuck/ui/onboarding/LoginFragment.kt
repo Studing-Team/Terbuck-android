@@ -108,8 +108,13 @@ class LoginFragment : Fragment() {
                                     mixpanel.people.set("School", "${TokenManager(mainActivity).getUniversity()}")
                                     mixpanel.people.set("Platform", "Android")
 
-                                    mainActivity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-                                    mainActivity.setBottomNavigationHome()
+                                    homeViewModel.getUniversityIsRegistered(mainActivity, TokenManager(mainActivity).getUniversity().toString()) {
+                                        mainActivity.supportFragmentManager.popBackStack(
+                                            null,
+                                            FragmentManager.POP_BACK_STACK_INCLUSIVE
+                                        )
+                                        mainActivity.setBottomNavigationHome()
+                                    }
                                 }
                             }
                         }
