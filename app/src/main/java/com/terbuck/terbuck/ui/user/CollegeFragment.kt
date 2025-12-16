@@ -77,7 +77,7 @@ class CollegeFragment : Fragment() {
                     // 회원가입 API 호출
                     viewModel.signUp(mainActivity, university, selectedCollege) {
                         TokenManager(mainActivity).saveUniversity(university)
-                        TokenManager(mainActivity).saveIsSignUp(true)
+                        MyApplication.preferences.saveIsSignUp(true)
 
                         mixpanel.people.set("School", "$university")
                         mixpanel.people.set("Platform", "Android")

@@ -30,6 +30,31 @@ class PreferenceUtil(context: Context) {
         return preferences.getBoolean("isFirstLoginView", true)
     }
 
+    fun saveIsSignUp(isSignUp: Boolean) {
+        val editor = preferences.edit()
+        editor.putBoolean("isSignUp", isSignUp)
+        editor.apply()
+    }
+
+    fun getIsSignUp(): Boolean {
+        return preferences.getBoolean("isSignUp", true)
+    }
+
+    fun saveIsUniversityRegistered(isRegistered: Boolean, isRequestRegistered: Boolean) {
+        val editor = preferences.edit()
+        editor.putBoolean("isRegistered", isRegistered)
+        editor.putBoolean("isRequestRegistered", isRequestRegistered)
+        editor.apply()
+    }
+
+    fun getIsUniversityRegistered(): Boolean {
+        return preferences.getBoolean("isRegistered", false)
+    }
+
+    fun getIsUniversityRequestRegistered(): Boolean {
+        return preferences.getBoolean("isRequestRegistered", false)
+    }
+
     fun setFCMToken(token: String) {
         preferences.edit().putString("FCM_TOKEN", token).apply()
     }

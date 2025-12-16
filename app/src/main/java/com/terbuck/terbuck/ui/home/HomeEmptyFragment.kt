@@ -55,7 +55,7 @@ class HomeEmptyFragment : Fragment() {
                     buttonRequestUniversity.visibility = View.GONE
                     layoutSuccessRequestUniversity.visibility = View.VISIBLE
 
-                    TokenManager(mainActivity).saveIsUniversityRegistered(false, true)
+                    MyApplication.preferences.saveIsUniversityRegistered(false, true)
 
                     BasicToast.showBasicButtonToast(
                         requireContext(),
@@ -94,7 +94,7 @@ class HomeEmptyFragment : Fragment() {
         }
 
         binding.run {
-            if(TokenManager(mainActivity).getIsUniversityRequestRegistered()) {
+            if(MyApplication.preferences.getIsUniversityRequestRegistered()) {
                 // 제휴업체 등록 신청 O
                 layoutRequestUniversity.visibility = View.GONE
                 buttonRequestUniversity.visibility = View.GONE

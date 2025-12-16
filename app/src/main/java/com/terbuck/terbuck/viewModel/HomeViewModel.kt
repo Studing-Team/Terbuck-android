@@ -41,7 +41,7 @@ class HomeViewModel: ViewModel() {
                         val result: BaseResponse<Boolean>? = response.body()
                         Log.d("터벅터벅", "onResponse 성공: " + result?.toString())
 
-                        tokenManager.saveIsUniversityRegistered(result?.data == true, false)
+                        MyApplication.preferences.saveIsUniversityRegistered(result?.data == true, false)
 
                         if(result?.data != true) {
                             getUniversityIsRequestRegistered(activity, result?.data == true) {
@@ -92,7 +92,7 @@ class HomeViewModel: ViewModel() {
                         val result: BaseResponse<Boolean>? = response.body()
                         Log.d("터벅터벅", "onResponse 성공: " + result?.toString())
 
-                        tokenManager.saveIsUniversityRegistered(isRegistered, result?.data == true)
+                        MyApplication.preferences.saveIsUniversityRegistered(isRegistered, result?.data == true)
 
                         onSuccess()
                     } else {

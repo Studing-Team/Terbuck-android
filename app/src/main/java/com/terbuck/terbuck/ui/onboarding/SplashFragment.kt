@@ -11,6 +11,7 @@ import com.terbuck.terbuck.R
 import com.terbuck.terbuck.api.TokenManager
 import com.terbuck.terbuck.databinding.FragmentSplashBinding
 import com.terbuck.terbuck.ui.MainActivity
+import com.terbuck.terbuck.utils.MyApplication
 import kotlin.text.replace
 
 class SplashFragment : Fragment() {
@@ -28,7 +29,7 @@ class SplashFragment : Fragment() {
 
         Handler().postDelayed({
             val tokenManager = TokenManager(mainActivity)
-            if(tokenManager.getAccessToken() != null && tokenManager.getIsSignUp()) {
+            if(tokenManager.getAccessToken() != null && MyApplication.preferences.getIsSignUp()) {
                 mainActivity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
                 mainActivity.setBottomNavigationHome()
             } else {
