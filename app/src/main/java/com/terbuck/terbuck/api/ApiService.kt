@@ -6,14 +6,17 @@ import com.terbuck.terbuck.api.request.onboarding.SignUpRequest
 import com.terbuck.terbuck.api.request.user.RefreshTokenRequest
 import com.terbuck.terbuck.api.request.user.UniversityRequest
 import com.terbuck.terbuck.api.response.BaseResponse
+import com.terbuck.terbuck.api.response.home.HomeOpenUniversityResponse
 import com.terbuck.terbuck.api.response.home.HomePartnershipResponse
 import com.terbuck.terbuck.api.response.home.HomeStoreResponse
 import com.terbuck.terbuck.api.response.home.PartnershipDetailResponse
 import com.terbuck.terbuck.api.response.onboarding.LoginResponse
 import com.terbuck.terbuck.api.response.terbuck.MapStoreListResponse
 import com.terbuck.terbuck.api.response.terbuck.StoreDetailResponse
+import com.terbuck.terbuck.api.response.user.CollegeResponse
 import com.terbuck.terbuck.api.response.user.RefreshTokenResponse
 import com.terbuck.terbuck.api.response.user.StudentCardResponse
+import com.terbuck.terbuck.api.response.user.UniversityByRegionResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -37,12 +40,12 @@ interface ApiService {
         @Body request: LoginRequest
     ): Call<BaseResponse<LoginResponse>>
 
-    // 회원가입
-    @POST("/member/signin")
+    // 회원가입 (대학교, 단과대학 정보 포함)
+    @POST("/member/signin/v2")
     fun signUp(
         @Header("authorization") token: String,
         @Body request: SignUpRequest
-    ): Call<BaseResponse<String>>
+    ): Call<BaseResponse<String?>>
 
     // 토큰 재발급
     @POST("/auth/reissue")
@@ -67,6 +70,19 @@ interface ApiService {
     @GET("/info/universities")
     fun getUniversities(): Call<BaseResponse<List<String>>>
 
+    // 지역별 대학교 리스트 조회
+    @GET("/university/by-region")
+    fun getUniversitiesByRegion(
+        @Header("authorization") token: String
+    ): Call<BaseResponse<List<UniversityByRegionResponse>>>
+
+    // 단과 대학교 리스트 조회
+    @GET("/university/colleges")
+    fun getColleges(
+        @Header("authorization") token: String,
+        @Query ("universityName") universityName: String
+    ): Call<BaseResponse<List<CollegeResponse>>>
+
     // 학생증 등록
     @Multipart
     @PUT("/member/studentID")
@@ -89,11 +105,31 @@ interface ApiService {
     ): Call<BaseResponse<StudentCardResponse>>
 
     // 대학교 변경
-    @PATCH("/member/univ")
+    @PATCH("/member/univ/v2")
     fun editUniversity(
         @Header("authorization") token: String,
         @Body request: UniversityRequest
     ): Call<BaseResponse<String?>>
+
+    // 제휴업체 등록 여부 조회
+    @GET("/university/is-registered")
+    fun getUniversityIsRegistered(
+        @Header("authorization") token: String,
+        @Query("universityName") universityName: String
+    ): Call<BaseResponse<Boolean>>
+
+    // 제휴업체 등록 신청 여부 조회
+    @GET("/university/open")
+    fun getUniversityIsRequestRegistered(
+        @Header("authorization") token: String
+    ): Call<BaseResponse<Boolean>>
+
+    // 제휴업체 등록 신청
+    @POST("/university/open")
+    fun openUniversity(
+        @Header("authorization") token: String,
+        @Query("universityName") universityName: String
+    ): Call<BaseResponse<HomeOpenUniversityResponse>>
 
     // 홈화면 제휴 업체 정보 조회
     @GET("/shops/home")

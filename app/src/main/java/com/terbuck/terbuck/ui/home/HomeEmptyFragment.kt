@@ -1,41 +1,39 @@
 package com.terbuck.terbuck.ui.home
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
-import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.terbuck.terbuck.R
-import com.terbuck.terbuck.databinding.FragmentHomeBinding
+import com.terbuck.terbuck.api.TokenManager
+import com.terbuck.terbuck.databinding.FragmentHomeEmptyBinding
 import com.terbuck.terbuck.ui.BasicToast
 import com.terbuck.terbuck.ui.MainActivity
+import com.terbuck.terbuck.ui.mypage.MypageNotificationFragment
 import com.terbuck.terbuck.ui.user.StudentCardFragment
 import com.terbuck.terbuck.ui.user.StudentCardOnboardingFragment
-import com.terbuck.terbuck.utils.MyApplication
-import com.terbuck.terbuck.viewModel.UserViewModel
-import android.Manifest
-import android.content.pm.PackageManager
-import android.location.Location
-import androidx.core.app.ActivityCompat
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.terbuck.terbuck.ui.mypage.MypageNotificationFragment
 import com.terbuck.terbuck.ui.user.StudentCardRegisterFragment
 import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
+import com.terbuck.terbuck.utils.MyApplication
 import com.terbuck.terbuck.utils.MyApplication.Companion.isRegisterStudentCard
+import com.terbuck.terbuck.viewModel.HomeViewModel
 
+class HomeEmptyFragment : Fragment() {
 
-class HomeFragment : Fragment() {
-
-    lateinit var binding: FragmentHomeBinding
+    lateinit var binding: FragmentHomeEmptyBinding
     lateinit var mainActivity: MainActivity
+
+    private val homeViewModel: HomeViewModel by lazy {
+        ViewModelProvider(requireActivity())[HomeViewModel::class.java]
+    }
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val LOCATION_PERMISSION_REQUEST_CODE = 1001
@@ -45,51 +43,33 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        binding = FragmentHomeBinding.inflate(layoutInflater)
+        binding = FragmentHomeEmptyBinding.inflate(layoutInflater)
         mainActivity = activity as MainActivity
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(mainActivity)
-
-        val category: List<String> = listOf("먹고가기", "이용하기", "파트너십")
-
-        val adapter = TemplateCategoryVPAdapter(this)
-        binding.viewpager.adapter = adapter
-
-        TabLayoutMediator(binding.tab, binding.viewpager) { tab, position ->
-            tab.text = category[position]  // 포지션에 따른 텍스트
-        }.attach()  // 탭 레이아웃과 뷰페이저를 붙여주는 기능
-
         binding.run {
-            val customView = LayoutInflater.from(context).inflate(R.layout.custom_tab_partnership, null)
-            binding.tab.getTabAt(2)?.customView = customView
+            buttonRequestUniversity.setOnClickListener {
+                // 제휴 혜택 정보 요청 API 호출
+                homeViewModel.openUniversity(mainActivity, TokenManager(mainActivity).getUniversity().toString()) {
 
-            binding.tab.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-                override fun onTabSelected(tab: TabLayout.Tab?) {
-                    if (tab?.position == 2) {
-                        val text = tab.customView?.findViewById<TextView>(R.id.tabText)
-                        text?.setTextColor(resources.getColor(R.color.black_30))
+                    layoutRequestUniversity.visibility = View.GONE
+                    buttonRequestUniversity.visibility = View.GONE
+                    layoutSuccessRequestUniversity.visibility = View.VISIBLE
 
-                        val icon = tab.customView?.findViewById<ImageView>(R.id.tabIcon)
-                        icon?.visibility = View.VISIBLE
-                    }
+                    TokenManager(mainActivity).saveIsUniversityRegistered(false, true)
+
+                    BasicToast.showBasicButtonToast(
+                        requireContext(),
+                        mainActivity,
+                        "업데이트 되는대로 알려드릴게요 :)",
+                        0,
+                        resources.getString(R.string.notification_button),
+                        mainActivity.binding.bottomNavBar,
+                        binding.root,
+                        MypageNotificationFragment()
+                    )
                 }
-
-                override fun onTabUnselected(tab: TabLayout.Tab?) {
-                    if (tab?.position == 2) {
-                        val text = tab.customView?.findViewById<TextView>(R.id.tabText)
-                        text?.setTextColor(resources.getColor(R.color.black_10))
-
-                        val icon = tab.customView?.findViewById<ImageView>(R.id.tabIcon)
-                        icon?.visibility = View.GONE
-                    }
-                }
-
-
-                override fun onTabReselected(tab: TabLayout.Tab?) {}
-            })
+            }
         }
-
-        tabItemMargin(binding.tab)
 
         return binding.root
     }
@@ -99,22 +79,13 @@ class HomeFragment : Fragment() {
         initView()
     }
 
-    private fun tabItemMargin(mTabLayout: TabLayout) {
-        for (i in 0 until mTabLayout.tabCount) {
-            val tab = (mTabLayout.getChildAt(0) as ViewGroup).getChildAt(i)
-            val p = tab.layoutParams as ViewGroup.MarginLayoutParams
-            p.setMargins(8, 8, 8, 8)
-            tab.requestLayout()
-        }
-    }
-
     fun initView() {
         mainActivity.run {
             hideBottomNavigation(false)
         }
         showToast()
 
-        if(MyApplication.preferences.getIsFirst() == true) {
+        if(MyApplication.preferences.getIsFirst()) {
             MyApplication.preferences.setIsFirst(false)
 
             StudentCardOnboardingFragment().show(parentFragmentManager, "StudentCardOnboardingDialog")
@@ -123,7 +94,19 @@ class HomeFragment : Fragment() {
         }
 
         binding.run {
-            if(MyApplication.isRegisterStudentCard) {
+            if(TokenManager(mainActivity).getIsUniversityRequestRegistered()) {
+                // 제휴업체 등록 신청 O
+                layoutRequestUniversity.visibility = View.GONE
+                buttonRequestUniversity.visibility = View.GONE
+                layoutSuccessRequestUniversity.visibility = View.VISIBLE
+            } else {
+                // 제휴업체 등록 신청 X
+                layoutRequestUniversity.visibility = View.VISIBLE
+                buttonRequestUniversity.visibility = View.VISIBLE
+                layoutSuccessRequestUniversity.visibility = View.GONE
+            }
+
+            if(isRegisterStudentCard) {
                 // 학생증 등록 O
                 toolbar.imageViewCard.setImageResource(R.drawable.ic_studentcard_green10)
             } else {
@@ -232,33 +215,4 @@ class HomeFragment : Fragment() {
         }
     }
 
-}
-
-
-class TemplateCategoryVPAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
-    override fun getItemCount(): Int = 3
-
-    override fun createFragment(position: Int): Fragment {
-        return when (position) {
-            0 -> {
-                mixpanel.track("click_top_tab_eating", null)
-
-                // 먹고가기 Fragment
-                HomeEatFragment()
-            }
-            1 -> {
-                mixpanel.track("click_top_tab_using", null)
-
-                // 이용하기 Fragment
-                HomeUseFragment()
-            }
-            2 -> {
-                mixpanel.track("click_top_tab_partnership", null)
-
-                // 파트너십 Fragment
-                HomePartnershipFragment()
-            }
-            else -> throw IllegalArgumentException("Invalid position")
-        }
-    }
 }

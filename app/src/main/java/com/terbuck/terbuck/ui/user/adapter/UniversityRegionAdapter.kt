@@ -6,27 +6,20 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.terbuck.terbuck.R
-import com.terbuck.terbuck.api.response.user.University
 import com.terbuck.terbuck.databinding.RowUniversityBinding
+import com.terbuck.terbuck.databinding.RowUniversityRegionBinding
 
-class UniversityAdapter(
+class UniversityRegionAdapter(
     private var activity: Activity,
-    private var schools: List<University>?
+    private var regions: List<String>?
 ) :
-    RecyclerView.Adapter<UniversityAdapter.ViewHolder>() {
+    RecyclerView.Adapter<UniversityRegionAdapter.ViewHolder>() {
 
     private var onItemClickListener: ((Int) -> Unit)? = null
     private var context: Context? = null
-    var selectedPosition: Int = -1
 
     fun setOnItemClickListener(listener: (Int) -> Unit) {
         onItemClickListener = listener
-    }
-
-    fun updateList(newSchools: List<University>?, newlySelectedPosition: Int?) {
-        schools = newSchools
-        selectedPosition = newlySelectedPosition ?: -1
-        notifyDataSetChanged()
     }
 
 
@@ -39,23 +32,21 @@ class UniversityAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         context = parent.context
         val binding =
-            RowUniversityBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            RowUniversityRegionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
         return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         with(holder.binding) {
-            textViewSchoolName.text = schools?.get(position)?.name ?: ""
-
-            imageViewCheckbox.setImageResource(if(position == selectedPosition) R.drawable.ic_checkbox_green50  else R.drawable.ic_checkbox_white)
+            textViewSchoolName.text = regions?.get(position) ?: ""
         }
     }
 
-    override fun getItemCount() = schools?.size ?: 0
+    override fun getItemCount() = regions?.size ?: 0
 
 
-    inner class ViewHolder(val binding: RowUniversityBinding) :
+    inner class ViewHolder(val binding: RowUniversityRegionBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         init {

@@ -6,14 +6,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.terbuck.terbuck.R
+import com.terbuck.terbuck.api.response.user.CollegeResponse
 import com.terbuck.terbuck.api.response.user.University
 import com.terbuck.terbuck.databinding.RowUniversityBinding
 
-class UniversityAdapter(
+class CollegeAdapter(
     private var activity: Activity,
-    private var schools: List<University>?
+    private var colleges: List<CollegeResponse>?
 ) :
-    RecyclerView.Adapter<UniversityAdapter.ViewHolder>() {
+    RecyclerView.Adapter<CollegeAdapter.ViewHolder>() {
 
     private var onItemClickListener: ((Int) -> Unit)? = null
     private var context: Context? = null
@@ -23,8 +24,8 @@ class UniversityAdapter(
         onItemClickListener = listener
     }
 
-    fun updateList(newSchools: List<University>?, newlySelectedPosition: Int?) {
-        schools = newSchools
+    fun updateList(newColleges: List<CollegeResponse>?, newlySelectedPosition: Int?) {
+        colleges = newColleges
         selectedPosition = newlySelectedPosition ?: -1
         notifyDataSetChanged()
     }
@@ -46,13 +47,13 @@ class UniversityAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         with(holder.binding) {
-            textViewSchoolName.text = schools?.get(position)?.name ?: ""
+            textViewSchoolName.text = colleges?.get(position)?.name ?: ""
 
             imageViewCheckbox.setImageResource(if(position == selectedPosition) R.drawable.ic_checkbox_green50  else R.drawable.ic_checkbox_white)
         }
     }
 
-    override fun getItemCount() = schools?.size ?: 0
+    override fun getItemCount() = colleges?.size ?: 0
 
 
     inner class ViewHolder(val binding: RowUniversityBinding) :

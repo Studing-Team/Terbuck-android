@@ -12,8 +12,9 @@ import com.terbuck.terbuck.api.request.onboarding.LoginRequest
 import com.terbuck.terbuck.api.request.onboarding.SignUpRequest
 import com.terbuck.terbuck.api.request.user.UniversityRequest
 import com.terbuck.terbuck.api.response.BaseResponse
-import com.terbuck.terbuck.api.response.home.HomeStoreResponse
 import com.terbuck.terbuck.api.response.onboarding.LoginResponse
+import com.terbuck.terbuck.api.response.user.CollegeResponse
+import com.terbuck.terbuck.api.response.user.UniversityByRegionResponse
 import com.terbuck.terbuck.ui.MainActivity
 import com.terbuck.terbuck.ui.onboarding.SignUpAgreementFragment
 import com.terbuck.terbuck.utils.GlobalApplication.Companion.mixpanel
@@ -24,6 +25,10 @@ import retrofit2.Response
 
 class OnboardingViewModel: ViewModel() {
     var universities: MutableLiveData<List<String>> = MutableLiveData()
+    var universitiesByRegion: MutableLiveData<List<UniversityByRegionResponse>> = MutableLiveData()
+
+    var colleges: MutableLiveData<List<CollegeResponse>> = MutableLiveData()
+
 
     fun getUniversities(activity: MainActivity) {
         val apiClient = ApiClient(activity)
@@ -59,6 +64,76 @@ class OnboardingViewModel: ViewModel() {
             })
     }
 
+    fun getUniversityByRegion(activity: MainActivity) {
+        val apiClient = ApiClient(activity)
+        val tokenManager = TokenManager(activity)
+
+        apiClient.apiService.getUniversitiesByRegion(tokenManager.getAccessToken().toString())
+            .enqueue(object :
+                Callback<BaseResponse<List<UniversityByRegionResponse>>> {
+                override fun onResponse(
+                    call: Call<BaseResponse<List<UniversityByRegionResponse>>>,
+                    response: Response<BaseResponse<List<UniversityByRegionResponse>>>
+                ) {
+                    Log.d("터벅터벅", "onResponse 성공: " + response.body().toString())
+                    if (response.isSuccessful) {
+                        // 정상적으로 통신이 성공된 경우
+                        val result: BaseResponse<List<UniversityByRegionResponse>>? = response.body()
+                        Log.d("터벅터벅", "onResponse 성공: " + result?.toString())
+
+                        universitiesByRegion.value = result?.data
+                    } else {
+                        // 통신이 실패한 경우(응답코드 3xx, 4xx 등)
+                        var result: BaseResponse<List<UniversityByRegionResponse>>? = response.body()
+                        Log.d("터벅터벅", "onResponse 실패: " + response.body())
+                        val errorBody = response.errorBody()?.string() // 에러 응답 데이터를 문자열로 얻음
+                        Log.d("터벅터벅", "Error Response: $errorBody")
+                    }
+                }
+
+                override fun onFailure(call: Call<BaseResponse<List<UniversityByRegionResponse>>>, t: Throwable) {
+                    // 통신 실패
+                    Log.d("터벅터벅", "onFailure 에러: " + t.message.toString())
+
+                }
+            })
+    }
+
+    fun getColleges(activity: MainActivity, university: String) {
+        val apiClient = ApiClient(activity)
+        val tokenManager = TokenManager(activity)
+
+        apiClient.apiService.getColleges(tokenManager.getAccessToken().toString(), university)
+            .enqueue(object :
+                Callback<BaseResponse<List<CollegeResponse>>> {
+                override fun onResponse(
+                    call: Call<BaseResponse<List<CollegeResponse>>>,
+                    response: Response<BaseResponse<List<CollegeResponse>>>
+                ) {
+                    Log.d("터벅터벅", "onResponse 성공: " + response.body().toString())
+                    if (response.isSuccessful) {
+                        // 정상적으로 통신이 성공된 경우
+                        val result: BaseResponse<List<CollegeResponse>>? = response.body()
+                        Log.d("터벅터벅", "onResponse 성공: " + result?.toString())
+
+                        colleges.value = result?.data
+                    } else {
+                        // 통신이 실패한 경우(응답코드 3xx, 4xx 등)
+                        var result: BaseResponse<List<CollegeResponse>>? = response.body()
+                        Log.d("터벅터벅", "onResponse 실패: " + response.body())
+                        val errorBody = response.errorBody()?.string() // 에러 응답 데이터를 문자열로 얻음
+                        Log.d("터벅터벅", "Error Response: $errorBody")
+                    }
+                }
+
+                override fun onFailure(call: Call<BaseResponse<List<CollegeResponse>>>, t: Throwable) {
+                    // 통신 실패
+                    Log.d("터벅터벅", "onFailure 에러: " + t.message.toString())
+
+                }
+            })
+    }
+
     fun login(activity: MainActivity, token: String, onSuccess: () -> Unit) {
         val apiClient = ApiClient(activity)
         val tokenManager = TokenManager(activity)
@@ -81,6 +156,7 @@ class OnboardingViewModel: ViewModel() {
                         mixpanel.identify(result?.data?.id?.toString(), true)
 
                         if(result?.data?.redirect == true) {
+                            tokenManager.saveIsSignUp(false)
                             // 회원가입 화면 이동
                             activity.supportFragmentManager.beginTransaction()
                                 .replace(R.id.fragmentContainerView, SignUpAgreementFragment())
@@ -108,28 +184,28 @@ class OnboardingViewModel: ViewModel() {
             })
     }
 
-    fun signUp(activity: MainActivity, university: String, onSuccess: () -> Unit) {
+    fun signUp(activity: MainActivity, university: String, collegeId: Long, onSuccess: () -> Unit) {
         val apiClient = ApiClient(activity)
         val tokenManager = TokenManager(activity)
 
-        apiClient.apiService.signUp(tokenManager.getAccessToken().toString(), SignUpRequest(university))
+        apiClient.apiService.signUp(tokenManager.getAccessToken().toString(), SignUpRequest(university, collegeId))
             .enqueue(object :
-                Callback<BaseResponse<String>> {
+                Callback<BaseResponse<String?>> {
                 override fun onResponse(
-                    call: Call<BaseResponse<String>>,
-                    response: Response<BaseResponse<String>>
+                    call: Call<BaseResponse<String?>>,
+                    response: Response<BaseResponse<String?>>
                 ) {
                     Log.d("터벅터벅", "onResponse 성공: " + response.body().toString())
                     if (response.isSuccessful) {
                         // 정상적으로 통신이 성공된 경우
-                        val result: BaseResponse<String>? = response.body()
+                        val result: BaseResponse<String?>? = response.body()
                         Log.d("터벅터벅", "onResponse 성공: " + result?.toString())
 
                         onSuccess()
                         setFcmToken(activity, MyApplication.preferences.getFCMToken().toString())
                     } else {
                         // 통신이 실패한 경우(응답코드 3xx, 4xx 등)
-                        var result: BaseResponse<String>? = response.body()
+                        var result: BaseResponse<String?>? = response.body()
                         Log.d("터벅터벅", "onResponse 실패: " + response.body())
                         val errorBody = response.errorBody()?.string() // 에러 응답 데이터를 문자열로 얻음
                         Log.d("터벅터벅", "Error Response: $errorBody")
@@ -137,14 +213,14 @@ class OnboardingViewModel: ViewModel() {
                         when(response.code()) {
                             401 -> {
                                 TokenUtil.refreshToken(activity) {
-                                    signUp(activity, university, onSuccess)
+                                    signUp(activity, university, collegeId, onSuccess)
                                 }
                             }
                         }
                     }
                 }
 
-                override fun onFailure(call: Call<BaseResponse<String>>, t: Throwable) {
+                override fun onFailure(call: Call<BaseResponse<String?>>, t: Throwable) {
                     // 통신 실패
                     Log.d("터벅터벅", "onFailure 에러: " + t.message.toString())
 
@@ -152,11 +228,11 @@ class OnboardingViewModel: ViewModel() {
             })
     }
 
-    fun editUniversity(activity: MainActivity, university: String, onSuccess: () -> Unit) {
+    fun editUniversity(activity: MainActivity, university: String, collegeId: Long, onSuccess: () -> Unit) {
         val apiClient = ApiClient(activity)
         val tokenManager = TokenManager(activity)
 
-        apiClient.apiService.editUniversity(tokenManager.getAccessToken().toString(), UniversityRequest(university))
+        apiClient.apiService.editUniversity(tokenManager.getAccessToken().toString(), UniversityRequest(university, collegeId))
             .enqueue(object :
                 Callback<BaseResponse<String?>> {
                 override fun onResponse(
@@ -180,7 +256,7 @@ class OnboardingViewModel: ViewModel() {
                         when(response.code()) {
                             401 -> {
                                 TokenUtil.refreshToken(activity) {
-                                    editUniversity(activity, university, onSuccess)
+                                    editUniversity(activity, university, collegeId, onSuccess)
                                 }
                             }
                         }

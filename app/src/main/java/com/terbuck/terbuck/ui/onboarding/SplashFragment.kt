@@ -28,7 +28,7 @@ class SplashFragment : Fragment() {
 
         Handler().postDelayed({
             val tokenManager = TokenManager(mainActivity)
-            if(tokenManager.getAccessToken() != null) {
+            if(tokenManager.getAccessToken() != null && tokenManager.getIsSignUp()) {
                 mainActivity.supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
                 mainActivity.setBottomNavigationHome()
             } else {
